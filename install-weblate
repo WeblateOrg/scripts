@@ -24,7 +24,6 @@ apt-get install --no-install-recommends -y\
     libgirepository1.0-dev \
     libjpeg-dev \
     libldap2-dev \
-    libleptonica-dev
     libleptonica-dev \
     libsasl2-dev \
     libssl-dev \
