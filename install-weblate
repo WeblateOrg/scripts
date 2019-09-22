@@ -56,11 +56,11 @@ apt-get install --no-install-recommends -y\
 adduser weblate --disabled-password
 
 # Install Weblate and deps
-sudo weblate virtualenv --python=python3 ~/weblate-env
-sudo weblate ~/weblate-env/bin/pip install Weblate psycopg2-binary ruamel.yaml aeidon boto3 zeep chardet tesserocr phply
+sudo -u weblate virtualenv --python=python3 /home/weblate/weblate-env
+sudo -u weblate /home/weblate/weblate-env/bin/pip install Weblate psycopg2-binary ruamel.yaml aeidon boto3 zeep chardet tesserocr phply
 
 # Configure Weblate
-sudo weblate cp ~/weblate-env/lib/python3.7/site-packages/weblate/settings_example.py ~/weblate-env/lib/python3.7/site-packages/weblate/settings.py
+sudo -u weblate cp /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings_example.py /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
 
 sed -i \
     -e 's/^DATA_DIR.*/DATA_DIR = "/home/weblate/data"/' \
@@ -71,12 +71,12 @@ sed -i \
     -e "s/^SITE_TITLE/SITE_TITLE = '$WEBLATE_TITLE'/" \
     -e "s/^ALLOWED_HOSTS/ALLOWED_HOSTS = ['$WEBLATE_DOMAIN'/" \
     -e "s/^SENTRY_DSN/SENTRY_DSN = '$WEBLATE_SENTRY'/" \
-    ~/weblate-env/lib/python3.7/site-packages/weblate/settings.py
+    /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
 
-sudo weblate weblate changesite --set-name $WEBLATE_DOMAIN
-sudo weblate weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
-sudo weblate weblate collectstatic
-sudo weblate weblate migrate
+sudo -u weblate /home/weblate/weblate-env/bin/weblate changesite --set-name $WEBLATE_DOMAIN
+sudo -u weblate /home/weblate/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
+sudo -u weblate /home/weblate/weblate-env/bin/weblate collectstatic
+sudo -u weblate /home/weblate/weblate-env/bin/weblate migrate
 
 # Celery and uwsgi
 cd /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/examples/

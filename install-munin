@@ -21,7 +21,7 @@ chmod +x redis_ weblate
 cat > /etc/munin/plugin-conf.d/weblate_servers <<EOT
 [weblate]
 env.SERVER https://$WEBLATE_DOMAIN/
-env.KEY $(sudo weblate weblate shell -c 'from weblate.auth.models import User; user = User.objects.create(username="monitor2"); print(user.auth_token.key)')
+env.KEY $(sudo -u weblate /home/weblate/weblate-env/bin/weblate shell -c 'from weblate.auth.models import User; user = User.objects.create(username="monitor2"); print(user.auth_token.key)')
 EOT
 
 # Install and configure munin
