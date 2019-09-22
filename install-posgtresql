@@ -13,3 +13,4 @@ pg_ctlcluster 11 main start
 # Create Weblate user and database
 sudo -u postgres createuser -D weblate
 sudo -u postgres createdb -O weblate weblate
+sudo -u postgres psql -c "alter user weblate with encrypted password '$POSTGRES_PASS';"
