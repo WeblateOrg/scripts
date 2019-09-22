@@ -1,0 +1,99 @@
+#!/bin/sh
+
+set -e 
+
+. /etc/weblate-bootstrap
+
+# Install deps
+apt-get install --no-install-recommends -y\
+    build-essential \
+    certbot \
+    curl \
+    cython \
+    exim4 \
+    g++ \
+    gcc \
+    gettext \
+    gir1.2-pango-1.0 \
+    git \
+    git-svn \
+    gnupg \
+    libcairo-dev \
+    libenchant1c2a \
+    libfreetype6-dev \
+    libgirepository1.0-dev \
+    libjpeg-dev \
+    libldap2-dev \
+    libleptonica-dev
+    libleptonica-dev \
+    libsasl2-dev \
+    libssl-dev \
+    libtesseract-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    libxslt-dev \
+    libyaml-dev \
+    libz-dev \
+    mercurial \
+    nginx \
+    openssh-client \
+    pkg-config \
+    postgresql-client \
+    python3-certbot-nginx \
+    python3-dev \
+    python3-gdbm \
+    python3-pip \
+    python3-virtualenv \
+    redis-server \
+    subversion \
+    tesseract-ocr \
+    uwsgi \
+    uwsgi-plugin-python3 \
+    virtualenv \
+    uwsgi \
+    uwsgi-plugin-python3
+
+# Add user
+adduser weblate --disabled-password
+
+# Install Weblate and deps
+sudo weblate virtualenv --python=python3 ~/weblate-env
+sudo weblate ~/weblate-env/bin/pip install Weblate psycopg2-binary ruamel.yaml aeidon boto3 zeep chardet tesserocr phply
+
+# Configure Weblate
+sudo weblate cp ~/weblate-env/lib/python3.7/site-packages/weblate/settings_example.py ~/weblate-env/lib/python3.7/site-packages/weblate/settings.py
+
+sed -i \
+    -e 's/^DATA_DIR.*/DATA_DIR = "/home/weblate/data"/' \
+    -e 's/^ENABLE_HTTPS.*/ENABLE_HTTPS = True/' \
+    -e 's/^SERVER_EMAIL.*/SERVER_EMAIL = "noreply@weblate.org"/' \
+    -e 's/^DEFAULT_FROM_EMAIL/DEFAULT_FROM_EMAIL = "noreply@weblate.org"/' \
+    -e "s/^SECRET_KEY/SECRET_KEY = '$WEBLATE_SECRET'/" \
+    -e "s/^SITE_TITLE/SITE_TITLE = '$WEBLATE_TITLE'/" \
+    -e "s/^ALLOWED_HOSTS/ALLOWED_HOSTS = ['$WEBLATE_DOMAIN'/" \
+    -e "s/^SENTRY_DSN/SENTRY_DSN = '$WEBLATE_SENTRY'/" \
+    ~/weblate-env/lib/python3.7/site-packages/weblate/settings.py
+
+sudo weblate weblate changesite --set-name $WEBLATE_DOMAIN
+sudo weblate weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
+sudo weblate weblate collectstatic
+sudo weblate weblate migrate
+
+# Celery and uwsgi
+cd /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/examples/
+cp celery-weblate.logrotate /etc/logrotate.d/
+cp celery-weblate.service /etc/systemd/system/
+cp celery-weblate.conf /etc/default/celery-weblate
+cp weblate.uwsgi.ini /etc/uwsgi/apps-available/weblate.ini
+systemctl daemon-reload
+systemctl start celery-weblate.service 
+ln -s ../apps-available/weblate.ini /etc/uwsgi/apps-enabled/
+systemctl restart uwsgi.service
+
+# Nginx
+certbot -d $WEBLATE_DOMAIN
+# TODO: 
+# - nginx status + config
+# - exim config + passwd
+
+

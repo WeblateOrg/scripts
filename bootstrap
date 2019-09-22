@@ -1,0 +1,28 @@
+#!/bin/sh
+
+echo "Weblate domain:"
+read domain
+echo "Weblate title:"
+read title
+echo "Sentry DNS:"
+read sentry
+echo "Matomo site id:"
+read matomo
+echo "Munin whitelist:"
+read munin
+
+smtp_pass=$(openssl rand -hex 32)
+
+cat > /tmp/weblate-bootstrap <<EOT
+WEBLATE_DOMAIN="$domain"
+WEBLATE_TITLE="$title"
+WEBLATE_SECRET=$(openssl rand -hex 32)
+WEBLATE_PIWIK="$matomo"
+WEBLATE_SENTRY="$sentry"
+
+# Exim
+EXIM_PASS=$smtp_pass
+# $(openssl passwd -6 -salt $(openssl rand -hex 6) "$smtp_pass")
+EOT
+
+

@@ -1,0 +1,30 @@
+#!/bin/sh
+
+set -e
+
+. /etc/weblate-bootstrap
+
+# Munin
+mkdir -p /etc/munin/plugin-conf.d/
+cat > /etc/munin/plugin-conf.d/postgres <<EOT
+[postgres_\*]
+user postgres
+env.PGUSER postgres
+EOT
+
+# Plugins
+mkdir -p /usr/share/munin/plugins/
+cd /usr/share/munin/plugins/
+wget https://raw.githubusercontent.com/munin-monitoring/contrib/master/plugins/redis/redis_
+wget https://raw.githubusercontent.com/WeblateOrg/munin/master/weblate
+chmod +x redis_ weblate
+cat > /etc/munin/plugin-conf.d/weblate_servers <<EOT
+[weblate]
+env.SERVER https://$WEBLATE_DOMAIN/
+env.KEY $(sudo weblate weblate shell -c 'from weblate.auth.models import User; user = User.objects.create(username="monitor2"); print(user.auth_token.key)')
+EOT
+
+# Install and configure munin
+apt install munin-node munin-plugins-extra libdbd-pg-perl libwww-perl
+
+# TODO: set allow address

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -e
+
+. /etc/weblate-bootstrap
+
+# Install postgresql
+apt install postgresql
+        
+# Start cluster
+pg_ctlcluster 11 main start
+
+# Create Weblate user and database
+sudo -u postgres createuser -D weblate
+sudo -u postgres createdb -O weblate weblate
