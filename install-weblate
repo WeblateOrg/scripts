@@ -63,14 +63,14 @@ sudo -u weblate /home/weblate/weblate-env/bin/pip install Weblate psycopg2-binar
 sudo -u weblate cp /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings_example.py /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
 
 sed -i \
-    -e 's@^DATA_DIR.*@DATA_DIR = "/home/weblate/data"@' \
-    -e 's@^ENABLE_HTTPS.*@ENABLE_HTTPS = True@' \
-    -e 's@^SERVER_EMAIL.*@SERVER_EMAIL = "noreply@weblate.org"@' \
-    -e 's@^DEFAULT_FROM_EMAIL@DEFAULT_FROM_EMAIL = "noreply@weblate.org"@' \
-    -e "s@^SECRET_KEY@SECRET_KEY = '$WEBLATE_SECRET'@" \
-    -e "s@^SITE_TITLE@SITE_TITLE = '$WEBLATE_TITLE'@" \
-    -e "s@^ALLOWED_HOSTS@ALLOWED_HOSTS = ['$WEBLATE_DOMAIN'@" \
-    -e "s@^SENTRY_DSN@SENTRY_DSN = '$WEBLATE_SENTRY'@" \
+    -e 's#^DATA_DIR.*#DATA_DIR = "/home/weblate/data"#' \
+    -e 's#^ENABLE_HTTPS.*#ENABLE_HTTPS = True#' \
+    -e 's#^SERVER_EMAIL.*#SERVER_EMAIL = "noreply@weblate.org"#' \
+    -e 's#^DEFAULT_FROM_EMAIL#DEFAULT_FROM_EMAIL = "noreply@weblate.org"#' \
+    -e "s#^SECRET_KEY#SECRET_KEY = '$WEBLATE_SECRET'#" \
+    -e "s#^SITE_TITLE#SITE_TITLE = '$WEBLATE_TITLE'#" \
+    -e "s#^ALLOWED_HOSTS#ALLOWED_HOSTS = ['$WEBLATE_DOMAIN']#" \
+    -e "s#^SENTRY_DSN#SENTRY_DSN = '$WEBLATE_SENTRY'#" \
     /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
 
 sudo -u weblate /home/weblate/weblate-env/bin/weblate changesite --set-name $WEBLATE_DOMAIN
