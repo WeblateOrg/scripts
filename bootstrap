@@ -13,7 +13,7 @@ read munin
 
 smtp_pass=$(openssl rand -hex 32)
 
-cat > /tmp/weblate-bootstrap <<EOT
+cat > /etc/weblate-bootstrap <<EOT
 WEBLATE_DOMAIN="$domain"
 WEBLATE_TITLE="$title"
 WEBLATE_SECRET=$(openssl rand -hex 32)
