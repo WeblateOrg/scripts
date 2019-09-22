@@ -71,13 +71,13 @@ sed -i \
     -e "s#^SITE_TITLE.*#SITE_TITLE = '$WEBLATE_TITLE'#" \
     -e "s#^ALLOWED_HOSTS.*#ALLOWED_HOSTS = ['$WEBLATE_DOMAIN']#" \
     -e "s#^SENTRY_DSN.*#SENTRY_DSN = '$WEBLATE_SENTRY'#" \
-    -e "s#'PASSWORD':.*#'PASSWORD': '$POSTGRES_PASS'#" \
+    -e "s#'PASSWORD':.*#'PASSWORD': '$POSTGRES_PASS',#" \
     /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
 
+sudo -u weblate /home/weblate/weblate-env/bin/weblate migrate
 sudo -u weblate /home/weblate/weblate-env/bin/weblate changesite --set-name $WEBLATE_DOMAIN
 sudo -u weblate /home/weblate/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
 sudo -u weblate /home/weblate/weblate-env/bin/weblate collectstatic
-sudo -u weblate /home/weblate/weblate-env/bin/weblate migrate
 
 # Celery and uwsgi
 cd /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/examples/
