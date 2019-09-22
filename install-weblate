@@ -94,6 +94,3 @@ systemctl restart uwsgi.service
 certbot -d $WEBLATE_DOMAIN
 # TODO: 
 # - nginx status + config
-# - exim config + passwd
-
-
