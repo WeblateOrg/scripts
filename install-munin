@@ -27,4 +27,5 @@ EOT
 # Install and configure munin
 apt install munin-node munin-plugins-extra libdbd-pg-perl libwww-perl
 
-# TODO: set allow address
+sed -i "/allow.*::1/ a allow ^$MUNIN_ALLOW\$" /etc/munin/munin-node.conf
+systemctl restart munin-node
