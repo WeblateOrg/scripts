@@ -58,7 +58,7 @@ adduser weblate --disabled-password
 # Install Weblate and deps
 sudo -u weblate virtualenv --python=python3 /home/weblate/weblate-env
 sudo -u weblate /home/weblate/weblate-env/bin/pip install Weblate psycopg2-binary ruamel.yaml aeidon boto3 zeep chardet tesserocr phply
-sudo -u weblate https://github.com/WeblateOrg/hosted/archive/master.zip
+sudo -u weblate /home/weblate/weblate-env/bin/pip install https://github.com/WeblateOrg/hosted/archive/master.zip
 
 # Configure Weblate
 sudo -u weblate cp /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings_example.py /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
@@ -140,6 +140,16 @@ cat > /etc/nginx/snippets/weblate.conf <<EOT
         # Adjust based to uwsgi configuration:
         uwsgi_pass unix:///run/uwsgi/app/weblate/socket;
         # uwsgi_pass 127.0.0.1:8080;
+    }
+    error_page 500 502 504 /weblate_50x.html;
+    error_page 503 /weblate_503.html;
+    location = /weblate_503.html {
+            root /home/weblate/weblate-env/lib/python3.7/site-packages/wlhosted/error;
+            internal;
+    }
+    location = /weblate_50x.html {
+            root /home/weblate/weblate-env/lib/python3.7/site-packages/wlhosted/error;
+            internal;
     }
 EOT
 # Insert include after first server_name stanza
