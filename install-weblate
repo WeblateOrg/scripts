@@ -45,6 +45,7 @@ apt-get install --no-install-recommends -y\
     python3-pip \
     python3-virtualenv \
     redis-server \
+    rsync \
     subversion \
     tesseract-ocr \
     uwsgi \
