@@ -157,6 +157,7 @@ EOT
 sed -i "0,/server_name $WEBLATE_DOMAIN.*/s//&\\ninclude snippets\/weblate.conf;/" /etc/nginx/sites-available/default
 # Delete default location, replaced by snippet
 sed -i ':a;N;$!ba;s/\(snippets\/weblate.conf;\)[^}]*}/\1/g' /etc/nginx/sites-available/default
+systemctl reload nginx.service
 
 # Matomo
 sudo -u weblate git clone https://github.com/matomo-org/matomo-log-analytics.git /home/weblate/matomo-log-analytics
@@ -172,5 +173,3 @@ EOT
 chmod +x /home/weblate/run-matomo.sh
 chown weblate:weblate /home/weblate/run-matomo.sh
 echo '0 7 * * * /home/weblate/run-matomo.sh' > /tmp/weblate-cron
-crontab -u weblate /tmp/weblate-cron
-rm /tmp/weblate-cron
