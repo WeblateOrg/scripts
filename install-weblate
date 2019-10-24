@@ -58,6 +58,7 @@ adduser weblate --disabled-password
 # Install Weblate and deps
 sudo -u weblate virtualenv --python=python3 /home/weblate/weblate-env
 sudo -u weblate /home/weblate/weblate-env/bin/pip install Weblate psycopg2-binary ruamel.yaml aeidon boto3 zeep chardet tesserocr phply
+sudo -u weblate https://github.com/WeblateOrg/hosted/archive/master.zip
 
 # Configure Weblate
 sudo -u weblate cp /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings_example.py /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
@@ -72,6 +73,14 @@ sed -i \
     -e "s#^ALLOWED_HOSTS.*#ALLOWED_HOSTS = ['$WEBLATE_DOMAIN']#" \
     -e "s#^SENTRY_DSN.*#SENTRY_DSN = '$WEBLATE_SENTRY'#" \
     -e "s#'PASSWORD':.*#'PASSWORD': '$POSTGRES_PASS',#" \
+    -e '/social_core.pipeline.social_auth.load_extra_data/ a \\
+    "weblate.legal.pipeline.tos_confirm",' \
+    -e '/weblate.middleware.SecurityMiddleware/ a \\
+    "weblate.legal.middleware.RequireTOSMiddleware",' \
+    -e '/weblate.gitexport/ a \\
+    "weblate.legal",' \
+    -e '/weblate.gitexport/ a \\
+    "wlhosted.legal",' \
     /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
 
 echo 'STATUS_URL = "https://status.weblate.org/"' >> /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
