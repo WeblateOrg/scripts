@@ -171,8 +171,6 @@ cat > /home/weblate/run-matomo.sh <<EOT
 EOT
 chmod +x /home/weblate/run-matomo.sh
 chown weblate:weblate /home/weblate/run-matomo.sh
-crontab -u weblate -l > /tmp/weblate-cron
-echo >> /tmp/weblate-cron
-echo '0 7 * * * /home/weblate/run-matomo.sh' >> /tmp/weblate-cron
+echo '0 7 * * * /home/weblate/run-matomo.sh' > /tmp/weblate-cron
 crontab -u weblate /tmp/weblate-cron
 rm /tmp/weblate-cron
