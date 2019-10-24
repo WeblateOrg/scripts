@@ -74,13 +74,13 @@ sed -i \
     -e "s#^ALLOWED_HOSTS.*#ALLOWED_HOSTS = ['$WEBLATE_DOMAIN']#" \
     -e "s#^SENTRY_DSN.*#SENTRY_DSN = '$WEBLATE_SENTRY'#" \
     -e "s#'PASSWORD':.*#'PASSWORD': '$POSTGRES_PASS',#" \
-    -e '/social_core.pipeline.social_auth.load_extra_data/ a \\
+    -e '/social_core.pipeline.social_auth.load_extra_data/ a \
     "weblate.legal.pipeline.tos_confirm",' \
-    -e '/weblate.middleware.SecurityMiddleware/ a \\
+    -e '/weblate.middleware.SecurityMiddleware/ a \
     "weblate.legal.middleware.RequireTOSMiddleware",' \
-    -e '/weblate.gitexport/ a \\
+    -e '/weblate.gitexport/ a \
     "weblate.legal",' \
-    -e '/weblate.gitexport/ a \\
+    -e '/weblate.gitexport/ a \
     "wlhosted.legal",' \
     /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
 
