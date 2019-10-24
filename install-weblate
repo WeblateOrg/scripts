@@ -32,6 +32,7 @@ apt-get install --no-install-recommends -y\
     libxmlsec1-dev \
     libxslt-dev \
     libyaml-dev \
+    libacl1-dev \
     libz-dev \
     mercurial \
     nginx \
