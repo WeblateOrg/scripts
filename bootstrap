@@ -22,7 +22,7 @@ WEBLATE_SENTRY="$sentry"
 
 # Exim
 EXIM_PASS=$smtp_pass
-# $(openssl passwd -6 -salt $(openssl rand -hex 6) "$smtp_pass")
+# $(openssl passwd -6 "$smtp_pass")
 
 # Postgresql
 POSTGRES_PASS=$(openssl rand -hex 32)
