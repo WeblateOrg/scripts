@@ -73,7 +73,7 @@ sed -i \
     -e "s#^SITE_TITLE.*#SITE_TITLE = '$WEBLATE_TITLE'#" \
     -e "s#^ALLOWED_HOSTS.*#ALLOWED_HOSTS = ['$WEBLATE_DOMAIN']#" \
     -e "s#^SENTRY_DSN.*#SENTRY_DSN = '$WEBLATE_SENTRY'#" \
-    -e "s#'PASSWORD':.*#'PASSWORD': '$POSTGRES_PASS',#" \
+    -e "s#\"PASSWORD\":.*#\"PASSWORD\": '$POSTGRES_PASS',#" \
     -e '/social_core.pipeline.social_auth.load_extra_data/ a \
     "weblate.legal.pipeline.tos_confirm",' \
     -e '/weblate.middleware.SecurityMiddleware/ a \
