@@ -79,9 +79,9 @@ sed -i \
     -e '/weblate.middleware.SecurityMiddleware/ a \
     "weblate.legal.middleware.RequireTOSMiddleware",' \
     -e '/weblate.gitexport/ a \
-    "weblate.legal",' \
-    -e '/weblate.gitexport/ a \
     "wlhosted.legal",' \
+    -e '/weblate.gitexport/ a \
+    "weblate.legal",' \
     /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
 
 echo 'STATUS_URL = "https://status.weblate.org/"' >> /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
