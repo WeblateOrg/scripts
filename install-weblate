@@ -53,7 +53,7 @@ apt-get install --no-install-recommends -y\
     uwsgi-plugin-python3
 
 # Add user
-adduser weblate --disabled-password
+adduser weblate --disabled-password --gecos Weblate
 
 # Install Weblate and deps
 sudo -u weblate virtualenv --python=python3 /home/weblate/weblate-env
