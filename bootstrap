@@ -8,6 +8,8 @@ echo "Sentry DNS:"
 read sentry
 echo "Matomo site id:"
 read matomo
+echo "Matomo token:"
+read matomo_token
 echo "Munin allow:"
 read munin
 
@@ -17,8 +19,11 @@ cat > /etc/weblate-bootstrap <<EOT
 WEBLATE_DOMAIN="$domain"
 WEBLATE_TITLE="$title"
 WEBLATE_SECRET=$(openssl rand -hex 32)
-WEBLATE_PIWIK="$matomo"
 WEBLATE_SENTRY="$sentry"
+
+# Matomo
+MATOMO_SITE="$matomo"
+MATOMO_TOKEN="$matomo_token"
 
 # Exim
 EXIM_PASS=$smtp_pass
