@@ -74,6 +74,9 @@ sed -i \
     -e "s#'PASSWORD':.*#'PASSWORD': '$POSTGRES_PASS',#" \
     /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
 
+echo 'STATUS_URL = "https://status.weblate.org/"' >> /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
+
+# Fill the database
 sudo -u weblate /home/weblate/weblate-env/bin/weblate migrate
 sudo -u weblate /home/weblate/weblate-env/bin/weblate changesite --set-name $WEBLATE_DOMAIN
 sudo -u weblate /home/weblate/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
