@@ -4,7 +4,7 @@ set -e
 
 . /etc/weblate-bootstrap
 
-apt install exim4
+apt install -y exim4
 
 sed -i \
     -e "s#dc_eximconfig_configtype=.*#dc_eximconfig_configtype='satellite'#" \

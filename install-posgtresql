@@ -5,7 +5,7 @@ set -e
 . /etc/weblate-bootstrap
 
 # Install postgresql
-apt install postgresql
+apt install -y postgresql
         
 # Start cluster
 pg_ctlcluster 11 main start
