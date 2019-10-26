@@ -56,6 +56,7 @@ apt-get install --no-install-recommends -y\
 
 # Add user
 adduser weblate --disabled-password --gecos Weblate
+usermod --append --groups adm weblate
 
 # Install Weblate and deps
 sudo -u weblate virtualenv --python=python3 /home/weblate/weblate-env
