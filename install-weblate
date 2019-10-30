@@ -81,6 +81,8 @@ sed -i \
     -e '/weblate.middleware.SecurityMiddleware/ a \
     "weblate.legal.middleware.RequireTOSMiddleware",' \
     -e '/weblate.gitexport/ a \
+    "wlhosted",' \
+    -e '/weblate.gitexport/ a \
     "wlhosted.legal",' \
     -e '/weblate.gitexport/ a \
     "weblate.legal",' \
