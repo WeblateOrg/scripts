@@ -95,6 +95,7 @@ sudo -u weblate /home/weblate/weblate-env/bin/weblate migrate
 sudo -u weblate /home/weblate/weblate-env/bin/weblate changesite --set-name $WEBLATE_DOMAIN
 sudo -u weblate /home/weblate/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
 sudo -u weblate /home/weblate/weblate-env/bin/weblate collectstatic
+sudo -u weblate /home/weblate/weblate-env/bin/weblate compilemessages
 
 # Celery and uwsgi
 cd /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/examples/
