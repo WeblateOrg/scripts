@@ -4,7 +4,7 @@ echo "Weblate domain:"
 read domain
 echo "Weblate title:"
 read title
-echo "Sentry DNS:"
+echo "Sentry DSN:"
 read sentry
 echo "Matomo site id:"
 read matomo
