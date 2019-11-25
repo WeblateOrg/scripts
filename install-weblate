@@ -112,7 +112,7 @@ systemctl restart uwsgi.service
 certbot -d $WEBLATE_DOMAIN
 
 # Enable status locally
-sed '/server_name _/a location = /nginx_status {\n    stub_status;\n}'   /etc/nginx/sites-available/default
+sed -i '/server_name _/a location = /nginx_status {\n    stub_status;\n}'   /etc/nginx/sites-available/default
 # Weblate nginx snippet
 cat > /etc/nginx/snippets/weblate.conf <<EOT
     location ~ ^/favicon.ico$ {
