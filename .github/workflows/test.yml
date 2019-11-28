@@ -1,0 +1,31 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run a one-line script
+      run: echo Hello, world!
+    - name: Bootstrap
+      run: |
+        cat | ./boootstrap <<EOT
+        weblate.example.com
+        CI Weblate
+        https://sentry.example.com/123
+        0
+        TOKEN
+        
+        EOT 
+    - name: Exim
+      run: ./install-exim
+    - name: PostgreSQL
+      run: ./install-posgtresql
+    - name: Weblate
+      run: ./install-weblate
+    - name: Munin
+      run: ./install-munin
