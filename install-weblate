@@ -119,7 +119,7 @@ ln -s ../apps-available/weblate.ini /etc/uwsgi/apps-enabled/
 systemctl restart uwsgi.service
 
 # SSL cert
-certbot -d $WEBLATE_DOMAIN
+certbot --agree-tos -m rt@weblate.org -d $WEBLATE_DOMAIN
 
 # Enable status locally
 sed -i '/server_name _/a location = /nginx_status {\n    stub_status;\n}'   /etc/nginx/sites-available/default
