@@ -13,7 +13,7 @@ jobs:
       run: ls -la
     - name: Bootstrap
       run: |
-        cat | sudo ./bootstrap <<EOT
+        sudo ./bootstrap <<EOT
         weblate.example.com
         CI Weblate
         https://sentry.example.com/123
