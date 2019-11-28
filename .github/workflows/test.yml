@@ -13,7 +13,7 @@ jobs:
       run: ls -la
     - name: Bootstrap
       run: |
-        cat | ./bootstrap <<EOT
+        cat | sudo ./bootstrap <<EOT
         weblate.example.com
         CI Weblate
         https://sentry.example.com/123
@@ -22,10 +22,10 @@ jobs:
         
         EOT
     - name: Exim
-      run: ./install-exim
+      run: sudo ./install-exim
     - name: PostgreSQL
-      run: ./install-posgtresql
+      run: sudo ./install-posgtresql
     - name: Weblate
-      run: ./install-weblate
+      run: sudo ./install-weblate
     - name: Munin
-      run: ./install-munin
+      run: sudo ./install-munin
