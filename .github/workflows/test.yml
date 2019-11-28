@@ -13,7 +13,7 @@ jobs:
       run: ls -la
     - name: Bootstrap
       run: |
-        cat | ./boootstrap <<EOT
+        cat | ./bootstrap <<EOT
         weblate.example.com
         CI Weblate
         https://sentry.example.com/123
