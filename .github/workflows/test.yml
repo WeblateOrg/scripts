@@ -24,6 +24,6 @@ jobs:
     - name: PostgreSQL
       run: sudo ./install-posgtresql
     - name: Weblate
-      run: sudo ./install-weblate
+      run: sudo ./install-weblate --nocert
     - name: Munin
       run: sudo ./install-munin
