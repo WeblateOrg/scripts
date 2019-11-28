@@ -6,9 +6,12 @@ set -e
 
 # Install postgresql
 apt install -y postgresql
-        
+
+# Figure out current cluster version
+CLUSTER_VERSION=$(ls /etc/postgresql| sort | tail -n1)
+
 # Start cluster
-pg_ctlcluster 11 main start
+pg_ctlcluster $CLUSTER_VERSION main start
 
 # Create Weblate user and database
 sudo -u postgres createuser -D weblate
