@@ -13,14 +13,14 @@ jobs:
       run: ls -la
     - name: Bootstrap
       run: |
-      cat | ./boootstrap <<EOT
-      weblate.example.com
-      CI Weblate
-      https://sentry.example.com/123
-      0
-      TOKEN
-      
-      EOT
+        cat | ./boootstrap <<EOT
+        weblate.example.com
+        CI Weblate
+        https://sentry.example.com/123
+        0
+        TOKEN
+        
+        EOT
     - name: Exim
       run: ./install-exim
     - name: PostgreSQL
