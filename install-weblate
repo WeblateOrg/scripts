@@ -76,6 +76,7 @@ sed -i \
     -e "s#^ALLOWED_HOSTS.*#ALLOWED_HOSTS = ['$WEBLATE_DOMAIN']#" \
     -e "s#^SENTRY_DSN.*#SENTRY_DSN = '$WEBLATE_SENTRY'#" \
     -e "s#^        \"PASSWORD\":.*#        \"PASSWORD\": '$POSTGRES_PASS',#" \
+    -e "s#.*your_email@example.com.*#    ('Michal Čihař', 'michal@cihar.com'),#" \
     -e '/social_core.pipeline.social_auth.load_extra_data/ a \
     "weblate.legal.pipeline.tos_confirm",' \
     -e '/weblate.middleware.SecurityMiddleware/ a \
@@ -87,6 +88,15 @@ sed -i \
     -e '/weblate.gitexport/ a \
     "weblate.legal",' \
     /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
+
+cat <<EOT >> /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
+
+# Hosted customization
+ADMINS_CONTACT = ['rt@weblate.org']
+DEFAULT_COMMITER_EMAIL = 'hosted@weblate.org'
+DEFAULT_COMMITER_NAME = 'Hosted Weblate'
+LOGIN_REQUIRED_URLS = (r'/(.*)$', )
+EOT
 
 echo 'STATUS_URL = "https://status.weblate.org/"' >> /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
 
