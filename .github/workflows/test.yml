@@ -9,8 +9,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Run a one-line script
-      run: ls -la
     - name: Bootstrap
       run: |
         sudo ./bootstrap <<EOT
