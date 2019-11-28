@@ -35,3 +35,5 @@ POSTGRES_PASS=$(openssl rand -hex 32)
 # Munin
 MUNIN_ALLOW="$munin"
 EOT
+
+apt update
