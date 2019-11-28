@@ -14,7 +14,7 @@ jobs:
         sudo ./bootstrap <<EOT
         weblate.example.com
         CI Weblate
-        https://sentry.example.com/123
+        https://00000000000000000000000000000000@sentry.example.com/123
         0
         TOKEN
         
