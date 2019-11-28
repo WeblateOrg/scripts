@@ -63,8 +63,10 @@ sudo -u weblate virtualenv --python=python3 /home/weblate/weblate-env
 sudo -u weblate /home/weblate/weblate-env/bin/pip install Weblate psycopg2-binary ruamel.yaml aeidon boto3 zeep chardet tesserocr phply
 sudo -u weblate /home/weblate/weblate-env/bin/pip install https://github.com/WeblateOrg/hosted/archive/master.zip
 
+PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
+
 # Configure Weblate
-sudo -u weblate cp /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings_example.py /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
+sudo -u weblate cp /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings_example.py /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
 
 sed -i \
     -e 's#^DATA_DIR.*#DATA_DIR = "/home/weblate/data"#' \
@@ -87,9 +89,9 @@ sed -i \
     "wlhosted.legal",' \
     -e '/weblate.gitexport/ a \
     "weblate.legal",' \
-    /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
+    /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
 
-cat <<EOT >> /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
+cat <<EOT >> /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
 
 # Hosted customization
 ADMINS_CONTACT = ['rt@weblate.org']
@@ -98,7 +100,7 @@ DEFAULT_COMMITER_NAME = 'Hosted Weblate'
 LOGIN_REQUIRED_URLS = (r'/(.*)$', )
 EOT
 
-echo 'STATUS_URL = "https://status.weblate.org/"' >> /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/settings.py
+echo 'STATUS_URL = "https://status.weblate.org/"' >> /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
 
 # Fill the database
 sudo -u weblate /home/weblate/weblate-env/bin/weblate migrate
@@ -108,7 +110,7 @@ sudo -u weblate /home/weblate/weblate-env/bin/weblate collectstatic
 sudo -u weblate /home/weblate/weblate-env/bin/weblate compilemessages
 
 # Celery and uwsgi
-cd /home/weblate/weblate-env/lib/python3.7/site-packages/weblate/examples/
+cd /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/examples/
 cp celery-weblate.logrotate /etc/logrotate.d/
 cp celery-weblate.service /etc/systemd/system/
 cp celery-weblate.conf /etc/default/celery-weblate
@@ -160,11 +162,11 @@ cat > /etc/nginx/snippets/weblate.conf <<EOT
     error_page 500 502 504 /weblate_50x.html;
     error_page 503 /weblate_503.html;
     location = /weblate_503.html {
-            root /home/weblate/weblate-env/lib/python3.7/site-packages/wlhosted/error;
+            root /home/weblate/weblate-env/lib/python$PYVER/site-packages/wlhosted/error;
             internal;
     }
     location = /weblate_50x.html {
-            root /home/weblate/weblate-env/lib/python3.7/site-packages/wlhosted/error;
+            root /home/weblate/weblate-env/lib/python$PYVER/site-packages/wlhosted/error;
             internal;
     }
 EOT
