@@ -1,6 +1,6 @@
 name: CI
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -10,17 +10,17 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Run a one-line script
-      run: echo Hello, world!
+      run: ls -la
     - name: Bootstrap
       run: |
-        cat | ./boootstrap <<EOT
-        weblate.example.com
-        CI Weblate
-        https://sentry.example.com/123
-        0
-        TOKEN
-        
-        EOT 
+      cat | ./boootstrap <<EOT
+      weblate.example.com
+      CI Weblate
+      https://sentry.example.com/123
+      0
+      TOKEN
+      
+      EOT
     - name: Exim
       run: ./install-exim
     - name: PostgreSQL
