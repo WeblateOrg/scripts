@@ -192,3 +192,5 @@ EOT
 chmod +x /home/weblate/run-matomo.sh
 chown weblate:weblate /home/weblate/run-matomo.sh
 echo '0 7 * * * /home/weblate/run-matomo.sh | logger -t matomo' > /tmp/weblate-cron
+crontab /tmp/weblate-cron
+rm /tmp/weblate-cron
