@@ -25,6 +25,9 @@ env.KEY $(sudo -u weblate /home/weblate/weblate-env/bin/weblate shell -c 'from w
 EOT
 
 # Install and configure munin
+# The mkdir is needed on Ubuntu (used for CI)
+mkdir /run/munin/
+chmod 777 /run/munin/
 apt install -y munin-node munin-plugins-extra libdbd-pg-perl libwww-perl || systemctl status munin-node.service
 
 sed -i "/allow.*::1/ a allow ^$MUNIN_ALLOW\$" /etc/munin/munin-node.conf
