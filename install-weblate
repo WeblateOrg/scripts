@@ -127,6 +127,8 @@ fi
 
 # Enable status locally
 sed -i '/server_name _/a location = /nginx_status {\n    stub_status;\n}'   /etc/nginx/sites-available/default
+# Enable compression for js/css
+sed -i 's/^\t# gzip/\tgzip/' /etc/nginx/nginx.conf
 # Weblate nginx snippet
 cat > /etc/nginx/snippets/weblate.conf <<EOT
     location ~ ^/favicon.ico$ {
