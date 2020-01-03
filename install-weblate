@@ -163,6 +163,7 @@ cat > /etc/nginx/snippets/weblate.conf <<EOT
         uwsgi_pass unix:///run/uwsgi/app/weblate/socket;
         # uwsgi_pass 127.0.0.1:8080;
     }
+    client_max_body_size 20m;
     error_page 500 502 504 /weblate_50x.html;
     error_page 503 /weblate_503.html;
     location = /weblate_503.html {
