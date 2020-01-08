@@ -4,6 +4,8 @@ set -e
 
 . /etc/weblate-bootstrap
 
+cd /tmp
+
 # Install deps
 apt-get install --no-install-recommends -y\
     build-essential \

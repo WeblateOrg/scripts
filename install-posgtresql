@@ -4,6 +4,8 @@ set -e
 
 . /etc/weblate-bootstrap
 
+cd /tmp
+
 # Install postgresql
 apt install -y postgresql
 
