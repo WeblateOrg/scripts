@@ -1,0 +1,27 @@
+#!/bin/sh
+
+set -e 
+
+# Stop web
+systemctl stop uwsgi.service 
+
+# Wait for celery to process all jobs
+while sudo -u weblate /home/weblate/weblate-env/bin/weblate celery_queues | grep ': [^0]' ; do
+    sleep 1
+done
+
+# Stop celery
+systemctl stop celery-weblate.service
+
+PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
+
+sudo -u weblate /home/weblate/weblate-env/bin/pip install -U Weblate psycopg2-binary ruamel.yaml aeidon boto3 zeep chardet tesserocr phply
+sudo -u weblate /home/weblate/weblate-env/bin/pip install https://github.com/WeblateOrg/hosted/archive/master.zip
+vimdiff /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings_example.py /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
+
+# Start the services
+systemctl start celery-weblate.service 
+systemctl start uwsgi.service
+
+# Upgrade munin plugin
+wget -O /usr/share/munin/plugins/weblate https://raw.githubusercontent.com/WeblateOrg/munin/master/weblate
