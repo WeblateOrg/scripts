@@ -34,4 +34,4 @@ systemctl start celery-weblate.service
 systemctl start uwsgi.service
 
 # Upgrade munin plugin
-wget -O /usr/share/munin/plugins/weblate https://raw.githubusercontent.com/WeblateOrg/munin/master/weblate
+wget -O - https://raw.githubusercontent.com/WeblateOrg/munin/master/weblate > /usr/share/munin/plugins/weblate
