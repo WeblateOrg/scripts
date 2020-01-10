@@ -2,6 +2,8 @@
 
 set -e 
 
+cd /tmp
+
 # Stop web
 systemctl stop uwsgi.service 
 
@@ -24,7 +26,7 @@ vimdiff /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/setting
 
 # Migrate database, compile gettext and collect static files
 sudo -u weblate /home/weblate/weblate-env/bin/weblate migrate
-sudo -u weblate /home/weblate/weblate-env/bin/weblate collectstatic
+sudo -u weblate /home/weblate/weblate-env/bin/weblate collectstatic --noinput
 sudo -u weblate /home/weblate/weblate-env/bin/weblate compilemessages
 
 # Start the services
