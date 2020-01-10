@@ -22,7 +22,9 @@ sudo -u weblate /home/weblate/weblate-env/bin/pip install -U Weblate psycopg2-bi
 sudo -u weblate /home/weblate/weblate-env/bin/pip install https://github.com/WeblateOrg/hosted/archive/master.zip
 
 # Adjust configuration
+if [ "x$1" != "x--nodiff" ] ; then
 vimdiff /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings_example.py /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
+fi
 
 # Migrate database, compile gettext and collect static files
 sudo -u weblate /home/weblate/weblate-env/bin/weblate migrate
