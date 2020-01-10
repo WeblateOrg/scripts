@@ -25,6 +25,7 @@ sudo -u weblate /home/weblate/weblate-env/bin/pip install https://github.com/Web
 if [ "x$1" != "x--nodiff" ] ; then
 vimdiff /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings_example.py /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
 fi
+cp /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/examples/celery-weblate.conf /etc/default/celery-weblate
 
 # Migrate database, compile gettext and collect static files
 sudo -u weblate /home/weblate/weblate-env/bin/weblate migrate
