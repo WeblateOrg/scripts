@@ -13,6 +13,7 @@ apt-get install --no-install-recommends -y\
     curl \
     cython \
     exim4 \
+    fail2ban python3-pyinotify python3-systemd \
     g++ \
     gcc \
     gettext \
@@ -200,3 +201,9 @@ chown weblate:weblate /home/weblate/run-matomo.sh
 echo '0 7 * * * /home/weblate/run-matomo.sh | logger -t matomo' > /tmp/weblate-cron
 crontab /tmp/weblate-cron
 rm /tmp/weblate-cron
+
+# Fail2ban
+sudo -u weblate git clone https://github.com/WeblateOrg/fail2ban.git /home/weblate/fail2ban
+ln -s /home/weblate/fail2ban/filter.d/* /etc/fail2ban/filter.d/
+ln -s /home/weblate/fail2ban/jail.d/* /etc/fail2ban/jail.d/
+systemctl restart fail2ban.service
