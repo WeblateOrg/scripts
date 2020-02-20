@@ -43,3 +43,4 @@ wget -O - https://raw.githubusercontent.com/WeblateOrg/munin/master/weblate > /u
 sudo -u weblate sh -c "cd /home/weblate/fail2ban && git pull"
 ln -sf /home/weblate/fail2ban/filter.d/* /etc/fail2ban/filter.d/
 ln -sf /home/weblate/fail2ban/jail.d/* /etc/fail2ban/jail.d/
+systemctl restart fail2ban.service
