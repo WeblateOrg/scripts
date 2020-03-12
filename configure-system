@@ -5,3 +5,8 @@ systemctl restart sshd
 
 apt update
 apt install -y fail2ban
+
+cat > /etc/fail2ban/jail.d/sshd.conf <<EOT
+[sshd]
+mode   = aggressive
+EOT
