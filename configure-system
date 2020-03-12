@@ -10,3 +10,4 @@ cat > /etc/fail2ban/jail.d/sshd.conf <<EOT
 [sshd]
 mode   = aggressive
 EOT
+systemctl restart fail2ban
