@@ -19,8 +19,7 @@ PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
 
 # Upgrade modules
 sudo -u weblate /home/weblate/weblate-env/bin/pip install -U pip
-sudo -u weblate /home/weblate/weblate-env/bin/pip install --upgrade-strategy eager -U Weblate[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres]
-sudo -u weblate /home/weblate/weblate-env/bin/pip install https://github.com/WeblateOrg/hosted/archive/master.zip
+sudo -u weblate /home/weblate/weblate-env/bin/pip install --upgrade-strategy eager -U Weblate[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres] wllegal
 
 # Adjust configuration
 if [ "x$1" != "x--nodiff" ] ; then

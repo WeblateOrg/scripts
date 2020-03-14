@@ -63,8 +63,7 @@ usermod --append --groups adm weblate
 
 # Install Weblate and deps
 sudo -u weblate virtualenv --python=python3 /home/weblate/weblate-env
-sudo -u weblate /home/weblate/weblate-env/bin/pip install Weblate[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres]
-sudo -u weblate /home/weblate/weblate-env/bin/pip install https://github.com/WeblateOrg/hosted/archive/master.zip
+sudo -u weblate /home/weblate/weblate-env/bin/pip install Weblate[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres] wllegal
 
 PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
 
@@ -87,9 +86,7 @@ sed -i \
     -e '/weblate.middleware.SecurityMiddleware/ a \
     "weblate.legal.middleware.RequireTOSMiddleware",' \
     -e '/weblate.gitexport/ a \
-    "wlhosted",' \
-    -e '/weblate.gitexport/ a \
-    "wlhosted.legal",' \
+    "wllegal",' \
     -e '/weblate.gitexport/ a \
     "weblate.legal",' \
     /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
