@@ -168,11 +168,11 @@ cat > /etc/nginx/snippets/weblate.conf <<EOT
     error_page 500 502 504 /weblate_50x.html;
     error_page 503 /weblate_503.html;
     location = /weblate_503.html {
-            root /home/weblate/weblate-env/lib/python$PYVER/site-packages/wlhosted/error;
+            root /home/weblate/weblate-env/lib/python$PYVER/site-packages/wllegal/templates;
             internal;
     }
     location = /weblate_50x.html {
-            root /home/weblate/weblate-env/lib/python$PYVER/site-packages/wlhosted/error;
+            root /home/weblate/weblate-env/lib/python$PYVER/site-packages/wllegal/templates;
             internal;
     }
 EOT
