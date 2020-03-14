@@ -30,7 +30,6 @@ cp /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/examples/cel
 # Migrate database, compile gettext and collect static files
 sudo -u weblate /home/weblate/weblate-env/bin/weblate migrate
 sudo -u weblate /home/weblate/weblate-env/bin/weblate collectstatic --noinput
-sudo -u weblate /home/weblate/weblate-env/bin/weblate compilemessages
 
 # Start the services
 systemctl start celery-weblate.service 
