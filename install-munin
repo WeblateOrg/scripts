@@ -30,5 +30,5 @@ mkdir /run/munin/
 chmod 777 /run/munin/
 apt install -y munin-node munin-plugins-extra libdbd-pg-perl libwww-perl
 
-sed -i "/allow.*::1/ a allow ^$MUNIN_ALLOW\$" /etc/munin/munin-node.conf
+sed -i "/allow.*::1/ a allow ^172\\.16\\.0\\.9\$" /etc/munin/munin-node.conf
 systemctl restart munin-node
