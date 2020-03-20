@@ -98,9 +98,8 @@ ADMINS_CONTACT = ['rt@weblate.org']
 DEFAULT_COMMITER_EMAIL = 'hosted@weblate.org'
 DEFAULT_COMMITER_NAME = 'Hosted Weblate'
 LOGIN_REQUIRED_URLS = (r'/(.*)$', )
+STATUS_URL = "https://status.weblate.org/"
 EOT
-
-echo 'STATUS_URL = "https://status.weblate.org/"' >> /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
 
 # Fill the database
 sudo -u weblate /home/weblate/weblate-env/bin/weblate migrate
