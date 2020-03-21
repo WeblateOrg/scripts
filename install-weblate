@@ -121,7 +121,7 @@ systemctl restart uwsgi.service
 
 # SSL cert
 if [ "x$1" != "x--nocert" ] ; then
-    certbot --agree-tos -m rt@weblate.org -d $WEBLATE_DOMAIN
+    certbot --agree-tos --email rt@weblate.org --redirect --no-eff-email -d $WEBLATE_DOMAIN
 fi
 
 # Enable status locally
