@@ -16,6 +16,6 @@ CLUSTER_VERSION=$(ls /etc/postgresql| sort | tail -n1)
 pg_ctlcluster $CLUSTER_VERSION main start
 
 # Create Weblate user and database
-sudo -u postgres createuser -D weblate
+sudo -u postgres createuser --superuser weblate
 sudo -u postgres createdb -O weblate weblate
 sudo -u postgres psql -c "alter user weblate with encrypted password '$POSTGRES_PASS';"
