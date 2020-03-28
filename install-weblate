@@ -63,7 +63,7 @@ usermod --append --groups adm weblate
 
 # Install Weblate and deps
 sudo -u weblate virtualenv --python=python3 /home/weblate/weblate-env
-sudo -u weblate /home/weblate/weblate-env/bin/pip install Weblate[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres] wllegal
+sudo -u weblate /home/weblate/weblate-env/bin/pip install Weblate[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
 
 PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
 
