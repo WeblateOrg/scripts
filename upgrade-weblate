@@ -37,6 +37,7 @@ systemctl start uwsgi.service
 
 # Upgrade munin plugin
 wget -O - https://raw.githubusercontent.com/WeblateOrg/munin/master/weblate > /usr/share/munin/plugins/weblate
+wget -O - https://raw.githubusercontent.com/WeblateOrg/munin/master/ksm > /usr/share/munin/plugins/ksm
 
 # Upgrade fail2ban
 sudo -u weblate sh -c "cd /home/weblate/fail2ban && git pull"

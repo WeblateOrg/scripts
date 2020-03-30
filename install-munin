@@ -17,7 +17,8 @@ mkdir -p /usr/share/munin/plugins/
 cd /usr/share/munin/plugins/
 wget https://raw.githubusercontent.com/munin-monitoring/contrib/master/plugins/redis/redis_
 wget https://raw.githubusercontent.com/WeblateOrg/munin/master/weblate
-chmod +x redis_ weblate
+wget https://raw.githubusercontent.com/WeblateOrg/munin/master/ksm
+chmod +x redis_ weblate ksm
 cat > /etc/munin/plugin-conf.d/weblate_servers <<EOT
 [weblate]
 env.SERVER https://$WEBLATE_DOMAIN/
