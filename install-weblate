@@ -12,6 +12,7 @@ apt-get install --no-install-recommends -y\
     certbot \
     curl \
     cython \
+    glances \
     ksmtuned \
     fail2ban python3-pyinotify python3-systemd \
     g++ \
