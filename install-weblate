@@ -12,7 +12,6 @@ apt-get install --no-install-recommends -y\
     certbot \
     curl \
     cython \
-    exim4 \
     ksmtuned \
     fail2ban python3-pyinotify python3-systemd \
     g++ \
@@ -52,8 +51,6 @@ apt-get install --no-install-recommends -y\
     rsync \
     subversion \
     tesseract-ocr \
-    uwsgi \
-    uwsgi-plugin-python3 \
     virtualenv \
     uwsgi \
     uwsgi-plugin-python3
