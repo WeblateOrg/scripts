@@ -59,17 +59,19 @@ apt-get install --no-install-recommends -y\
 adduser weblate --disabled-password --gecos Weblate
 usermod --append --groups adm weblate
 
+WEBLATE_HOME=~weblate
+
 # Install Weblate and deps
-sudo -u weblate virtualenv --python=python3 /home/weblate/weblate-env
-sudo -u weblate /home/weblate/weblate-env/bin/pip install Weblate[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
+sudo -u weblate virtualenv --python=python3 $WEBLATE_HOME/weblate-env
+sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install Weblate[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
 
 PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
 
 # Configure Weblate
-sudo -u weblate cp /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings_example.py /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
+sudo -u weblate cp $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings_example.py $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
 
 sed -i \
-    -e 's#^DATA_DIR.*#DATA_DIR = "/home/weblate/data"#' \
+    -e "s#^DATA_DIR.*#DATA_DIR = \"$WEBLATE_HOME/data\"#" \
     -e 's#^ENABLE_HTTPS.*#ENABLE_HTTPS = True#' \
     -e 's#^SERVER_EMAIL.*#SERVER_EMAIL = "noreply@weblate.org"#' \
     -e 's#^DEFAULT_FROM_EMAIL.*#DEFAULT_FROM_EMAIL = "noreply@weblate.org"#' \
@@ -87,9 +89,9 @@ sed -i \
     "wllegal",' \
     -e '/weblate.gitexport/ a \
     "weblate.legal",' \
-    /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
+    $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
 
-cat <<EOT >> /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
+cat <<EOT >> $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
 
 # Hosted customization
 ADMINS_CONTACT = ['rt@weblate.org']
@@ -100,13 +102,13 @@ STATUS_URL = "https://status.weblate.org/"
 EOT
 
 # Fill the database
-sudo -u weblate /home/weblate/weblate-env/bin/weblate migrate
-sudo -u weblate /home/weblate/weblate-env/bin/weblate changesite --set-name $WEBLATE_DOMAIN
-sudo -u weblate /home/weblate/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
-sudo -u weblate /home/weblate/weblate-env/bin/weblate collectstatic --noinput
+sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate migrate
+sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate changesite --set-name $WEBLATE_DOMAIN
+sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
+sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
 
 # Celery and uwsgi
-cd /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/examples/
+cd $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/examples/
 cp celery-weblate.logrotate /etc/logrotate.d/
 cp celery-weblate.service /etc/systemd/system/
 cp celery-weblate.conf /etc/default/celery-weblate
@@ -130,25 +132,25 @@ sed -i 's/^\t# gzip/\tgzip/' /etc/nginx/nginx.conf
 cat > /etc/nginx/snippets/weblate.conf <<EOT
     location ~ ^/favicon.ico$ {
         # DATA_DIR/static/favicon.ico
-        alias /home/weblate/data/static/favicon.ico;
+        alias $WEBLATE_HOME/data/static/favicon.ico;
         expires 30d;
     }
 
     location ~ ^/robots.txt$ {
         # DATA_DIR/static/robots.txt
-        alias /home/weblate/data/static/robots.txt;
+        alias $WEBLATE_HOME/data/static/robots.txt;
         expires 30d;
     }
 
     location /static/ {
         # DATA_DIR/static/
-        alias /home/weblate/data/static/;
+        alias $WEBLATE_HOME/data/static/;
         expires 30d;
     }
 
     location /media/ {
         # DATA_DIR/media/
-        alias /home/weblate/data/media/;
+        alias $WEBLATE_HOME/data/media/;
         expires 30d;
     }
 
@@ -164,11 +166,11 @@ cat > /etc/nginx/snippets/weblate.conf <<EOT
     error_page 500 502 504 /weblate_50x.html;
     error_page 503 /weblate_503.html;
     location = /weblate_503.html {
-            root /home/weblate/weblate-env/lib/python$PYVER/site-packages/wllegal/templates;
+            root $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/wllegal/templates;
             internal;
     }
     location = /weblate_50x.html {
-            root /home/weblate/weblate-env/lib/python$PYVER/site-packages/wllegal/templates;
+            root $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/wllegal/templates;
             internal;
     }
 EOT
@@ -179,24 +181,24 @@ sed -i ':a;N;$!ba;s/\(snippets\/weblate.conf;\)[^}]*}/\1/g' /etc/nginx/sites-ava
 systemctl reload nginx.service
 
 # Matomo
-sudo -u weblate git clone https://github.com/matomo-org/matomo-log-analytics.git /home/weblate/matomo-log-analytics
-cat > /home/weblate/run-matomo.sh <<EOT
+sudo -u weblate git clone https://github.com/matomo-org/matomo-log-analytics.git $WEBLATE_HOME/matomo-log-analytics
+cat > $WEBLATE_HOME/run-matomo.sh <<EOT
 #!/bin/sh
 /usr/bin/python2 \
-        /home/weblate/matomo-log-analytics/import_logs.py \
+        $WEBLATE_HOME/matomo-log-analytics/import_logs.py \
         --url=https://stats.cihar.com/ \
         --idsite=$MATOMO_SITE \
         --token-auth=$MATOMO_TOKEN \
         /var/log/nginx/access.log.1
 EOT
-chmod +x /home/weblate/run-matomo.sh
-chown weblate:weblate /home/weblate/run-matomo.sh
-echo '0 7 * * * /home/weblate/run-matomo.sh | logger -t matomo' > /tmp/weblate-cron
+chmod +x $WEBLATE_HOME/run-matomo.sh
+chown weblate:weblate $WEBLATE_HOME/run-matomo.sh
+echo '0 7 * * * $WEBLATE_HOME/run-matomo.sh | logger -t matomo' > /tmp/weblate-cron
 crontab /tmp/weblate-cron
 rm /tmp/weblate-cron
 
 # Fail2ban
-sudo -u weblate git clone https://github.com/WeblateOrg/fail2ban.git /home/weblate/fail2ban
-ln -s /home/weblate/fail2ban/filter.d/* /etc/fail2ban/filter.d/
-ln -s /home/weblate/fail2ban/jail.d/* /etc/fail2ban/jail.d/
+sudo -u weblate git clone https://github.com/WeblateOrg/fail2ban.git $WEBLATE_HOME/fail2ban
+ln -s $WEBLATE_HOME/fail2ban/filter.d/* /etc/fail2ban/filter.d/
+ln -s $WEBLATE_HOME/fail2ban/jail.d/* /etc/fail2ban/jail.d/
 systemctl restart fail2ban.service

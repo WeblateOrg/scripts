@@ -7,8 +7,10 @@ cd /tmp
 # Stop web
 systemctl stop uwsgi.service 
 
+WEBLATE_HOME=~weblate
+
 # Wait for celery to process all jobs
-while sudo -u weblate /home/weblate/weblate-env/bin/weblate celery_queues | grep ': [^0]' ; do
+while sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate celery_queues | grep ': [^0]' ; do
     sleep 1
 done
 
@@ -18,18 +20,18 @@ systemctl stop celery-weblate.service
 PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
 
 # Upgrade modules
-sudo -u weblate /home/weblate/weblate-env/bin/pip install -U pip
-sudo -u weblate /home/weblate/weblate-env/bin/pip install --upgrade-strategy eager -U Weblate[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
+sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install -U pip
+sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install --upgrade-strategy eager -U Weblate[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
 
 # Adjust configuration
 if [ "x$1" != "x--nodiff" ] ; then
-vimdiff /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings_example.py /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
+vimdiff $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings_example.py $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
 fi
-cp /home/weblate/weblate-env/lib/python$PYVER/site-packages/weblate/examples/celery-weblate.conf /etc/default/celery-weblate
+cp $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/examples/celery-weblate.conf /etc/default/celery-weblate
 
 # Migrate database, compile gettext and collect static files
-sudo -u weblate /home/weblate/weblate-env/bin/weblate migrate
-sudo -u weblate /home/weblate/weblate-env/bin/weblate collectstatic --noinput
+sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate migrate
+sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
 
 # Start the services
 systemctl start celery-weblate.service 
@@ -40,7 +42,7 @@ wget -O - https://raw.githubusercontent.com/WeblateOrg/munin/master/weblate > /u
 wget -O - https://raw.githubusercontent.com/WeblateOrg/munin/master/ksm > /usr/share/munin/plugins/ksm
 
 # Upgrade fail2ban
-sudo -u weblate sh -c "cd /home/weblate/fail2ban && git pull"
-ln -sf /home/weblate/fail2ban/filter.d/* /etc/fail2ban/filter.d/
-ln -sf /home/weblate/fail2ban/jail.d/* /etc/fail2ban/jail.d/
+sudo -u weblate sh -c "cd $WEBLATE_HOME/fail2ban && git pull"
+ln -sf $WEBLATE_HOME/fail2ban/filter.d/* /etc/fail2ban/filter.d/
+ln -sf $WEBLATE_HOME/fail2ban/jail.d/* /etc/fail2ban/jail.d/
 systemctl restart fail2ban.service
