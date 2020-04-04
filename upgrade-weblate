@@ -38,11 +38,15 @@ systemctl start celery-weblate.service
 systemctl start uwsgi.service
 
 # Upgrade munin plugin
-wget -O - https://raw.githubusercontent.com/WeblateOrg/munin/master/weblate > /usr/share/munin/plugins/weblate
-wget -O - https://raw.githubusercontent.com/WeblateOrg/munin/master/ksm > /usr/share/munin/plugins/ksm
+if [ -d /usr/share/munin/plugins ] ; then
+    wget -O - https://raw.githubusercontent.com/WeblateOrg/munin/master/weblate > /usr/share/munin/plugins/weblate
+    wget -O - https://raw.githubusercontent.com/WeblateOrg/munin/master/ksm > /usr/share/munin/plugins/ksm
+fi
 
 # Upgrade fail2ban
-sudo -u weblate sh -c "cd $WEBLATE_HOME/fail2ban && git pull"
-ln -sf $WEBLATE_HOME/fail2ban/filter.d/* /etc/fail2ban/filter.d/
-ln -sf $WEBLATE_HOME/fail2ban/jail.d/* /etc/fail2ban/jail.d/
-systemctl restart fail2ban.service
+if [ -d /etc/fail2ban/filter.d/ ] ; then
+    sudo -u weblate sh -c "cd $WEBLATE_HOME/fail2ban && git pull"
+    ln -sf $WEBLATE_HOME/fail2ban/filter.d/* /etc/fail2ban/filter.d/
+    ln -sf $WEBLATE_HOME/fail2ban/jail.d/* /etc/fail2ban/jail.d/
+    systemctl restart fail2ban.service
+fi
