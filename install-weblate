@@ -13,7 +13,6 @@ apt-get install --no-install-recommends -y\
     curl \
     cython \
     glances \
-    ksmtuned \
     fail2ban python3-pyinotify python3-systemd \
     g++ \
     gcc \
