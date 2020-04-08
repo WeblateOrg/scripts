@@ -42,6 +42,9 @@ cp $WEBLATE_DIR/weblate/examples/celery-weblate.conf /etc/default/celery-weblate
 # Migrate database, compile gettext and collect static files
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate migrate
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
+if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
+    sudo -u weblate sh -c "cd $WEBLATE_DIR; $WEBLATE_HOME/weblate-env/bin/weblate compilemessages"
+fi
 
 # Start the services
 systemctl start celery-weblate.service 
