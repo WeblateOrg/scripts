@@ -16,7 +16,7 @@ if [ -d "$WEBLATE_HOME/weblate" ] ; then
     WEBLATE_PKG="$WEBLATE_DIR"
     PIP_ARGS="--editable"
 else
-    WEBLATE_DIR="$WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate"
+    WEBLATE_DIR="$WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages"
     WEBLATE_PKG="Weblate"
     PIP_ARGS=""
 fi
@@ -35,9 +35,9 @@ sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install --upgrade-strategy eag
 
 # Adjust configuration
 if [ "x$1" != "x--nodiff" ] ; then
-vimdiff $WEBLATE_DIR/settings_example.py $WEBLATE_DIR/settings.py
+vimdiff $WEBLATE_DIR/weblate/settings_example.py $WEBLATE_DIR/weblate/settings.py
 fi
-cp $WEBLATE_DIR/examples/celery-weblate.conf /etc/default/celery-weblate
+cp $WEBLATE_DIR/weblate/examples/celery-weblate.conf /etc/default/celery-weblate
 
 # Migrate database, compile gettext and collect static files
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate migrate
