@@ -130,18 +130,6 @@ sed -i '/server_name _/a location = /nginx_status {\n    stub_status;\n}'   /etc
 sed -i 's/^\t# gzip/\tgzip/' /etc/nginx/nginx.conf
 # Weblate nginx snippet
 cat > /etc/nginx/snippets/weblate.conf <<EOT
-    location ~ ^/favicon.ico$ {
-        # DATA_DIR/static/favicon.ico
-        alias $WEBLATE_HOME/data/static/favicon.ico;
-        expires 30d;
-    }
-
-    location ~ ^/robots.txt$ {
-        # DATA_DIR/static/robots.txt
-        alias $WEBLATE_HOME/data/static/robots.txt;
-        expires 30d;
-    }
-
     location /static/ {
         # DATA_DIR/static/
         alias $WEBLATE_HOME/data/static/;
