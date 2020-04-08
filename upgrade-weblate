@@ -9,6 +9,18 @@ systemctl stop uwsgi.service
 
 WEBLATE_HOME=~weblate
 
+PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
+
+if [ -d "$WEBLATE_HOME/weblate" ] ; then 
+    WEBLATE_DIR="$WEBLATE_HOME/weblate"
+    WEBLATE_PKG="$WEBLATE_DIR"
+    PIP_ARGS="--editable"
+else
+    WEBLATE_DIR="$WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate"
+    WEBLATE_PKG="Weblate"
+    PIP_ARGS=""
+fi
+
 # Wait for celery to process all jobs
 while sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate celery_queues | grep ': [^0]' ; do
     sleep 1
@@ -17,17 +29,15 @@ done
 # Stop celery
 systemctl stop celery-weblate.service
 
-PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
-
 # Upgrade modules
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install -U pip
-sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install --upgrade-strategy eager -U Weblate[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
+sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS Weblate[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
 
 # Adjust configuration
 if [ "x$1" != "x--nodiff" ] ; then
-vimdiff $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings_example.py $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
+vimdiff $WEBLATE_DIR/settings_example.py $WEBLATE_DIR/settings.py
 fi
-cp $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/examples/celery-weblate.conf /etc/default/celery-weblate
+cp $WEBLATE_DIR/examples/celery-weblate.conf /etc/default/celery-weblate
 
 # Migrate database, compile gettext and collect static files
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate migrate
