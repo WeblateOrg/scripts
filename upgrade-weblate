@@ -31,7 +31,7 @@ systemctl stop celery-weblate.service
 
 # Upgrade modules
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install -U pip
-sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS Weblate[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
+sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS $WEBLATE_PKG[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
 
 # Adjust configuration
 if [ "x$1" != "x--nodiff" ] ; then
