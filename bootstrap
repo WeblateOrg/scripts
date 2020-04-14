@@ -4,18 +4,30 @@ echo "Weblate domain:"
 read domain
 echo "Weblate title:"
 read title
-echo "Sentry DSN:"
-read sentry
-echo "Sentry Token:"
-read sentry_token
+if [ -f ~/.config/weblate-bootstrap/sentry_dsn ] ; then
+    sentry=$(cat ~/.config/weblate-bootstrap/sentry_dsn)
+else
+    echo "Sentry DSN:"
+    read sentry
+fi
+if [ -f ~/.config/weblate-bootstrap/sentry_token ] ; then
+    sentry_token=$(cat ~/.config/weblate-bootstrap/sentry_token)
+else
+    echo "Sentry Token:"
+    read sentry_token
+fi
 echo "Matomo site id:"
 read matomo
-echo "Matomo token:"
-read matomo_token
+if [ -f ~/.config/weblate-bootstrap/matomo_token ] ; then
+    matomo_token=$(cat ~/.config/weblate-bootstrap/matomo_token)
+else
+    echo "Matomo token:"
+    read matomo_token
+fi
 
 smtp_pass=$(openssl rand -hex 32)
 
-cat > /etc/weblate-bootstrap <<EOT
+cat > ${1:-/etc/weblate-bootstrap} <<EOT
 WEBLATE_DOMAIN="$domain"
 WEBLATE_TITLE="$title"
 WEBLATE_SECRET=$(openssl rand -hex 32)

@@ -1,0 +1,66 @@
+#!/bin/sh
+# Installation wrapper to create Weblate instance on Hetzner cloud
+
+set -e
+
+if [ -z "$1" -o "x$1" = "x--help" ] ; then
+    echo "Usage: install-remote HOSTNAME"
+    exit 1
+fi
+
+# Set path to include script directory
+export PATH="$(dirname "$(readlink -f "$0")"):$PATH"
+
+BOOTSTRAP=$(mktemp --tmpdir weblate-bootstrap.XXXXXXXXXX)
+TMPFILE=$(mktemp --tmpdir weblate-log.XXXXXXXXXX)
+
+# Gather basic configuration
+bootstrap $BOOTSTRAP
+echo >> $BOOTSTRAP <<EOT
+WEBLATE_PASSWORD="$(apg -a 0 -M sncl -n 1 -x 10 -m 20)"
+EOT
+. $BOOTSTRAP
+
+# Create server
+hcloud server create \
+    --image debian-10 \
+    --location nbg1 \
+    --name $1 \
+    --network 19990 \
+    --ssh-key 1056953 \
+    --type cx21-ceph | tee $TMPFILE
+
+IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' $TMPFILE)
+
+echo "Created server with address $IPADDRESS, please ensure $WEBLATE_DOMAIN points to that"
+read x
+
+s() {
+    ssh root@$IPADDRESS "$@"
+}
+
+# Install the system
+scp $BOOTSTRAP root@$IPADDRESS:/etc/weblate-bootstrap
+s apt update
+s apt install -y git
+s git clone https://github.com/WeblateOrg/scripts.git
+s ./scripts/configure-system
+s ./scripts/install-exim
+s ./scripts/install-posgtresql
+s ./scripts/install-weblate
+s ./scripts/install-munin
+
+# Configure mail sending
+echo "$WEBLATE_DOMAIN:$(openssl passwd -6 -salt $(openssl rand -hex 6) "$EXIM_PASS"):666:0:99999:7::" | ssh root@mail tee --append /etc/exim4/passwd
+ssh root@mail ln -s /etc/exim4/virtual/weblate.cloud /etc/exim4/virtual/$WEBLATE_DOMAIN
+
+# Print list of things to do
+echo "TODO:"
+echo " * Store password: $WEBLATE_PASSWORD"
+echo " * Add $IPADDRESS to SSH configuration"
+echo " * Add host to munin: $(s ip -f inet address show ens10  | sed -En -e 's/.*inet ([0-9.]+).*/\1/p')"
+echo " * Link with purchased service"
+echo " * Activate and verify backups"
+echo " * Verify SMTP is working"
+
+rm -f $BOOTSTRAP $TMPFILE

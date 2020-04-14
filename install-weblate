@@ -103,12 +103,19 @@ DEFAULT_COMMITER_EMAIL = 'hosted@weblate.org'
 DEFAULT_COMMITER_NAME = 'Hosted Weblate'
 LOGIN_REQUIRED_URLS = (r'/(.*)$', )
 STATUS_URL = "https://status.weblate.org/"
+
+MT_APERTIUM_APY = "http://172.16.0.9:2737/"
+MT_SERVICES += ('weblate.machinery.apertium.ApertiumAPYTranslation',)
 EOT
 
 # Fill the database
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate migrate
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate changesite --set-name $WEBLATE_DOMAIN
-sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
+if [ -n "$WEBLATE_PASSWORD" ] ; then
+    sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař' --password "$WEBLATE_PASSWORD"
+else
+    sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
+fi
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
 
 # Celery and uwsgi
