@@ -97,6 +97,11 @@ SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     -e 's/^# MT_SERVICES/MT_SERVICES/' \
     -e "s/^#     'weblate.machinery.apertium./    'weblate.machinery.apertium./" \
     -e "s/^#     'weblate.memory.machine/    'weblate.memory.machine/" \
+    -e 's/^DEBUG =.*/DEBUG = False/' \
+    -e 's/^SECURE_HSTS_SECONDS =.*/SECURE_HSTS_SECONDS = 31536000/' \
+    -e 's/^SECURE_HSTS_PRELOAD =.*/SECURE_HSTS_PRELOAD = True/' \
+    -e 's/^SECURE_HSTS_INCLUDE_SUBDOMAINS =.*/SECURE_HSTS_INCLUDE_SUBDOMAINS = True/' \
+    -e 's/"admin.E408"/"admin.E408", "weblate.E012", "weblate.E013",/' \
     -e '/weblate.memory.machine.WeblateMemory/ a \
 )' \
     $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py

@@ -64,5 +64,6 @@ echo " * Add host to munin: $(s ip -f inet address show ens10  | sed -En -e 's/.
 echo " * Link with purchased service"
 echo " * Activate and verify backups"
 echo " * Verify SMTP is working"
+echo " * Add service to monitoring"
 
 rm -f $BOOTSTRAP $TMPFILE
