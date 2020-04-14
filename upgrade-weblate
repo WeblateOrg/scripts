@@ -48,6 +48,8 @@ sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
 if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
     sudo -u weblate sh -c "cd $WEBLATE_DIR; $WEBLATE_HOME/weblate-env/bin/weblate compilemessages"
 fi
+# Track deploy at Sentry
+sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate sentry_deploy
 
 # Start the services
 systemctl start celery-weblate.service 
