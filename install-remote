@@ -16,7 +16,7 @@ TMPFILE=$(mktemp --tmpdir weblate-log.XXXXXXXXXX)
 
 # Gather basic configuration
 bootstrap $BOOTSTRAP
-echo >> $BOOTSTRAP <<EOT
+cat >> $BOOTSTRAP <<EOT
 WEBLATE_PASSWORD="$(apg -a 0 -M sncl -n 1 -x 10 -m 20)"
 EOT
 . $BOOTSTRAP
@@ -54,7 +54,7 @@ s ./scripts/install-munin
 
 # Configure mail sending
 echo "$WEBLATE_DOMAIN:$(openssl passwd -6 -salt $(openssl rand -hex 6) "$EXIM_PASS"):666:0:99999:7::" | ssh root@mail tee --append /etc/exim4/passwd
-ssh root@mail ln -s /etc/exim4/virtual/weblate.cloud /etc/exim4/virtual/$WEBLATE_DOMAIN
+ssh root@mail ln -sf /etc/exim4/virtual/weblate.cloud /etc/exim4/virtual/$WEBLATE_DOMAIN
 
 # Print list of things to do
 echo "TODO:"
