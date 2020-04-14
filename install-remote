@@ -32,6 +32,8 @@ hcloud server create \
 
 IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' $TMPFILE)
 
+ssh-keygen -f ~/.ssh/known_hosts -R "$IPADDRESS"
+
 echo "Created server with address $IPADDRESS, please ensure $WEBLATE_DOMAIN points to that"
 read x
 
