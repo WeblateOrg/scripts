@@ -93,7 +93,7 @@ SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     "wllegal",' \
     -e '/weblate.gitexport/ a \
     "weblate.legal",' \
-    -e 's#^MT_APERTIUM_APY.*#MT_APERTIUM_APY = "http://172.16.0.9:2737/"' \
+    -e 's#^MT_APERTIUM_APY.*#MT_APERTIUM_APY = "http://172.16.0.9:2737/"#' \
     -e 's/^# MT_SERVICES/MT_SERVICES/' \
     -e "s/^#     'weblate.machinery.apertium./    'weblate.machinery.apertium./" \
     -e "s/^#     'weblate.memory.machine/    'weblate.memory.machine/" \
