@@ -93,6 +93,12 @@ SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     "wllegal",' \
     -e '/weblate.gitexport/ a \
     "weblate.legal",' \
+    -e 's#^MT_APERTIUM_APY.*#MT_APERTIUM_APY = "http://172.16.0.9:2737/"' \
+    -e 's/^# MT_SERVICES/MT_SERVICES/' \
+    -e "s/^#     'weblate.machinery.apertium./    'weblate.machinery.apertium./" \
+    -e "s/^#     'weblate.memory.machine/    'weblate.memory.machine/" \
+    -e '/weblate.memory.machine.WeblateMemory/ a \
+)' \
     $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
 
 cat <<EOT >> $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
@@ -103,9 +109,6 @@ DEFAULT_COMMITER_EMAIL = 'hosted@weblate.org'
 DEFAULT_COMMITER_NAME = 'Hosted Weblate'
 LOGIN_REQUIRED_URLS = (r'/(.*)$', )
 STATUS_URL = "https://status.weblate.org/"
-
-MT_APERTIUM_APY = "http://172.16.0.9:2737/"
-MT_SERVICES += ('weblate.machinery.apertium.ApertiumAPYTranslation',)
 EOT
 
 # Fill the database
