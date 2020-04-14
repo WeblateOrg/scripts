@@ -6,6 +6,8 @@ echo "Weblate title:"
 read title
 echo "Sentry DSN:"
 read sentry
+echo "Sentry Token:"
+read sentry_token
 echo "Matomo site id:"
 read matomo
 echo "Matomo token:"
@@ -18,6 +20,7 @@ WEBLATE_DOMAIN="$domain"
 WEBLATE_TITLE="$title"
 WEBLATE_SECRET=$(openssl rand -hex 32)
 WEBLATE_SENTRY="$sentry"
+WEBLATE_SENTRY_TOKEN="$sentry_token"
 
 # Matomo
 MATOMO_SITE="$matomo"
