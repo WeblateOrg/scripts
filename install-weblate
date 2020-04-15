@@ -200,7 +200,7 @@ cat > $WEBLATE_HOME/run-matomo.sh <<EOT
 EOT
 chmod +x $WEBLATE_HOME/run-matomo.sh
 chown weblate:weblate $WEBLATE_HOME/run-matomo.sh
-echo '0 7 * * * $WEBLATE_HOME/run-matomo.sh | logger -t matomo' > /tmp/weblate-cron
+echo "0 7 * * * $WEBLATE_HOME/run-matomo.sh | logger -t matomo" > /tmp/weblate-cron
 crontab /tmp/weblate-cron
 rm /tmp/weblate-cron
 
