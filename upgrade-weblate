@@ -47,6 +47,9 @@ sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate migrate
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
 if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
     sudo -u weblate sh -c "cd $WEBLATE_DIR; $WEBLATE_HOME/weblate-env/bin/weblate compilemessages"
+    if [ -d $WEBLATE_HOME/hosted ] ; then
+        sudo -u weblate sh -c "cd $WEBLATE_HOME/hosted; git pull -q; $WEBLATE_HOME/weblate-env/bin/weblate compilemessages"
+    fi
 fi
 # Track deploy at Sentry
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate sentry_deploy
