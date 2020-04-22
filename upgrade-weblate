@@ -52,7 +52,9 @@ if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
     fi
 fi
 # Track deploy at Sentry
-sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate sentry_deploy
+if ! grep -q "SENTRY_TOKEN = ''" $WEBLATE_DIR/weblate/settings.py ; then
+    sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate sentry_deploy
+fi
 
 # Start the services
 systemctl start celery-weblate.service
