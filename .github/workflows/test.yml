@@ -17,9 +17,9 @@ jobs:
           weblate.example.com
           CI Weblate
           https://00000000000000000000000000000000@sentry.example.com/123
+
           0
           TOKEN
-
           EOT
       - name: Exim
         run: sudo ./install-exim
