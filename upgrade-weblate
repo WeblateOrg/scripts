@@ -1,17 +1,17 @@
 #!/bin/sh
 
-set -e 
+set -e
 
 cd /tmp
 
 # Stop web
-systemctl stop uwsgi.service 
+systemctl stop uwsgi.service
 
 WEBLATE_HOME=~weblate
 
 PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
 
-if [ -d "$WEBLATE_HOME/weblate" ] ; then 
+if [ -d "$WEBLATE_HOME/weblate" ] ; then
     WEBLATE_DIR="$WEBLATE_HOME/weblate"
     WEBLATE_PKG="$WEBLATE_DIR"
     PIP_ARGS="--editable"
@@ -55,7 +55,7 @@ fi
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate sentry_deploy
 
 # Start the services
-systemctl start celery-weblate.service 
+systemctl start celery-weblate.service
 systemctl start uwsgi.service
 
 # Upgrade munin plugin

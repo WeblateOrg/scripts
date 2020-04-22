@@ -8,26 +8,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Exim
-      run: sudo ./configure-system
-    - name: Bootstrap
-      run: |
-        sudo ./bootstrap <<EOT
-        weblate.example.com
-        CI Weblate
-        https://00000000000000000000000000000000@sentry.example.com/123
-        0
-        TOKEN
-        
-        EOT
-    - name: Exim
-      run: sudo ./install-exim
-    - name: PostgreSQL
-      run: sudo ./install-posgtresql
-    - name: Weblate
-      run: sudo ./install-weblate --nocert
-    - name: Munin
-      run: sudo ./install-munin
-    - name: Upgrade
-      run: sudo ./upgrade-weblate --nodiff
+      - uses: actions/checkout@v2
+      - name: Exim
+        run: sudo ./configure-system
+      - name: Bootstrap
+        run: |
+          sudo ./bootstrap <<EOT
+          weblate.example.com
+          CI Weblate
+          https://00000000000000000000000000000000@sentry.example.com/123
+          0
+          TOKEN
+
+          EOT
+      - name: Exim
+        run: sudo ./install-exim
+      - name: PostgreSQL
+        run: sudo ./install-posgtresql
+      - name: Weblate
+        run: sudo ./install-weblate --nocert
+      - name: Munin
+        run: sudo ./install-munin
+      - name: Upgrade
+        run: sudo ./upgrade-weblate --nodiff

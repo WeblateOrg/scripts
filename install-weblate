@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e 
+set -e
 
 . /etc/weblate-bootstrap
 
@@ -133,8 +133,8 @@ cp celery-weblate.service /etc/systemd/system/
 cp celery-weblate.conf /etc/default/celery-weblate
 cp weblate.uwsgi.ini /etc/uwsgi/apps-available/weblate.ini
 systemctl daemon-reload
-systemctl enable celery-weblate.service 
-systemctl start celery-weblate.service 
+systemctl enable celery-weblate.service
+systemctl start celery-weblate.service
 ln -s ../apps-available/weblate.ini /etc/uwsgi/apps-enabled/
 systemctl restart uwsgi.service
 
