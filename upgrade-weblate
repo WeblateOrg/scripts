@@ -29,6 +29,9 @@ done
 # Stop celery
 systemctl stop celery-weblate.service
 
+# Backup settings
+cp $WEBLATE_DIR/weblate/settings.py /root/weblate-settings-$(date -I).py
+
 # Upgrade modules
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install -U pip
 if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
