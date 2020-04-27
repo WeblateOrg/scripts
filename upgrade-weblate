@@ -39,6 +39,9 @@ if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
 fi
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS $WEBLATE_PKG[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
 
+# Apply hotfix for 4.0.2
+curl https://github.com/WeblateOrg/weblate/commit/00e534fd0fcb898c455033bef158f8972f3dcc30.patch | patch $WEBLATE_DIR/weblate/utils/management/commands/sentry_deploy.py
+
 # Adjust configuration
 if [ "x$1" != "x--nodiff" ] ; then
 vimdiff $WEBLATE_DIR/weblate/settings_example.py $WEBLATE_DIR/weblate/settings.py
