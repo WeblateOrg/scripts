@@ -102,6 +102,8 @@ SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     -e 's/^SECURE_HSTS_PRELOAD =.*/SECURE_HSTS_PRELOAD = True/' \
     -e 's/^SECURE_HSTS_INCLUDE_SUBDOMAINS =.*/SECURE_HSTS_INCLUDE_SUBDOMAINS = True/' \
     -e 's/"admin.E408"/"admin.E408", "weblate.E012", "weblate.E013",/' \
+    -e 's/^REGISTRATION_OPEN =.*/REGISTRATION_OPEN = False/' \
+    -e 's/^LOGIN_REQUIRED =.*/LOGIN_REQUIRED = True/' \
     -e '/weblate.memory.machine.WeblateMemory/ a \
 )' \
     $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
