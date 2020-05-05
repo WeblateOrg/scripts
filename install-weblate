@@ -67,8 +67,10 @@ sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install Weblate[Unicode,YAML,P
 
 PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
 
+SETTINGS_PY=$WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
+
 # Configure Weblate
-sudo -u weblate cp $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings_example.py $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
+sudo -u weblate cp $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings_example.py $SETTINGS_PY
 
 sed -i \
     -e "s#^DATA_DIR.*#DATA_DIR = \"$WEBLATE_HOME/data\"#" \
@@ -106,9 +108,9 @@ SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     -e 's/^LOGIN_REQUIRED =.*/LOGIN_REQUIRED = True/' \
     -e '/weblate.memory.machine.WeblateMemory/ a \
 )' \
-    $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
+    $SETTINGS_PY
 
-cat <<EOT >> $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
+cat <<EOT >> $SETTINGS_PY
 
 # Hosted customization
 ADMINS_CONTACT = ['rt@weblate.org']
@@ -128,7 +130,7 @@ else
 fi
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
 # Track deploy at Sentry
-if ! grep -q "SENTRY_TOKEN = ''" $WEBLATE_DIR/weblate/settings.py ; then
+if ! grep -q "SENTRY_TOKEN = ''" $SETTINGS_PY ; then
     sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate sentry_deploy
 fi
 
