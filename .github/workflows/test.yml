@@ -21,6 +21,7 @@ jobs:
           0
           TOKEN
           EOT
+          cat /etc/weblate-bootstrap
       - name: Exim
         run: sudo ./install-exim
       - name: PostgreSQL
