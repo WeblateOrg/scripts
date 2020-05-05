@@ -127,6 +127,10 @@ else
     sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
 fi
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
+# Track deploy at Sentry
+if ! grep -q "SENTRY_TOKEN = ''" $WEBLATE_DIR/weblate/settings.py ; then
+    sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate sentry_deploy
+fi
 
 # Celery and uwsgi
 cd $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/examples/
