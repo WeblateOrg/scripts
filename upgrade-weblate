@@ -4,10 +4,21 @@ set -e
 
 cd /tmp
 
+# Detect user
+for u in weblate ec2-user ; do
+    if id $u > /dev/null 2>&1 ; then
+        USERNAME=$u
+    fi
+done
+if [ -z "$USERNAME" ] ; then
+    echo "Could not detect username!"
+fi
+
+WEBLATE_HOME=$(getent passwd "$USERNAME" | cut -d\: -f 6)
+
 # Stop web
 systemctl stop uwsgi.service
 
-WEBLATE_HOME=~weblate
 WEBLATE_ENV="$WEBLATE_HOME/weblate-env"
 
 PYVER=$($WEBLATE_ENV/bin/python -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
@@ -23,7 +34,7 @@ else
 fi
 
 # Wait for celery to process all jobs
-while sudo -u weblate $WEBLATE_ENV/bin/weblate celery_queues | grep ': [^0]' ; do
+while sudo -u $USERNAME $WEBLATE_ENV/bin/weblate celery_queues | grep ': [^0]' ; do
     sleep 1
 done
 
@@ -34,11 +45,11 @@ systemctl stop celery-weblate.service
 cp $WEBLATE_DIR/weblate/settings.py /root/weblate-settings-$(date -I).py
 
 # Upgrade modules
-sudo -u weblate $WEBLATE_ENV/bin/pip install -U pip
+sudo -u $USERNAME $WEBLATE_ENV/bin/pip install -U pip
 if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
-    sudo -u weblate sh -c "cd $WEBLATE_DIR; git pull"
+    sudo -u $USERNAME sh -c "cd $WEBLATE_DIR; git pull"
 fi
-sudo -u weblate $WEBLATE_ENV/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS $WEBLATE_PKG[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
+sudo -u $USERNAME $WEBLATE_ENV/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS $WEBLATE_PKG[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
 
 # Adjust configuration
 if [ "x$1" != "x--nodiff" ] ; then
@@ -47,17 +58,17 @@ fi
 sed s@/home/weblate/weblate-env@$WEBLATE_ENV@ $WEBLATE_DIR/weblate/examples/celery-weblate.conf > /etc/default/celery-weblate
 
 # Migrate database, compile gettext and collect static files
-sudo -u weblate $WEBLATE_ENV/bin/weblate migrate
-sudo -u weblate $WEBLATE_ENV/bin/weblate collectstatic --noinput
+sudo -u $USERNAME $WEBLATE_ENV/bin/weblate migrate
+sudo -u $USERNAME $WEBLATE_ENV/bin/weblate collectstatic --noinput
 if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
-    sudo -u weblate sh -c "cd $WEBLATE_DIR; $WEBLATE_ENV/bin/weblate compilemessages"
+    sudo -u $USERNAME sh -c "cd $WEBLATE_DIR; $WEBLATE_ENV/bin/weblate compilemessages"
     if [ -d $WEBLATE_HOME/hosted ] ; then
-        sudo -u weblate sh -c "cd $WEBLATE_HOME/hosted; git pull -q; $WEBLATE_ENV/bin/weblate compilemessages"
+        sudo -u $USERNAME sh -c "cd $WEBLATE_HOME/hosted; git pull -q; $WEBLATE_ENV/bin/weblate compilemessages"
     fi
 fi
 # Track deploy at Sentry
 if ! grep -q "SENTRY_TOKEN = ''" $WEBLATE_DIR/weblate/settings.py ; then
-    sudo -u weblate $WEBLATE_ENV/bin/weblate sentry_deploy
+    sudo -u $USERNAME $WEBLATE_ENV/bin/weblate sentry_deploy
 fi
 
 # Start the services
@@ -72,7 +83,7 @@ fi
 
 # Upgrade fail2ban
 if [ -d /etc/fail2ban/filter.d/ ] ; then
-    sudo -u weblate sh -c "cd $WEBLATE_HOME/fail2ban && git pull"
+    sudo -u $USERNAME sh -c "cd $WEBLATE_HOME/fail2ban && git pull"
     ln -sf $WEBLATE_HOME/fail2ban/filter.d/* /etc/fail2ban/filter.d/
     ln -sf $WEBLATE_HOME/fail2ban/jail.d/* /etc/fail2ban/jail.d/
     systemctl reload fail2ban.service
