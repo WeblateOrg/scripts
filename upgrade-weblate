@@ -10,7 +10,7 @@ systemctl stop uwsgi.service
 WEBLATE_HOME=~weblate
 WEBLATE_ENV="$WEBLATE_HOME/weblate-env"
 
-PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
+PYVER=$($WEBLATE_ENV/bin/python -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
 
 if [ -d "$WEBLATE_HOME/weblate" ] ; then
     WEBLATE_DIR="$WEBLATE_HOME/weblate"
