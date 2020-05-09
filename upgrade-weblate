@@ -8,6 +8,7 @@ cd /tmp
 systemctl stop uwsgi.service
 
 WEBLATE_HOME=~weblate
+WEBLATE_ENV="$WEBLATE_HOME/weblate-env"
 
 PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
 
@@ -16,13 +17,13 @@ if [ -d "$WEBLATE_HOME/weblate" ] ; then
     WEBLATE_PKG="$WEBLATE_DIR"
     PIP_ARGS="--editable"
 else
-    WEBLATE_DIR="$WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages"
+    WEBLATE_DIR="$WEBLATE_ENV/lib/python$PYVER/site-packages"
     WEBLATE_PKG="Weblate"
     PIP_ARGS=""
 fi
 
 # Wait for celery to process all jobs
-while sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate celery_queues | grep ': [^0]' ; do
+while sudo -u weblate $WEBLATE_ENV/bin/weblate celery_queues | grep ': [^0]' ; do
     sleep 1
 done
 
@@ -33,30 +34,30 @@ systemctl stop celery-weblate.service
 cp $WEBLATE_DIR/weblate/settings.py /root/weblate-settings-$(date -I).py
 
 # Upgrade modules
-sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install -U pip
+sudo -u weblate $WEBLATE_ENV/bin/pip install -U pip
 if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
     sudo -u weblate sh -c "cd $WEBLATE_DIR; git pull"
 fi
-sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS $WEBLATE_PKG[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
+sudo -u weblate $WEBLATE_ENV/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS $WEBLATE_PKG[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
 
 # Adjust configuration
 if [ "x$1" != "x--nodiff" ] ; then
 vimdiff $WEBLATE_DIR/weblate/settings_example.py $WEBLATE_DIR/weblate/settings.py
 fi
-sed s@/home/weblate/weblate-env@$WEBLATE_HOME/weblate-env@ $WEBLATE_DIR/weblate/examples/celery-weblate.conf > /etc/default/celery-weblate
+sed s@/home/weblate/weblate-env@$WEBLATE_ENV@ $WEBLATE_DIR/weblate/examples/celery-weblate.conf > /etc/default/celery-weblate
 
 # Migrate database, compile gettext and collect static files
-sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate migrate
-sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
+sudo -u weblate $WEBLATE_ENV/bin/weblate migrate
+sudo -u weblate $WEBLATE_ENV/bin/weblate collectstatic --noinput
 if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
-    sudo -u weblate sh -c "cd $WEBLATE_DIR; $WEBLATE_HOME/weblate-env/bin/weblate compilemessages"
+    sudo -u weblate sh -c "cd $WEBLATE_DIR; $WEBLATE_ENV/bin/weblate compilemessages"
     if [ -d $WEBLATE_HOME/hosted ] ; then
-        sudo -u weblate sh -c "cd $WEBLATE_HOME/hosted; git pull -q; $WEBLATE_HOME/weblate-env/bin/weblate compilemessages"
+        sudo -u weblate sh -c "cd $WEBLATE_HOME/hosted; git pull -q; $WEBLATE_ENV/bin/weblate compilemessages"
     fi
 fi
 # Track deploy at Sentry
 if ! grep -q "SENTRY_TOKEN = ''" $WEBLATE_DIR/weblate/settings.py ; then
-    sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate sentry_deploy
+    sudo -u weblate $WEBLATE_ENV/bin/weblate sentry_deploy
 fi
 
 # Start the services
