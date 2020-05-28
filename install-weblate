@@ -105,7 +105,7 @@ SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     -e 's/^SECURE_HSTS_INCLUDE_SUBDOMAINS =.*/SECURE_HSTS_INCLUDE_SUBDOMAINS = True/' \
     -e 's/"admin.E408"/"admin.E408", "weblate.E012", "weblate.E013",/' \
     -e 's/^REGISTRATION_OPEN =.*/REGISTRATION_OPEN = False/' \
-    -e 's/^LOGIN_REQUIRED =.*/LOGIN_REQUIRED = True/' \
+    -e 's/^REQUIRE_LOGIN =.*/REQUIRE_LOGIN = True/' \
     -e '/weblate.memory.machine.WeblateMemory/ a \
 )' \
     $SETTINGS_PY
@@ -116,7 +116,6 @@ cat <<EOT >> $SETTINGS_PY
 ADMINS_CONTACT = ['rt@weblate.org']
 DEFAULT_COMMITER_EMAIL = 'hosted@weblate.org'
 DEFAULT_COMMITER_NAME = 'Hosted Weblate'
-LOGIN_REQUIRED_URLS = (r'/(.*)$', )
 STATUS_URL = "https://status.weblate.org/"
 EOT
 
