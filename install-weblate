@@ -150,6 +150,8 @@ if [ "x$1" != "x--nocert" ] ; then
     certbot --agree-tos --email rt@weblate.org --redirect --no-eff-email -d $WEBLATE_DOMAIN
 fi
 
+# Enable http/2
+sed -i 's/ssl;/ssl http2;/' /etc/nginx/sites-available/default
 # Enable status locally
 sed -i '/server_name _/a location = /nginx_status {\n    stub_status;\n}'   /etc/nginx/sites-available/default
 # Enable compression for js/css
