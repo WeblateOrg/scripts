@@ -49,7 +49,7 @@ sudo -u $USERNAME $WEBLATE_ENV/bin/pip install -U pip
 if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
     sudo -u $USERNAME sh -c "cd $WEBLATE_DIR; git pull"
 fi
-sudo -u $USERNAME $WEBLATE_ENV/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS $WEBLATE_PKG[Unicode,YAML,PHP,Subtitles,OCR,MSTerminology,Amazon,Postgres,Antispam] wllegal
+sudo -u $USERNAME $WEBLATE_ENV/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS $WEBLATE_PKG[all] wllegal
 
 # Adjust configuration
 if [ "x$1" != "x--nodiff" ] ; then
