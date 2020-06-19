@@ -151,7 +151,7 @@ if [ "x$1" != "x--nocert" ] ; then
 fi
 
 # Enable http/2
-sed -i -e 's/ssl;/ssl http2;/' -e 's/ssl ipv6only=on/ssl ipv6only=on http2' /etc/nginx/sites-available/default
+sed -i -e 's/ssl;/ssl http2;/' -e 's/ssl ipv6only=on/ssl ipv6only=on http2/' /etc/nginx/sites-available/default
 # Enable status locally
 sed -i '/server_name _/a location = /nginx_status {\n    stub_status;\n}'   /etc/nginx/sites-available/default
 # Enable compression for js/css
