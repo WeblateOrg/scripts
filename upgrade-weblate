@@ -62,6 +62,7 @@ sudo -u $USERNAME $WEBLATE_ENV/bin/weblate migrate
 sudo -u $USERNAME $WEBLATE_ENV/bin/weblate ensure_stats
 sudo -u $USERNAME $WEBLATE_ENV/bin/weblate collectstatic --noinput
 sudo -u $USERNAME $WEBLATE_ENV/bin/weblate compress --force
+sudo -u $USERNAME $WEBLATE_ENV/bin/weblate setuplang
 if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
     sudo -u $USERNAME sh -c "cd $WEBLATE_DIR; $WEBLATE_ENV/bin/weblate compilemessages"
     if [ -d $WEBLATE_HOME/hosted ] ; then
