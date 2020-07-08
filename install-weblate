@@ -107,6 +107,7 @@ SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     -e 's/"admin.E408"/"admin.E408", "weblate.E012", "weblate.E013",/' \
     -e 's/^REGISTRATION_OPEN =.*/REGISTRATION_OPEN = False/' \
     -e 's/^REQUIRE_LOGIN =.*/REQUIRE_LOGIN = True/' \
+    -e 's/^COMPRESS_OFFLINE =.*/COMPRESS_OFFLINE = True/' \
     -e '/weblate.memory.machine.WeblateMemory/ a \
 )' \
     $SETTINGS_PY
@@ -129,6 +130,7 @@ else
     sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
 fi
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
+sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate compress --force
 # Track deploy at Sentry
 if ! grep -q "SENTRY_TOKEN = ''" $SETTINGS_PY ; then
     sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate sentry_deploy
