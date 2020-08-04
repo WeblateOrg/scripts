@@ -79,6 +79,7 @@ sed -i \
     -e 's#^DEFAULT_FROM_EMAIL.*#DEFAULT_FROM_EMAIL = "noreply@weblate.org"#' \
     -e "s#^SECRET_KEY.*#SECRET_KEY = '$WEBLATE_SECRET'#" \
     -e "s#^SITE_TITLE.*#SITE_TITLE = '$WEBLATE_TITLE'#" \
+    -e "s#^SITE_DOMAIN.*#SITE_DOMAIN = '$WEBLATE_DOMAIN'#" \
     -e "s#^ALLOWED_HOSTS.*#ALLOWED_HOSTS = ['$WEBLATE_DOMAIN']#" \
     -e "s#^SENTRY_DSN.*#SENTRY_DSN = '$WEBLATE_SENTRY'#" \
     -e "/SENTRY_DSN/ a \
@@ -123,7 +124,6 @@ EOT
 
 # Fill the database
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate migrate
-sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate changesite --set-name $WEBLATE_DOMAIN
 if [ -n "$WEBLATE_PASSWORD" ] ; then
     sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař' --password "$WEBLATE_PASSWORD"
 else
