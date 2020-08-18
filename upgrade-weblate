@@ -15,7 +15,11 @@ if [ -z "$USERNAME" ] ; then
     exit 1
 fi
 
-WEBLATE_HOME=$(getent passwd "$USERNAME" | cut -d\: -f 6)
+if [ $USERNAME = apache -a -d /opt/weblate ] ; then
+    WEBLATE_HOME=/opt/weblate
+else
+    WEBLATE_HOME=$(getent passwd "$USERNAME" | cut -d\: -f 6)
+fi
 
 # Detect web service
 for service in uwsgi.service httpd.service ; do
@@ -31,11 +35,19 @@ fi
 # Stop web
 systemctl stop $SERVICE
 
-WEBLATE_ENV="$WEBLATE_HOME/weblate-env"
+if [ "$WEBLATE_HOME" = /opt/weblate ] ; then
+    WEBLATE_ENV="/opt/weblate"
+else
+    WEBLATE_ENV="$WEBLATE_HOME/weblate-env"
+fi
 
 PYVER=$($WEBLATE_ENV/bin/python -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
 
-if [ -d "$WEBLATE_HOME/weblate" ] ; then
+if [ -d "$WEBLATE_HOME/weblate-src" ] ; then
+    WEBLATE_DIR="$WEBLATE_HOME/weblate-src"
+    WEBLATE_PKG="$WEBLATE_DIR"
+    PIP_ARGS="--editable"
+elif [ -d "$WEBLATE_HOME/weblate" ] ; then
     WEBLATE_DIR="$WEBLATE_HOME/weblate"
     WEBLATE_PKG="$WEBLATE_DIR"
     PIP_ARGS="--editable"
@@ -58,7 +70,7 @@ cp $WEBLATE_DIR/weblate/settings.py /root/weblate-settings-$(date -I).py
 
 # Upgrade modules
 sudo -u $USERNAME $WEBLATE_ENV/bin/pip install -U pip
-if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
+if [ $WEBLATE_PKG != "Weblate" ] ; then
     sudo -u $USERNAME sh -c "cd $WEBLATE_DIR; git pull"
 fi
 sudo -u $USERNAME $WEBLATE_ENV/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS $WEBLATE_PKG[all] wllegal
