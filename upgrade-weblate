@@ -23,7 +23,7 @@ fi
 
 # Detect web service
 for service in uwsgi.service httpd.service ; do
-    if systemctl is-active --quiet httpd.service ; then
+    if systemctl cat -- $service > /dev/null 2>&1 ; then
         SERVICE=$service
     fi
 done
