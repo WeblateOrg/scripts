@@ -5,7 +5,7 @@ set -e
 cd /tmp
 
 # Detect user
-for u in weblate ec2-user ; do
+for u in weblate ec2-user apache ; do
     if id $u > /dev/null 2>&1 ; then
         USERNAME=$u
     fi
