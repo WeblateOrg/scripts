@@ -12,12 +12,24 @@ for u in weblate ec2-user ; do
 done
 if [ -z "$USERNAME" ] ; then
     echo "Could not detect username!"
+    exit 1
 fi
 
 WEBLATE_HOME=$(getent passwd "$USERNAME" | cut -d\: -f 6)
 
+# Detect web service
+for service in uwsgi.service httpd.service ; do
+    if systemctl is-active --quiet httpd.service ; then
+        SERVICE=$service
+    fi
+done
+if [ -z "$SERVICE" ] ; then
+    echo "Could not detect web service!"
+    exit 1
+fi
+
 # Stop web
-systemctl stop uwsgi.service
+systemctl stop $SERVICE
 
 WEBLATE_ENV="$WEBLATE_HOME/weblate-env"
 
@@ -76,7 +88,7 @@ fi
 
 # Start the services
 systemctl start celery-weblate.service
-systemctl start uwsgi.service
+systemctl start $SERVICE
 
 # Upgrade munin plugin
 if [ -d /usr/share/munin/plugins ] ; then
