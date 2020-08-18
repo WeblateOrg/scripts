@@ -202,7 +202,7 @@ systemctl reload nginx.service
 sudo -u weblate git clone https://github.com/matomo-org/matomo-log-analytics.git $WEBLATE_HOME/matomo-log-analytics
 cat > $WEBLATE_HOME/run-matomo.sh <<EOT
 #!/bin/sh
-/usr/bin/python2 \
+/usr/bin/python3 \
         $WEBLATE_HOME/matomo-log-analytics/import_logs.py \
         --url=https://stats.cihar.com/ \
         --idsite=$MATOMO_SITE \
