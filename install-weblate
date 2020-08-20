@@ -79,10 +79,9 @@ sed -i \
     -e "s#^SECRET_KEY.*#SECRET_KEY = '$WEBLATE_SECRET'#" \
     -e "s#^SITE_TITLE.*#SITE_TITLE = '$WEBLATE_TITLE'#" \
     -e "s#^SITE_DOMAIN.*#SITE_DOMAIN = '$WEBLATE_DOMAIN'#" \
-    -e "s#^ALLOWED_HOSTS.*#ALLOWED_HOSTS = ['$WEBLATE_DOMAIN']#" \
     -e "s#^SENTRY_DSN.*#SENTRY_DSN = '$WEBLATE_SENTRY'#" \
     -e "/SENTRY_DSN/ a \
-SENTRY_ENVIRONMENT = ALLOWED_HOSTS[0]" \
+SENTRY_ENVIRONMENT = SITE_DOMAIN" \
     -e "/SENTRY_DSN/ a \
 SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     -e "s#^        \"PASSWORD\":.*#        \"PASSWORD\": '$POSTGRES_PASS',#" \
@@ -108,8 +107,7 @@ SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     -e 's/^REGISTRATION_OPEN =.*/REGISTRATION_OPEN = False/' \
     -e 's/^REQUIRE_LOGIN =.*/REQUIRE_LOGIN = True/' \
     -e 's/^COMPRESS_OFFLINE =.*/COMPRESS_OFFLINE = True/' \
-    -e '/weblate.memory.machine.WeblateMemory/ a \
-)' \
+    -e 's/#     "weblate.machinery.apertium.ApertiumAPYTranslation",/"weblate.machinery.apertium.ApertiumAPYTranslation",/' \
     $SETTINGS_PY
 
 cat <<EOT >> $SETTINGS_PY
