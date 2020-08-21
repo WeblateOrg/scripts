@@ -20,11 +20,17 @@ if [ -z "$USERNAME" ] ; then
     exit 1
 fi
 
-if [ $USERNAME = apache -a -d /opt/weblate ] ; then
+if [ $USERNAME = root -a -d /opt/weblate ] ; then
     WEBLATE_HOME=/opt/weblate
+    WEBLATE_USERNAME=apache
 else
     WEBLATE_HOME=$(getent passwd "$USERNAME" | cut -d\: -f 6)
+    WEBLATE_USERNAME=$USERNAME
 fi
+
+# At this point:
+# WEBLATE_USERNAME is user running Weblate
+# USERNAME is user owning Weblate sources
 
 # Detect web service
 for service in uwsgi.service httpd.service ; do
@@ -63,7 +69,7 @@ else
 fi
 
 # Wait for celery to process all jobs
-while sudo -u $USERNAME $WEBLATE_ENV/bin/weblate celery_queues | grep ': [^0]' ; do
+while sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate celery_queues | grep ': [^0]' ; do
     sleep 1
 done
 
@@ -87,20 +93,20 @@ fi
 sed s@/home/weblate/weblate-env@$WEBLATE_ENV@ $WEBLATE_DIR/weblate/examples/celery-weblate.conf > /etc/default/celery-weblate
 
 # Migrate database, compile gettext and collect static files
-sudo -u $USERNAME $WEBLATE_ENV/bin/weblate migrate
-sudo -u $USERNAME $WEBLATE_ENV/bin/weblate ensure_stats
-sudo -u $USERNAME $WEBLATE_ENV/bin/weblate collectstatic --noinput
-sudo -u $USERNAME $WEBLATE_ENV/bin/weblate compress --force
-sudo -u $USERNAME $WEBLATE_ENV/bin/weblate setuplang
+sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate migrate
+sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate ensure_stats
+sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate collectstatic --noinput
+sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate compress --force
+sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate setuplang
 if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
-    sudo -u $USERNAME sh -c "cd $WEBLATE_DIR; $WEBLATE_ENV/bin/weblate compilemessages"
+    sudo -u $WEBLATE_USERNAME sh -c "cd $WEBLATE_DIR; $WEBLATE_ENV/bin/weblate compilemessages"
     if [ -d $WEBLATE_HOME/hosted ] ; then
-        sudo -u $USERNAME sh -c "cd $WEBLATE_HOME/hosted; git pull -q; $WEBLATE_ENV/bin/weblate compilemessages"
+        sudo -u $WEBLATE_USERNAME sh -c "cd $WEBLATE_HOME/hosted; git pull -q; $WEBLATE_ENV/bin/weblate compilemessages"
     fi
 fi
 # Track deploy at Sentry
 if ! grep -q "SENTRY_TOKEN = ''" $WEBLATE_DIR/weblate/settings.py ; then
-    sudo -u $USERNAME $WEBLATE_ENV/bin/weblate sentry_deploy
+    sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate sentry_deploy
 fi
 
 # Start the services
