@@ -5,11 +5,15 @@ set -e
 cd /tmp
 
 # Detect user
-for u in weblate ec2-user apache ; do
-    if id $u > /dev/null 2>&1 ; then
-        USERNAME=$u
-    fi
-done
+if [ -n "$WEBLATE_USERNAME" ] ; then
+    USERNAME=$WEBLATE_USERNAME
+else
+    for u in weblate ec2-user apache ; do
+        if id $u > /dev/null 2>&1 ; then
+            USERNAME=$u
+        fi
+    done
+fi
 if [ -z "$USERNAME" ] ; then
     echo "Could not detect username!"
     exit 1
