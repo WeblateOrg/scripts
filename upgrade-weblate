@@ -36,6 +36,7 @@ fi
 for service in uwsgi.service httpd.service ; do
     if systemctl cat -- $service > /dev/null 2>&1 ; then
         SERVICE=$service
+        break
     fi
 done
 if [ -z "$SERVICE" ] ; then
