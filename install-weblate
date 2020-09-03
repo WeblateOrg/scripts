@@ -54,6 +54,10 @@ apt-get install --no-install-recommends -y\
     uwsgi \
     uwsgi-plugin-python3
 
+# Install ruby deps for licebsee
+apt-get install -y \
+    ruby bundler cmake pkg-config git libssl-dev ruby-dev
+
 # Add user
 adduser weblate --disabled-password --gecos Weblate
 usermod --append --groups adm weblate
@@ -212,6 +216,10 @@ chown weblate:weblate $WEBLATE_HOME/run-matomo.sh
 echo "0 7 * * * $WEBLATE_HOME/run-matomo.sh | logger -t matomo" > /tmp/weblate-cron
 crontab /tmp/weblate-cron
 rm /tmp/weblate-cron
+
+# Licensee
+sudo -u weblate gem install --user-install licensee
+sudo -u weblate ln -s $WEBLATE_HOME/.gem/ruby/2.5.0/bin/licensee $WEBLATE_HOME/weblate-env/bin/
 
 # Fail2ban
 sudo -u weblate git clone https://github.com/WeblateOrg/fail2ban.git $WEBLATE_HOME/fail2ban
