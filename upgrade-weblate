@@ -24,7 +24,7 @@ if [ $USERNAME = root -a -d /opt/weblate ] ; then
     WEBLATE_HOME=/opt/weblate
     WEBLATE_USERNAME=apache
 else
-    WEBLATE_HOME=$(getent passwd "$USERNAME" | cut -d\: -f 6)
+    WEBLATE_HOME=$(getent passwd "$USERNAME" | cut -d: -f 6)
     WEBLATE_USERNAME=$USERNAME
 fi
 
