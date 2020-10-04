@@ -8,6 +8,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.3.3
+      - name: pkg
+        run: ls /etc/apt/sources.list.d/
       - name: Exim
         run: sudo ./configure-system
       - name: Bootstrap
