@@ -59,8 +59,8 @@ apt-get install -y \
     ruby bundler cmake pkg-config git libssl-dev ruby-dev
 
 # Manually install recent fail2ban
-wget http://ftp.cz.debian.org/debian/pool/main/f/fail2ban/fail2ban_0.11.1-2_all.deb 
-dpkg -i fail2ban_0.11.1-2_all.deb 
+wget http://ftp.cz.debian.org/debian/pool/main/f/fail2ban/fail2ban_0.11.1-2_all.deb
+dpkg -i fail2ban_0.11.1-2_all.deb
 rm fail2ban_0.11.1-2_all.deb
 
 # Add user
