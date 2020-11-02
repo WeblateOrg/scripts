@@ -11,6 +11,11 @@ cat > /etc/munin/plugin-conf.d/postgres <<EOT
 user postgres
 env.PGUSER postgres
 EOT
+cat > /etc/munin/plugin-conf.d/redis <<EOT
+[redis]
+env.host1 127.0.0.1
+env.port1 6379
+EOT
 
 # Plugins
 mkdir -p /usr/share/munin/plugins/
