@@ -198,6 +198,19 @@ cat > /etc/nginx/snippets/weblate.conf <<EOT
             root $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/wllegal/templates;
             internal;
     }
+    access_log /var/log/nginx/matomo.log matomo;
+    access_log /var/log/nginx/access.log;
+EOT
+cat > /etc/nginx/conf.d/matomo.conf <<EOT
+log_format  matomo                   '{"ip": "\$remote_addr",'
+                                    '"host": "\$host",'
+                                    '"path": "\$request_uri",'
+                                    '"status": "\$status",'
+                                    '"referrer": "\$http_referer",'
+                                    '"user_agent": "\$http_user_agent",'
+                                    '"length": \$bytes_sent,'
+                                    '"generation_time_milli": \$request_time,'
+                                    '"date": "\$time_iso8601"}';
 EOT
 # Insert include after first server_name stanza
 sed -i "0,/server_name $WEBLATE_DOMAIN.*/s//&\\ninclude snippets\/weblate.conf;/" /etc/nginx/sites-available/default
