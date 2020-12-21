@@ -225,9 +225,10 @@ cat > $WEBLATE_HOME/run-matomo.sh <<EOT
 /usr/bin/python3 \
         $WEBLATE_HOME/matomo-log-analytics/import_logs.py \
         --url=https://stats.cihar.com/ \
+        --enable-http-errors \
         --idsite=$MATOMO_SITE \
         --token-auth=$MATOMO_TOKEN \
-        /var/log/nginx/access.log.1
+        /var/log/nginx/matomo.log.1
 EOT
 chmod +x $WEBLATE_HOME/run-matomo.sh
 chown weblate:weblate $WEBLATE_HOME/run-matomo.sh
