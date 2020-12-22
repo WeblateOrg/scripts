@@ -4,6 +4,11 @@ set -e
 
 cd /tmp
 
+DO_DIFF=1
+if [ "x$1" != "x--nodiff" ] ; then
+    DO_DIFF=0
+fi
+
 # Detect user
 if [ -n "$WEBLATE_USERNAME" ] ; then
     USERNAME=$WEBLATE_USERNAME
@@ -83,12 +88,17 @@ cp $WEBLATE_DIR/weblate/settings.py /root/weblate-settings-$(date -I).py
 # Upgrade modules
 sudo -u $USERNAME $WEBLATE_ENV/bin/pip install -U pip
 if [ $WEBLATE_PKG != "Weblate" ] ; then
+    OLD_DIR=$PWD
+    cd $WEBLATE_DIR
+    OLD_HEAD=$(git log -n1 --format=%H)
     sudo -u $USERNAME sh -c "cd $WEBLATE_DIR; git pull"
+    git diff --exit-code weblate-4.1.. -- weblate/settings_example.py > /dev/null
+    DO_DIFF="$?"
 fi
 sudo -u $USERNAME $WEBLATE_ENV/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS $WEBLATE_PKG[all] wllegal
 
 # Adjust configuration
-if [ "x$1" != "x--nodiff" ] ; then
+if [ "$DO_DIFF" -eq 1 ] ; then
 vimdiff $WEBLATE_DIR/weblate/settings_example.py $WEBLATE_DIR/weblate/settings.py
 fi
 sed s@/home/weblate/weblate-env@$WEBLATE_ENV@ $WEBLATE_DIR/weblate/examples/celery-weblate.conf > /etc/default/celery-weblate
