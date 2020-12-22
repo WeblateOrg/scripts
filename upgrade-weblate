@@ -5,7 +5,7 @@ set -e
 cd /tmp
 
 DO_DIFF=1
-if [ "x$1" != "x--nodiff" ] ; then
+if [ "x$1" = "x--nodiff" ] ; then
     DO_DIFF=0
 fi
 
