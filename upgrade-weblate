@@ -99,7 +99,7 @@ sudo -u $USERNAME $WEBLATE_ENV/bin/pip install --upgrade-strategy eager --upgrad
 
 # Adjust configuration
 if [ "$DO_DIFF" -eq 1 ] ; then
-vimdiff $WEBLATE_DIR/weblate/settings_example.py $WEBLATE_DIR/weblate/settings.py
+    vimdiff $WEBLATE_DIR/weblate/settings_example.py $WEBLATE_DIR/weblate/settings.py
 fi
 sed s@/home/weblate/weblate-env@$WEBLATE_ENV@ $WEBLATE_DIR/weblate/examples/celery-weblate.conf > /etc/default/celery-weblate
 
