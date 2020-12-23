@@ -92,8 +92,10 @@ if [ $WEBLATE_PKG != "Weblate" ] ; then
     cd $WEBLATE_DIR
     OLD_HEAD=$(git log -n1 --format=%H)
     sudo -u $USERNAME sh -c "cd $WEBLATE_DIR; git pull"
-    git diff --exit-code "$OLD_HEAD".. -- weblate/settings_example.py > /dev/null
-    DO_DIFF="$?"
+    if [ "$DO_DIFF" -eq 1 ] ; then
+        git diff --exit-code "$OLD_HEAD".. -- weblate/settings_example.py > /dev/null
+        DO_DIFF="$?"
+    fi
 fi
 sudo -u $USERNAME $WEBLATE_ENV/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS $WEBLATE_PKG[all] wllegal
 
