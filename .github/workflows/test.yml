@@ -33,3 +33,5 @@ jobs:
         run: sudo ./install-munin
       - name: Upgrade
         run: sudo ./upgrade-weblate --nodiff
+      - name: Upgrade (lazy restart)
+        run: sudo ./upgrade-weblate --nodiff --lazy-restart

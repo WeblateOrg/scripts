@@ -5,8 +5,9 @@ set -e
 cd /tmp
 
 DO_DIFF=1
+LAZY_RESTART=0
 
-PARSED_ARGUMENTS=$(getopt -a -n alphabet -o d --long nodiff,no-diff -- "$@")
+PARSED_ARGUMENTS=$(getopt -a -n alphabet -o dr --long nodiff,no-diff,lazy-restart -- "$@")
 VALID_ARGUMENTS=$?
 if [ "$VALID_ARGUMENTS" != "0" ]; then
     echo "Invalid arguments"
@@ -17,6 +18,10 @@ while : do
     case "$1" in
         -d | --nodiff | --no-diff)
             DO_DIFF=0
+            shift
+            ;;
+        -r | --lazy-restart)
+            LAZY_RESTART=1
             shift
             ;;
         --)
@@ -70,8 +75,6 @@ if [ -z "$SERVICE" ] ; then
     exit 1
 fi
 
-# Stop web
-systemctl stop $SERVICE
 
 if [ "$WEBLATE_HOME" = /opt/weblate ] ; then
     WEBLATE_ENV="/opt/weblate"
@@ -95,13 +98,17 @@ else
     PIP_ARGS=""
 fi
 
-# Wait for celery to process all jobs
-while sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate celery_queues | grep ': [^0]' ; do
-    sleep 1
-done
+if [ $LAZY_RESTART -eq 0 ] ; then
+    # Stop web
+    systemctl stop $SERVICE
+    # Wait for celery to process all jobs
+    while sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate celery_queues | grep ': [^0]' ; do
+        sleep 1
+    done
 
-# Stop celery
-systemctl stop celery-weblate.service
+    # Stop celery
+    systemctl stop celery-weblate.service
+fi
 
 # Backup settings
 cp $WEBLATE_DIR/weblate/settings.py /root/weblate-settings-$(date -I).py
@@ -145,8 +152,12 @@ if ! grep -q "SENTRY_TOKEN = ''" $WEBLATE_DIR/weblate/settings.py ; then
 fi
 
 # Start the services
-systemctl start celery-weblate.service
-systemctl start $SERVICE
+if [ $LAZY_RESTART -eq 0 ] ; then
+    systemctl start celery-weblate.service
+    systemctl start $SERVICE
+else
+    systemctl restart celery-weblate.service $SERVICE
+fi
 
 # Upgrade munin plugin
 if [ -d /usr/share/munin/plugins ] ; then
