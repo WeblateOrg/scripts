@@ -14,7 +14,7 @@ if [ "$VALID_ARGUMENTS" != "0" ]; then
     exit 1
 fi
 eval set -- "$PARSED_ARGUMENTS"
-while : do
+while : ; do
     case "$1" in
         -d | --nodiff | --no-diff)
             DO_DIFF=0
