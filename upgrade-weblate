@@ -7,10 +7,15 @@ cd /tmp
 DO_DIFF=1
 LAZY_RESTART=0
 
-PARSED_ARGUMENTS=$(getopt -a -n alphabet -o dr --long nodiff,no-diff,lazy-restart -- "$@")
+usage() {
+    echo "Usage: upgrade-weblate [--no-diff] [--lazy-restart]"
+}
+
+PARSED_ARGUMENTS=$(getopt -a -n upgrade-weblate -o drh --long help,nodiff,no-diff,lazy-restart -- "$@")
 VALID_ARGUMENTS=$?
 if [ "$VALID_ARGUMENTS" != "0" ]; then
     echo "Invalid arguments"
+    usage
     exit 1
 fi
 eval set -- "$PARSED_ARGUMENTS"
@@ -24,12 +29,17 @@ while : ; do
             LAZY_RESTART=1
             shift
             ;;
+        -h | --help)
+            usage
+            exit
+            ;;
         --)
             shift
             break
             ;;
         *)
             echo "Unexpected option: $1 - this should not happen."
+            usage
             exit 1
             ;;
     esac
