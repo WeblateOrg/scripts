@@ -5,9 +5,30 @@ set -e
 cd /tmp
 
 DO_DIFF=1
-if [ "x$1" = "x--nodiff" ] ; then
-    DO_DIFF=0
+
+PARSED_ARGUMENTS=$(getopt -a -n alphabet -o d --long nodiff,no-diff -- "$@")
+VALID_ARGUMENTS=$?
+if [ "$VALID_ARGUMENTS" != "0" ]; then
+    echo "Invalid arguments"
+    exit 1
 fi
+eval set -- "$PARSED_ARGUMENTS"
+while : do
+    case "$1" in
+        -d | --nodiff | --no-diff)
+            DO_DIFF=0
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo "Unexpected option: $1 - this should not happen."
+            exit 1
+            ;;
+    esac
+done
 
 # Detect user
 if [ -n "$WEBLATE_USERNAME" ] ; then
