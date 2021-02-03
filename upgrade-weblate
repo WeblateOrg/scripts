@@ -114,6 +114,11 @@ cp $WEBLATE_DIR/weblate/settings.py /root/weblate-settings-$(date -I).py
 # Upgrade pip
 sudo -u $USERNAME $WEBLATE_ENV/bin/pip install -U pip wheel
 
+# Prebuild wheels, they are stored in the cache
+WHEELS=$(mktemp -d)
+sudo -u $USERNAME $WEBLATE_ENV/bin/pip wheel --upgrade-strategy eager --upgrade Weblate[all] wllegal
+rm -rf $WHEELS
+
 if [ $LAZY_RESTART -eq 0 ] ; then
     # Stop web
     systemctl stop $SERVICE
