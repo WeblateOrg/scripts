@@ -166,7 +166,8 @@ if [ $LAZY_RESTART -eq 0 ] ; then
     systemctl start celery-weblate.service
     systemctl start $SERVICE
 else
-    systemctl restart celery-weblate.service $SERVICE
+    systemctl restart celery-weblate.service &
+    systemctl restart $SERVICE
 fi
 
 # Upgrade munin plugin
