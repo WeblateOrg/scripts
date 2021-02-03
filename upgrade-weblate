@@ -116,7 +116,7 @@ sudo -u $USERNAME $WEBLATE_ENV/bin/pip install -U pip wheel
 
 # Prebuild wheels, they are stored in the cache
 WHEELS=$(mktemp -d)
-sudo -u $USERNAME $WEBLATE_ENV/bin/pip wheel --upgrade-strategy eager --upgrade Weblate[all] wllegal
+sudo -u $USERNAME $WEBLATE_ENV/bin/pip wheel Weblate[all] wllegal
 rm -rf $WHEELS
 
 if [ $LAZY_RESTART -eq 0 ] ; then
