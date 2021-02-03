@@ -108,6 +108,12 @@ else
     PIP_ARGS=""
 fi
 
+# Backup settings
+cp $WEBLATE_DIR/weblate/settings.py /root/weblate-settings-$(date -I).py
+
+# Upgrade pip
+sudo -u $USERNAME $WEBLATE_ENV/bin/pip install -U pip wheel
+
 if [ $LAZY_RESTART -eq 0 ] ; then
     # Stop web
     systemctl stop $SERVICE
@@ -120,11 +126,7 @@ if [ $LAZY_RESTART -eq 0 ] ; then
     systemctl stop celery-weblate.service
 fi
 
-# Backup settings
-cp $WEBLATE_DIR/weblate/settings.py /root/weblate-settings-$(date -I).py
-
 # Upgrade modules
-sudo -u $USERNAME $WEBLATE_ENV/bin/pip install -U pip
 if [ $WEBLATE_PKG != "Weblate" ] ; then
     OLD_DIR=$PWD
     cd $WEBLATE_DIR
