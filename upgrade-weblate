@@ -116,7 +116,7 @@ sudo -u $USERNAME $WEBLATE_ENV/bin/pip install -U pip wheel
 
 # Prebuild wheels, they are stored in the cache
 WHEELS=$(mktemp -d)
-chwon $USERNAME "$WHEELS"
+chown $USERNAME "$WHEELS"
 sudo -u $USERNAME $WEBLATE_ENV/bin/pip wheel --wheel-dir "$WHEELS" Weblate[all] wllegal
 rm -rf "$WHEELS"
 
