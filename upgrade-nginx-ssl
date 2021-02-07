@@ -5,6 +5,10 @@
 # Disable Letsencrypt SSL configuraion (it is weak)
 sed -i '/\/etc\/letsencrypt\/options-ssl-nginx.conf/ D' /etc/nginx/sites-available/*
 
+# Disable built-in SSL config
+sed -i -e '/ssl_protocols/D' -e '/ssl_prefer_server_ciphers/D' /etc/nginx/nginx.conf
+
+
 # Update SSL config
 cat > /etc/nginx/conf.d/ssl.conf <<EOT
 ssl_session_timeout 1d;
