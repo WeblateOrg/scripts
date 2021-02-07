@@ -51,6 +51,7 @@ s ./scripts/configure-system
 s ./scripts/install-exim
 s ./scripts/install-posgtresql
 s ./scripts/install-weblate
+s ./scripts/upgrade-nginx-ssl
 s ./scripts/install-munin
 
 # Configure mail sending

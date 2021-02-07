@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# Based on https://ssl-config.mozilla.org/#server=nginx
+
+# Disable Letsencrypt SSL configuraion (it is weak)
+sed -i '/\/etc\/letsencrypt\/options-ssl-nginx.conf/ D' /etc/nginx/sites-available/*
+
+# Update SSL config
+cat > /etc/nginx/conf.d/ssl.conf <<EOT
+ssl_session_timeout 1d;
+ssl_session_cache shared:SSL:50m;
+ssl_session_tickets off;
+
+ssl_dhparam /etc/nginx/ffdhe4096.pem;
+
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+ssl_prefer_server_ciphers off;
+
+ssl_stapling on;
+ssl_stapling_verify on;
+EOT
+
+# Update DH params
+if [ ! -f /etc/nginx/ffdhe4096.pem ] ; then
+    curl https://ssl-config.mozilla.org/ffdhe2048.txt > /etc/nginx/ffdhe4096.pem
+fi
+
+# Reload ngxin
+systemctl reload nginx
