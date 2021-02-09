@@ -2,6 +2,7 @@
 
 set -e
 
+# shellcheck disable=SC1091
 . /etc/weblate-bootstrap
 
 cd /tmp
@@ -70,16 +71,17 @@ usermod --append --groups adm weblate
 WEBLATE_HOME=~weblate
 
 # Install Weblate and deps
-sudo -u weblate virtualenv --python=python3 $WEBLATE_HOME/weblate-env
-sudo -u weblate $WEBLATE_HOME/weblate-env/bin/pip install Weblate[all] wllegal
+sudo -u weblate virtualenv --python=python3 "$WEBLATE_HOME/weblate-env"
+sudo -u weblate "$WEBLATE_HOME/weblate-env/bin/pip install" 'Weblate[all]' wllegal
 
 PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
 
-SETTINGS_PY=$WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py
+SETTINGS_PY="$WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings.py"
 
 # Configure Weblate
-sudo -u weblate cp $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings_example.py $SETTINGS_PY
+sudo -u weblate cp "$WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/settings_example.py" "$SETTINGS_PY"
 
+# shellcheck disable=SC1004
 sed -i \
     -e "s#^DATA_DIR.*#DATA_DIR = \"$WEBLATE_HOME/data\"#" \
     -e 's#^ENABLE_HTTPS.*#ENABLE_HTTPS = True#' \
@@ -117,9 +119,9 @@ SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     -e 's/^REQUIRE_LOGIN =.*/REQUIRE_LOGIN = True/' \
     -e 's/^COMPRESS_OFFLINE =.*/COMPRESS_OFFLINE = True/' \
     -e 's/#     "weblate.machinery.apertium.ApertiumAPYTranslation",/"weblate.machinery.apertium.ApertiumAPYTranslation",/' \
-    $SETTINGS_PY
+    "$SETTINGS_PY"
 
-cat <<EOT >> $SETTINGS_PY
+cat <<EOT >> "$SETTINGS_PY"
 
 # Hosted customization
 ADMINS_CONTACT = ['rt@weblate.org']
@@ -138,12 +140,12 @@ fi
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate compress --force
 # Track deploy at Sentry
-if ! grep -q "SENTRY_TOKEN = ''" $SETTINGS_PY ; then
-    sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate sentry_deploy
+if ! grep -q "SENTRY_TOKEN = ''" "$SETTINGS_PY" ; then
+    sudo -u weblate "$WEBLATE_HOME/weblate-env/bin/weblate sentry_deploy"
 fi
 
 # Celery and uwsgi
-cd $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/examples/
+cd "$WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/examples/"
 cp celery-weblate.logrotate /etc/logrotate.d/
 cp celery-weblate.service /etc/systemd/system/
 cp celery-weblate.conf /etc/default/celery-weblate
@@ -156,7 +158,7 @@ systemctl restart uwsgi.service
 
 # SSL cert
 if [ "x$1" != "x--nocert" ] ; then
-    certbot --agree-tos --email rt@weblate.org --redirect --no-eff-email -d $WEBLATE_DOMAIN
+    certbot --agree-tos --email rt@weblate.org --redirect --no-eff-email -d "$WEBLATE_DOMAIN"
 fi
 
 # Enable http/2

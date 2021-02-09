@@ -61,7 +61,7 @@ if [ -z "$USERNAME" ] ; then
     exit 1
 fi
 
-if [ $USERNAME = root -a -d /opt/weblate ] ; then
+if [ $USERNAME = root ] && [ -d /opt/weblate ] ; then
     WEBLATE_HOME=/opt/weblate
     WEBLATE_USERNAME=apache
 else
@@ -92,7 +92,7 @@ else
     WEBLATE_ENV="$WEBLATE_HOME/weblate-env"
 fi
 
-PYVER=$($WEBLATE_ENV/bin/python -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
+PYVER="$("$WEBLATE_ENV/bin/python" -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')"
 
 if [ -d "$WEBLATE_HOME/weblate-src" ] ; then
     WEBLATE_DIR="$WEBLATE_HOME/weblate-src"
@@ -109,22 +109,22 @@ else
 fi
 
 # Backup settings
-cp $WEBLATE_DIR/weblate/settings.py /root/weblate-settings-$(date -I).py
+cp "$WEBLATE_DIR/weblate/settings.py" "/root/weblate-settings-$(date -I).py"
 
 # Upgrade pip
-sudo -u $USERNAME $WEBLATE_ENV/bin/pip install -U pip wheel
+sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install -U pip wheel
 
 # Prebuild wheels, they are stored in the cache
 WHEELS=$(mktemp -d)
-chown $USERNAME "$WHEELS"
-sudo -u $USERNAME $WEBLATE_ENV/bin/pip wheel --wheel-dir "$WHEELS" Weblate[all] wllegal
+chown "$USERNAME" "$WHEELS"
+sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" wheel --wheel-dir "$WHEELS" 'Weblate[all]' wllegal
 rm -rf "$WHEELS"
 
 if [ $LAZY_RESTART -eq 0 ] ; then
     # Stop web
     systemctl stop $SERVICE
     # Wait for celery to process all jobs
-    while sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate celery_queues | grep ': [^0]' ; do
+    while sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" celery_queues | grep ': [^0]' ; do
         sleep 1
     done
 
@@ -135,38 +135,40 @@ fi
 # Upgrade modules
 if [ $WEBLATE_PKG != "Weblate" ] ; then
     OLD_DIR=$PWD
-    cd $WEBLATE_DIR
+    cd "$WEBLATE_DIR"
     OLD_HEAD=$(git log -n1 --format=%H)
-    sudo -u $USERNAME sh -c "cd $WEBLATE_DIR; git pull"
+    sudo -u "$USERNAME" sh -c "cd $WEBLATE_DIR; git pull"
     if [ "$DO_DIFF" -eq 1 ] && git diff --exit-code "$OLD_HEAD".. -- weblate/settings_example.py > /dev/null ; then
         DO_DIFF="0"
     fi
+    cd "$OLD_DIR"
 fi
-sudo -u $USERNAME $WEBLATE_ENV/bin/pip install --upgrade-strategy eager --upgrade $PIP_ARGS $WEBLATE_PKG[all] wllegal
+# shellcheck disable=SC2086
+sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install --upgrade-strategy eager --upgrade $PIP_ARGS "${WEBLATE_PKG}[all]" wllegal
 
 # Adjust configuration
 if [ "$DO_DIFF" -eq 1 ] ; then
-    vimdiff $WEBLATE_DIR/weblate/settings_example.py $WEBLATE_DIR/weblate/settings.py
+    vimdiff "$WEBLATE_DIR/weblate/settings_example.py" "$WEBLATE_DIR/weblate/settings.py"
 fi
-sed s@/home/weblate/weblate-env@$WEBLATE_ENV@ $WEBLATE_DIR/weblate/examples/celery-weblate.conf > /etc/default/celery-weblate
+sed "s@/home/weblate/weblate-env@$WEBLATE_ENV@" "$WEBLATE_DIR/weblate/examples/celery-weblate.conf" > /etc/default/celery-weblate
 
 # Migrate database, compile gettext and collect static files
-sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate migrate
-sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate ensure_stats
-sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate collectstatic --noinput
-sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate compress --force
-if ! grep -q UPDATE_LANGUAGES $WEBLATE_DIR/weblate/settings.py ; then
-    sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate setuplang
+sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" migrate
+sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" ensure_stats
+sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" collectstatic --noinput
+sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" compress --force
+if ! grep -q UPDATE_LANGUAGES "$WEBLATE_DIR/weblate/settings.py" ; then
+    sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" setuplang
 fi
 if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
-    sudo -u $WEBLATE_USERNAME sh -c "cd $WEBLATE_DIR; $WEBLATE_ENV/bin/weblate compilemessages"
-    if [ -d $WEBLATE_HOME/hosted ] ; then
-        sudo -u $WEBLATE_USERNAME sh -c "cd $WEBLATE_HOME/hosted; git pull -q; $WEBLATE_ENV/bin/weblate compilemessages"
+    sudo -u "$WEBLATE_USERNAME" sh -c "cd $WEBLATE_DIR; $WEBLATE_ENV/bin/weblate compilemessages"
+    if [ -d "$WEBLATE_HOME/hosted" ] ; then
+        sudo -u "$WEBLATE_USERNAME" sh -c "cd $WEBLATE_HOME/hosted; git pull -q; $WEBLATE_ENV/bin/weblate compilemessages"
     fi
 fi
 # Track deploy at Sentry
-if ! grep -q "SENTRY_TOKEN = ''" $WEBLATE_DIR/weblate/settings.py ; then
-    sudo -u $WEBLATE_USERNAME $WEBLATE_ENV/bin/weblate sentry_deploy
+if ! grep -q "SENTRY_TOKEN = ''" "$WEBLATE_DIR/weblate/settings.py" ; then
+    sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" sentry_deploy
 fi
 
 # Start the services
@@ -187,7 +189,7 @@ fi
 # Upgrade fail2ban
 if [ -d /etc/fail2ban/filter.d/ ] ; then
     sudo -u $USERNAME sh -c "cd $WEBLATE_HOME/fail2ban && git pull"
-    ln -sf $WEBLATE_HOME/fail2ban/filter.d/* /etc/fail2ban/filter.d/
-    ln -sf $WEBLATE_HOME/fail2ban/jail.d/* /etc/fail2ban/jail.d/
+    ln -sf "$WEBLATE_HOME/fail2ban/filter.d/*" /etc/fail2ban/filter.d/
+    ln -sf "$WEBLATE_HOME/fail2ban/jail.d/*" /etc/fail2ban/jail.d/
     systemctl reload fail2ban.service
 fi

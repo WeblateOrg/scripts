@@ -2,6 +2,7 @@
 
 set -e
 
+# shellcheck disable=SC1091
 . /etc/weblate-bootstrap
 
 apt install -y exim4
@@ -21,4 +22,4 @@ EOT
 systemctl restart exim4
 
 echo "TODO: update smarthost credentials:"
-echo "$WEBLATE_DOMAIN:$(openssl passwd -6 -salt $(openssl rand -hex 6) "$EXIM_PASS"):666:0:99999:7::"
+echo "$WEBLATE_DOMAIN:$(openssl passwd -6 -salt "$(openssl rand -hex 6)" "$EXIM_PASS"):666:0:99999:7::"

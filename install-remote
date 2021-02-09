@@ -3,47 +3,51 @@
 
 set -e
 
-if [ -z "$1" -o "x$1" = "x--help" ] ; then
+if [ -z "$1" ] || [ "x$1" = "x--help" ] ; then
     echo "Usage: install-remote HOSTNAME"
     exit 1
 fi
 
 # Set path to include script directory
-export PATH="$(dirname "$(readlink -f "$0")"):$PATH"
+PATH="$(dirname "$(readlink -f "$0")"):$PATH"
+export PATH
 
 BOOTSTRAP=$(mktemp --tmpdir weblate-bootstrap.XXXXXXXXXX)
 TMPFILE=$(mktemp --tmpdir weblate-log.XXXXXXXXXX)
 
 # Gather basic configuration
-bootstrap $BOOTSTRAP
-cat >> $BOOTSTRAP <<EOT
+bootstrap "$BOOTSTRAP"
+cat >> "$BOOTSTRAP" <<EOT
 WEBLATE_PASSWORD="$(apg -a 0 -M sncl -n 1 -x 10 -m 20)"
 EOT
-. $BOOTSTRAP
+
+# shellcheck disable=SC1090
+. "$BOOTSTRAP"
 
 # Create server
 hcloud server create \
     --image debian-10 \
     --location nbg1 \
-    --name $1 \
+    --name "$1" \
     --network 19990 \
     --ssh-key 1056953 \
     --ssh-key 1494306 \
-    --type cx21-ceph | tee $TMPFILE
+    --type cx21-ceph | tee "$TMPFILE"
 
-IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' $TMPFILE)
+IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' "$TMPFILE")
 
 ssh-keygen -f ~/.ssh/known_hosts -R "$IPADDRESS"
 
 echo "Created server with address $IPADDRESS, please ensure $WEBLATE_DOMAIN points to that"
-read x
+read -r
 
 s() {
-    ssh root@$IPADDRESS "$@"
+    # shellcheck disable=SC2029
+    ssh "root@$IPADDRESS" "$@"
 }
 
 # Install the system
-scp $BOOTSTRAP root@$IPADDRESS:/etc/weblate-bootstrap
+scp "$BOOTSTRAP" "root@$IPADDRESS:/etc/weblate-bootstrap"
 s apt update
 s apt install -y git
 s git clone https://github.com/WeblateOrg/scripts.git
@@ -55,8 +59,8 @@ s ./scripts/upgrade-nginx-ssl
 s ./scripts/install-munin
 
 # Configure mail sending
-echo "$WEBLATE_DOMAIN:$(openssl passwd -6 -salt $(openssl rand -hex 6) "$EXIM_PASS"):666:0:99999:7::" | ssh root@mail tee --append /etc/exim4/passwd
-ssh root@mail ln -sf /etc/exim4/virtual/weblate.cloud /etc/exim4/virtual/$WEBLATE_DOMAIN
+echo "$WEBLATE_DOMAIN:$(openssl passwd -6 -salt "$(openssl rand -hex 6)" "$EXIM_PASS"):666:0:99999:7::" | ssh root@mail tee --append /etc/exim4/passwd
+ssh root@mail ln -sf /etc/exim4/virtual/weblate.cloud "/etc/exim4/virtual/$WEBLATE_DOMAIN"
 
 # Print list of things to do
 echo "TODO:"
@@ -68,4 +72,4 @@ echo " * Activate and verify backups"
 echo " * Verify SMTP is working"
 echo " * Add service to monitoring"
 
-rm -f $BOOTSTRAP $TMPFILE
+rm -f "$BOOTSTRAP" "$TMPFILE"
