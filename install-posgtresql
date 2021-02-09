@@ -11,7 +11,8 @@ cd /tmp
 apt install -y postgresql
 
 # Figure out current cluster version
-CLUSTER_VERSION=$(find /etc/postgresql -mindepth 1 -maxdepth 1 | sort | tail -n1)
+# shellcheck disable=SC2012
+CLUSTER_VERSION=$(ls /etc/postgresql | sort | tail -n1)
 
 # Start cluster
 pg_ctlcluster "$CLUSTER_VERSION" main start
