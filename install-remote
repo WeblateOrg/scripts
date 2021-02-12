@@ -39,7 +39,8 @@ IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' "$TMPFILE")
 ssh-keygen -f ~/.ssh/known_hosts -R "$IPADDRESS"
 
 echo "Created server with address $IPADDRESS, please ensure $WEBLATE_DOMAIN points to that"
-read -r
+# shellcheck disable=SC2034
+read -r dummy
 
 s() {
     # shellcheck disable=SC2029
