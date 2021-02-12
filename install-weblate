@@ -141,7 +141,7 @@ sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate compress --force
 # Track deploy at Sentry
 if ! grep -q "SENTRY_TOKEN = ''" "$SETTINGS_PY" ; then
-    sudo -u weblate "$WEBLATE_HOME/weblate-env/bin/weblate sentry_deploy"
+    sudo -u weblate "$WEBLATE_HOME/weblate-env/bin/weblate" sentry_deploy
 fi
 
 # Celery and uwsgi
