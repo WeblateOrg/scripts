@@ -1,5 +1,6 @@
 #!/bin/sh
 # Installation wrapper to create Weblate instance on Hetzner cloud
+# shellcheck disable=SC2162
 
 set -e
 
@@ -39,7 +40,7 @@ IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' "$TMPFILE")
 ssh-keygen -f ~/.ssh/known_hosts -R "$IPADDRESS"
 
 echo "Created server with address $IPADDRESS, please ensure $WEBLATE_DOMAIN points to that"
-read -r
+read
 
 s() {
     # shellcheck disable=SC2029
