@@ -1,29 +1,28 @@
 #!/bin/sh
-# shellcheck disable=SC2162
 
 echo "Weblate domain:"
-read domain
+read -r domain
 echo "Weblate title:"
-read title
+read -r title
 if [ -f ~/.config/weblate-bootstrap/sentry_dsn ] ; then
     sentry=$(cat ~/.config/weblate-bootstrap/sentry_dsn)
 else
     echo "Sentry DSN:"
-    read sentry
+    read -r sentry
 fi
 if [ -f ~/.config/weblate-bootstrap/sentry_token ] ; then
     sentry_token=$(cat ~/.config/weblate-bootstrap/sentry_token)
 else
     echo "Sentry Token:"
-    read sentry_token
+    read -r sentry_token
 fi
 echo "Matomo site id:"
-read matomo
+read -r matomo
 if [ -f ~/.config/weblate-bootstrap/matomo_token ] ; then
     matomo_token=$(cat ~/.config/weblate-bootstrap/matomo_token)
 else
     echo "Matomo token:"
-    read matomo_token
+    read -r matomo_token
 fi
 
 smtp_pass=$(openssl rand -hex 32)
