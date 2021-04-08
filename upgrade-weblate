@@ -107,6 +107,9 @@ else
     WEBLATE_PKG="Weblate"
     PIP_ARGS=""
 fi
+if [ -d "$WEBLATE_HOME/hosted" ] ; then
+    PIP_ARGS="--editable $WEBLATE_HOME/hosted $PIP_ARGS"
+fi
 
 # Backup settings
 cp "$WEBLATE_DIR/weblate/settings.py" "/root/weblate-settings-$(date -I).py"
