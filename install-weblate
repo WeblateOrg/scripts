@@ -129,6 +129,7 @@ DEFAULT_COMMITER_EMAIL = 'hosted@weblate.org'
 DEFAULT_COMMITER_NAME = 'Hosted Weblate'
 STATUS_URL = "https://status.weblate.org/"
 GET_HELP_URL = "https://care.weblate.org/"
+CONTACT_FORM = "from"
 EOT
 
 # Fill the database
