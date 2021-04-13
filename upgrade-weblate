@@ -141,6 +141,9 @@ if [ $WEBLATE_PKG != "Weblate" ] ; then
     cd "$WEBLATE_DIR"
     OLD_HEAD=$(git log -n1 --format=%H)
     sudo -u "$USERNAME" sh -c "cd $WEBLATE_DIR; git pull"
+    if [ -d "$WEBLATE_HOME/hosted" ] ; then
+        sudo -u "$WEBLATE_USERNAME" sh -c "cd $WEBLATE_HOME/hosted; git pull -q"
+    fi
     if [ "$DO_DIFF" -eq 1 ] && git diff --exit-code "$OLD_HEAD".. -- weblate/settings_example.py > /dev/null ; then
         DO_DIFF="0"
     fi
@@ -166,7 +169,7 @@ fi
 if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
     sudo -u "$WEBLATE_USERNAME" sh -c "cd $WEBLATE_DIR; $WEBLATE_ENV/bin/weblate compilemessages"
     if [ -d "$WEBLATE_HOME/hosted" ] ; then
-        sudo -u "$WEBLATE_USERNAME" sh -c "cd $WEBLATE_HOME/hosted; git pull -q; $WEBLATE_ENV/bin/weblate compilemessages"
+        sudo -u "$WEBLATE_USERNAME" sh -c "cd $WEBLATE_HOME/hosted; $WEBLATE_ENV/bin/weblate compilemessages"
     fi
 fi
 # Track deploy at Sentry
