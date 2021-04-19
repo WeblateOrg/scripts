@@ -8,6 +8,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.3.4
+      # Remove non-installable git packages. There git-svn can not be installed
+      # because the image contains newer versions which do not have matching git-svn
+      # in enabled repositories.
+      - name: APT cleanup
+        run: sudo apt-get purge git git-man
       - name: Exim
         run: sudo ./configure-system
       - name: Bootstrap
