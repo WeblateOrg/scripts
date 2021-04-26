@@ -158,7 +158,7 @@ ln -s ../apps-available/weblate.ini /etc/uwsgi/apps-enabled/
 systemctl restart uwsgi.service
 
 # SSL cert
-if [ "x$1" != "x--nocert" ] ; then
+if [ "$1" != "--nocert" ] ; then
     certbot --agree-tos --email rt@weblate.org --redirect --no-eff-email -d "$WEBLATE_DOMAIN"
 fi
 
