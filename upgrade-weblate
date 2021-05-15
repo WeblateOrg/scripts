@@ -193,7 +193,7 @@ if [ -d /usr/share/munin/plugins ] ; then
 fi
 
 # Upgrade fail2ban
-if [ -d /etc/fail2ban/filter.d/ ] ; then
+if [ -d "$WEBLATE_HOME/fail2ban" ] ; then
     sudo -u $USERNAME sh -c "cd $WEBLATE_HOME/fail2ban && git pull"
     ln -sf "$WEBLATE_HOME/fail2ban/filter.d/*" /etc/fail2ban/filter.d/
     ln -sf "$WEBLATE_HOME/fail2ban/jail.d/*" /etc/fail2ban/jail.d/
