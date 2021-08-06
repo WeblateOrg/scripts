@@ -8,6 +8,7 @@ set -e
 cd /tmp
 
 # Install deps
+apt-get update
 apt-get install --no-install-recommends -y\
     build-essential \
     certbot \
