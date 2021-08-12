@@ -169,6 +169,8 @@ sed -i -e 's/ssl;/ssl http2;/' -e 's/ssl ipv6only=on/ssl ipv6only=on http2/' /et
 sed -i '/server_name _/a location = /nginx_status {\n    stub_status;\n}'   /etc/nginx/sites-available/default
 # Enable compression for js/css
 sed -i 's/^\t# gzip/\tgzip/' /etc/nginx/nginx.conf
+# Hide server version
+sed -i 's/# server_tokens off/server_tokens off/' /etc/nginx/nginx.conf
 # Weblate nginx snippet
 cat > /etc/nginx/snippets/weblate.conf <<EOT
     location /static/ {
