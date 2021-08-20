@@ -14,7 +14,6 @@ apt-get install --no-install-recommends -y\
     certbot \
     curl \
     cython3 \
-    glances \
     fail2ban python3-pyinotify python3-systemd \
     g++ \
     gcc \
@@ -23,8 +22,8 @@ apt-get install --no-install-recommends -y\
     git \
     git-svn \
     gnupg \
-    libcairo-dev \
-    libenchant1c2a \
+    libcairo2-dev \
+    libenchant-2-2 \
     libfreetype6-dev \
     libgirepository1.0-dev \
     libjpeg-dev \
@@ -35,10 +34,10 @@ apt-get install --no-install-recommends -y\
     libtesseract-dev \
     libxml2-dev \
     libxmlsec1-dev \
-    libxslt-dev \
+    libxslt1-dev \
     libyaml-dev \
     libacl1-dev \
-    libz-dev \
+    zlib1g-dev \
     nginx \
     openssh-client \
     pkg-config \
