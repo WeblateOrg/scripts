@@ -13,7 +13,7 @@ apt-get install --no-install-recommends -y\
     build-essential \
     certbot \
     curl \
-    cython \
+    cython3 \
     glances \
     fail2ban python3-pyinotify python3-systemd \
     g++ \
