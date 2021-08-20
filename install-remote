@@ -26,7 +26,7 @@ EOT
 
 # Create server
 hcloud server create \
-    --image debian-10 \
+    --image debian-11 \
     --location nbg1 \
     --name "$1" \
     --network 19990 \
