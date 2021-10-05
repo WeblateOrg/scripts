@@ -109,7 +109,7 @@ else
 fi
 WEBLATE_FLAGS="all,zxcvbn"
 if [ -d "$WEBLATE_HOME/hosted" ] ; then
-    PIP_ARGS="--editable $WEBLATE_HOME/hosted $PIP_ARGS"
+    PIP_ARGS="--editable $WEBLATE_HOME/hosted $PIP_ARGS djangosaml2idp"
     WEBLATE_FLAGS="$WEBLATE_FLAGS,mysql"
 fi
 
