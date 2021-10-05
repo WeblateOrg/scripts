@@ -107,8 +107,10 @@ else
     WEBLATE_PKG="Weblate"
     PIP_ARGS=""
 fi
+WEBLATE_FLAGS="all"
 if [ -d "$WEBLATE_HOME/hosted" ] ; then
     PIP_ARGS="--editable $WEBLATE_HOME/hosted $PIP_ARGS"
+    WEBLATE_FLAGS="$WEBLATE_FLAGS,mysql"
 fi
 
 # Backup settings
@@ -120,7 +122,7 @@ sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install -U pip wheel
 # Prebuild wheels, they are stored in the cache
 WHEELS=$(mktemp -d)
 chown "$USERNAME" "$WHEELS"
-sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" wheel --wheel-dir "$WHEELS" 'Weblate[all]' wllegal
+sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" wheel --wheel-dir "$WHEELS" "Weblate[${WEBLATE_FLAGS}]" wllegal
 rm -rf "$WHEELS"
 
 if [ $LAZY_RESTART -eq 0 ] ; then
@@ -150,7 +152,7 @@ if [ $WEBLATE_PKG != "Weblate" ] ; then
     cd "$OLD_DIR"
 fi
 # shellcheck disable=SC2086
-sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install --upgrade-strategy eager --upgrade $PIP_ARGS "${WEBLATE_PKG}[all]" wllegal
+sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install --upgrade-strategy eager --upgrade $PIP_ARGS "${WEBLATE_PKG}[${WEBLATE_FLAGS}]" wllegal
 
 # Adjust configuration
 if [ "$DO_DIFF" -eq 1 ] ; then
