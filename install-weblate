@@ -239,7 +239,7 @@ rm /tmp/weblate-cron
 
 # Licensee
 sudo -u weblate gem install --user-install licensee
-sudo -u weblate ln -s $WEBLATE_HOME/.gem/ruby/2.5.0/bin/licensee $WEBLATE_HOME/weblate-env/bin/
+sudo -u weblate ln -s $WEBLATE_HOME/.gem/ruby/2.7.0/bin/licensee $WEBLATE_HOME/weblate-env/bin/
 sudo -u weblate ln -s $WEBLATE_HOME/.gem $WEBLATE_HOME/data/home/
 
 # Fail2ban
