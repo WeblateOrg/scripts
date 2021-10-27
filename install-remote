@@ -16,10 +16,9 @@ BOOTSTRAP=$(mktemp --tmpdir weblate-bootstrap.XXXXXXXXXX)
 TMPFILE=$(mktemp --tmpdir weblate-log.XXXXXXXXXX)
 
 # Gather basic configuration
-bootstrap "$BOOTSTRAP"
+bootstrap "$BOOTSTRAP" "$2"
 cat >> "$BOOTSTRAP" <<EOT
 WEBLATE_PASSWORD="$(apg -a 0 -M sncl -n 1 -x 10 -m 20)"
-WEBLATE_VERSION="$2"
 EOT
 
 # shellcheck disable=SC1090
