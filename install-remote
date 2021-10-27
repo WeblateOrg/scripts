@@ -4,7 +4,7 @@
 set -e
 
 if [ -z "$1" ] || [ "$1" = "--help" ] ; then
-    echo "Usage: install-remote HOSTNAME"
+    echo "Usage: install-remote HOSTNAME [VERSION]"
     exit 1
 fi
 
@@ -19,6 +19,7 @@ TMPFILE=$(mktemp --tmpdir weblate-log.XXXXXXXXXX)
 bootstrap "$BOOTSTRAP"
 cat >> "$BOOTSTRAP" <<EOT
 WEBLATE_PASSWORD="$(apg -a 0 -M sncl -n 1 -x 10 -m 20)"
+WEBLATE_VERSION="$2"
 EOT
 
 # shellcheck disable=SC1090

@@ -33,6 +33,7 @@ WEBLATE_TITLE="$title"
 WEBLATE_SECRET=$(openssl rand -hex 32)
 WEBLATE_SENTRY="$sentry"
 WEBLATE_SENTRY_TOKEN="$sentry_token"
+WEBLATE_VERSION=""
 
 # Matomo
 MATOMO_SITE="$matomo"
