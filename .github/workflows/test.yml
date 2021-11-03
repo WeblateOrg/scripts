@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v2.3.5
+      - uses: actions/checkout@v2.4.0
       # Remove non-installable git packages. There git-svn can not be installed
       # because the image contains newer versions which do not have matching git-svn
       # in enabled repositories.
