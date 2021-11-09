@@ -32,7 +32,7 @@ hcloud server create \
     --network 19990 \
     --ssh-key 1056953 \
     --ssh-key 1494306 \
-    --type cx21-ceph | tee "$TMPFILE"
+    --type cx21 | tee "$TMPFILE"
 
 IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' "$TMPFILE")
 
