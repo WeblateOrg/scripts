@@ -156,6 +156,8 @@ if [ $WEBLATE_PKG != "Weblate" ] ; then
 fi
 # shellcheck disable=SC2086
 sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install --upgrade-strategy eager --upgrade $PIP_ARGS "${WEBLATE_PKG}[${WEBLATE_FLAGS}]" wllegal
+# In case of cffi issues:
+# ./weblate-env/bin/pip install cffi --force-reinstall --no-binary :all:
 
 # Adjust configuration
 if [ "$DO_DIFF" -eq 1 ] ; then
