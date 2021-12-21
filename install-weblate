@@ -222,7 +222,7 @@ cat > $WEBLATE_HOME/run-matomo.sh <<EOT
 #!/bin/sh
 /usr/bin/python3 \
         $WEBLATE_HOME/matomo-log-analytics/import_logs.py \
-        --url=https://stats.cihar.com/ \
+        --url=https://stats.cihar.com \
         --enable-http-errors \
         --idsite=$MATOMO_SITE \
         --token-auth=$MATOMO_TOKEN \
