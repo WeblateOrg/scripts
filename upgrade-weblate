@@ -120,7 +120,7 @@ cp "$WEBLATE_DIR/weblate/settings.py" "/root/weblate-settings-$(date -I).py"
 sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" uninstall --yes akismet celery-batches
 
 # Upgrade pip
-sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install -U pip wheel
+sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install -U pip wheel pkgconfig
 
 # Prebuild wheels, they are stored in the cache
 WHEELS=$(mktemp -d)
