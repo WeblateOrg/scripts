@@ -67,6 +67,7 @@ WEBLATE_HOME=~weblate
 
 # Install Weblate and deps
 sudo -u weblate virtualenv --python=python3 "$WEBLATE_HOME/weblate-env"
+sudo -u weblate "$WEBLATE_HOME/weblate-env/bin/pip" install pkgconfig
 sudo -u weblate "$WEBLATE_HOME/weblate-env/bin/pip" install "Weblate[all,zxcvbn]$WEBLATE_VERSION" wllegal
 
 PYVER=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')
