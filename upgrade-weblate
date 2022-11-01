@@ -174,7 +174,9 @@ sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install --upgrade-strategy eager --up
 if [ "$DO_DIFF" -eq 1 ] ; then
     vimdiff "$WEBLATE_DIR/weblate/settings_example.py" "$WEBLATE_DIR/weblate/settings.py"
 fi
-sed "s@/home/weblate/weblate-env@$WEBLATE_ENV@" "$WEBLATE_DIR/weblate/examples/celery-weblate.conf" > /etc/default/celery-weblate
+if [ -z "$WEBLATE_WORKERS" ] ; then
+    sed "s@/home/weblate/weblate-env@$WEBLATE_ENV@" "$WEBLATE_DIR/weblate/examples/celery-weblate.conf" > /etc/default/celery-weblate
+fi
 
 # Migrate database, compile gettext and collect static files
 sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" migrate
@@ -224,4 +226,8 @@ if [ -d "$WEBLATE_HOME/fail2ban" ] ; then
     # shellcheck disable=SC2086
     ln -sf $WEBLATE_HOME/fail2ban/jail.d/* /etc/fail2ban/jail.d/
     systemctl reload fail2ban.service
+fi
+
+if [ -z "$WEBLATE_WORKERS" ] ; then
+    echo "Celery configuration not updated, using remote workers!"
 fi
