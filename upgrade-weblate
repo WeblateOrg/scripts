@@ -4,6 +4,11 @@ set -e
 
 cd /tmp
 
+if [ -f /etc/weblate-bootstrap ] ; then
+    # shellcheck disable=SC1091
+    . /etc/weblate-bootstrap
+fi
+
 DO_DIFF=1
 LAZY_RESTART=0
 
@@ -142,6 +147,9 @@ if [ $LAZY_RESTART -eq 0 ] ; then
 
     # Stop celery
     systemctl stop celery-weblate.service
+    for WORKER in $WEBLATE_WORKERS ; do
+        ssh "root@$WORKER" systemctl stop celery-weblate.service
+    done
 fi
 
 # Upgrade modules
@@ -190,9 +198,15 @@ fi
 # Start the services
 if [ $LAZY_RESTART -eq 0 ] ; then
     systemctl start celery-weblate.service
+    for WORKER in $WEBLATE_WORKERS ; do
+        ssh "root@$WORKER" systemctl start celery-weblate.service
+    done
     systemctl start $SERVICE
 else
     systemctl restart celery-weblate.service &
+    for WORKER in $WEBLATE_WORKERS ; do
+        ssh "root@$WORKER" systemctl restart celery-weblate.service &
+    done
     systemctl restart $SERVICE
 fi
 
