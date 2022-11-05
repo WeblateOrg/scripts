@@ -228,6 +228,6 @@ if [ -d "$WEBLATE_HOME/fail2ban" ] ; then
     systemctl reload fail2ban.service
 fi
 
-if [ -z "$WEBLATE_WORKERS" ] ; then
+if [ -n "$WEBLATE_WORKERS" ] ; then
     echo "Celery configuration not updated, using remote workers!"
 fi
