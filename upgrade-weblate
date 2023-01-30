@@ -156,6 +156,7 @@ fi
 if [ $WEBLATE_PKG != "Weblate" ] ; then
     OLD_DIR=$PWD
     cd "$WEBLATE_DIR"
+    git config --global safe.directory "$WEBLATE_DIR"
     OLD_HEAD=$(git log -n1 --format=%H)
     sudo -u "$USERNAME" sh -c "cd $WEBLATE_DIR; git pull"
     if [ -d "$WEBLATE_HOME/hosted" ] ; then
