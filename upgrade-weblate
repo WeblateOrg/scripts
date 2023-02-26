@@ -66,7 +66,7 @@ if [ -z "$USERNAME" ] ; then
     exit 1
 fi
 
-if [ $USERNAME = root ] && [ -d /opt/weblate ] ; then
+if [ "$USERNAME" = root ] && [ -d /opt/weblate ] ; then
     WEBLATE_HOME=/opt/weblate
     WEBLATE_USERNAME=apache
 else
@@ -139,7 +139,7 @@ rm -rf "$WHEELS"
 
 if [ $LAZY_RESTART -eq 0 ] ; then
     # Stop web
-    systemctl stop $SERVICE
+    systemctl stop "$SERVICE"
     # Wait for celery to process all jobs
     while sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" celery_queues | grep ': [^0]' ; do
         sleep 1
@@ -153,7 +153,7 @@ if [ $LAZY_RESTART -eq 0 ] ; then
 fi
 
 # Upgrade modules
-if [ $WEBLATE_PKG != "Weblate" ] ; then
+if [ "$WEBLATE_PKG" != "Weblate" ] ; then
     OLD_DIR=$PWD
     cd "$WEBLATE_DIR"
     git config --global safe.directory "$WEBLATE_DIR"
@@ -204,13 +204,13 @@ if [ $LAZY_RESTART -eq 0 ] ; then
     for WORKER in $WEBLATE_WORKERS ; do
         ssh "root@$WORKER" systemctl start celery-weblate.service
     done
-    systemctl start $SERVICE
+    systemctl start "$SERVICE"
 else
     systemctl restart celery-weblate.service &
     for WORKER in $WEBLATE_WORKERS ; do
         ssh "root@$WORKER" systemctl restart celery-weblate.service &
     done
-    systemctl restart $SERVICE
+    systemctl restart "$SERVICE"
 fi
 
 # Upgrade munin plugin
@@ -221,7 +221,7 @@ fi
 
 # Upgrade fail2ban
 if [ -d "$WEBLATE_HOME/fail2ban" ] ; then
-    sudo -u $USERNAME sh -c "cd $WEBLATE_HOME/fail2ban && git pull"
+    sudo -u "$USERNAME" sh -c "cd $WEBLATE_HOME/fail2ban && git pull"
     # shellcheck disable=SC2086
     ln -sf $WEBLATE_HOME/fail2ban/filter.d/* /etc/fail2ban/filter.d/
     # shellcheck disable=SC2086
