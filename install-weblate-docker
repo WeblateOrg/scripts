@@ -14,9 +14,13 @@ WEBLATE_DOCKER="$WEBLATE_HOME/weblate"
 
 # Install Weblate and deps
 mkdir -p "$WEBLATE_DOCKER" "$WEBLATE_HOME/data" "$WEBLATE_HOME/postgresql" "$WEBLATE_HOME/redis" "$WEBLATE_HOME/ssl-certs"
-curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/docker-compose-https.yml > "$WEBLATE_DOCKER/docker-compose.yml"
-curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/environment > "$WEBLATE_DOCKER/environment"
-cat > "$WEBLATE_DOCKER/docker-compose.override.yml" <<EOT
+
+# Go to the docker dir
+cd $WEBLATE_DOCKER
+
+curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/docker-compose-https.yml > docker-compose.yml
+curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/environment > environment
+cat > docker-compose.override.yml <<EOT
 services:
   weblate:
     image: weblate/weblate:latest
@@ -50,7 +54,7 @@ volumes:
       device: '$WEBLATE_HOME/ssl-certs'
 EOT
 
-cat >> $WEBLATE_DOCKER/environment <<EOT
+cat >> environment <<EOT
 
 # E-mail setup
 WEBLATE_EMAIL_HOST=mail.cihar.com
@@ -93,13 +97,13 @@ EOT
 chown -R weblate:weblate $WEBLATE_HOME
 
 # Start Weblate
-sudo -u weblate -D $WEBLATE_DOCKER docker-compose up -d
+sudo -u weblate docker-compose up -d
 
 # Wait for startup
-while [ "$(sudo -u weblate -D $WEBLATE_DOCKER docker-compose ps --services --filter state=unhealthy)" = "" ] ; do sleep 1; echo sleep 1; done;
+while [ "$(sudo -u weblate docker-compose ps --services --filter state=unhealthy)" = "" ] ; do sleep 1; echo sleep 1; done;
 
 # Show logs
-sudo -u weblate -D $WEBLATE_DOCKER docker-compose logs
+sudo -u weblate docker-compose logs
 
 # Check
-sudo -u weblate -D $WEBLATE_DOCKER docker-compose exec --user weblate weblate weblate check --deploy
+sudo -u weblate docker-compose exec --user weblate weblate weblate check --deploy
