@@ -54,6 +54,7 @@ s apt install -y git
 s git clone https://github.com/WeblateOrg/scripts.git
 s ./scripts/configure-system
 s ./scripts/install-exim
+# s ./scripts/install-docker
 s ./scripts/install-posgtresql
 s ./scripts/install-weblate
 s ./scripts/upgrade-nginx-ssl

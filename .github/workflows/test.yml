@@ -26,8 +26,6 @@ jobs:
         TOKEN
         EOT
         cat /etc/weblate-bootstrap
-    - name: Docker
-      run: sudo ./install-docker
     - name: Exim
       run: sudo ./install-exim
     - name: PostgreSQL
@@ -40,3 +38,35 @@ jobs:
       run: sudo ./upgrade-weblate --nodiff
     - name: Upgrade (lazy restart)
       run: sudo ./upgrade-weblate --nodiff --lazy-restart
+
+  docker:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+      # Remove non-installable git packages. There git-svn can not be installed
+      # because the image contains newer versions which do not have matching git-svn
+      # in enabled repositories.
+    - name: APT cleanup
+      run: sudo apt-get purge git git-man
+    - name: Exim
+      run: sudo ./configure-system
+    - name: Bootstrap
+      run: |
+        sudo ./bootstrap <<EOT
+        weblate.example.com
+        CI Weblate
+        https://00000000000000000000000000000000@sentry.example.com/123
+
+        0
+        TOKEN
+        EOT
+        cat /etc/weblate-bootstrap
+    - name: Docker
+      run: sudo ./install-docker
+    - name: Exim
+      run: sudo ./install-exim
+    - name: PostgreSQL
+      run: sudo ./install-posgtresql
+    - name: Weblate
+      run: sudo ./install-weblate-docker

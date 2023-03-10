@@ -1,0 +1,90 @@
+#!/bin/sh
+
+set -e
+
+# shellcheck disable=SC1091
+. /etc/weblate-bootstrap
+
+adduser weblate --disabled-password --gecos Weblate
+usermod --append --groups adm weblate
+usermod --append --groups docker weblate
+
+WEBLATE_HOME=~weblate
+WEBLATE_DIR="$WEBLATE_HOME/weblate"
+
+# Install Weblate and deps
+mkdir -p "$WEBLATE_DIR" "$WEBLATE_DIR/data" "$WEBLATE_DIR/postgresql" "$WEBLATE_DIR/redis" "$WEBLATE_DIR/ssl-certs"
+curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/docker-compose-https.yml > "$WEBLATE_DIR/docker-compose.yml"
+curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/environment > "$WEBLATE_DIR/environment"
+cat > "$WEBLATE_DIR/docker-compose.override.yml" <<EOT
+services:
+  weblate:
+    image: weblate/weblate:latest
+  https-portal:
+    environment:
+      DOMAINS: '$WEBLATE_DOMAIN -> http://weblate:8080'
+volumes:
+  weblate-data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '$WEBLATE_HOME/data'
+  postgres-data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '$WEBLATE_HOME/postgresql'
+  redis-data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '$WEBLATE_HOME/redis'
+  ssl-certs:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '$WEBLATE_HOME/ssl-certs'
+EOT
+
+cat >> $WEBLATE_DIR/environment <<EOT
+
+# E-mail setup
+WEBLATE_EMAIL_HOST=mail.cihar.com
+WEBLATE_EMAIL_PORT=587
+WEBLATE_EMAIL_HOST_USER=$WEBLATE_DOMAIN
+WEBLATE_EMAIL_HOST_PASSWORD=$EXIM_PASS
+WEBLATE_EMAIL_USE_TLS=1
+
+# Hosted customization
+WEBLATE_SERVER_EMAIL=noreply@weblate.org
+WEBLATE_DEFAULT_FROM_EMAIL=noreply@weblate.org
+WEBLATE_SITE_TITLE="$WEBLATE_TITLE"
+WEBLATE_SITE_DOMAIN="$WEBLATE_DOMAIN"
+WEBLATE_ADMIN_NAME='Michal Čihař'
+WEBLATE_ADMIN_EMAIL='michal@cihar.com'
+WEBLATE_DEFAULT_COMMITER_EMAIL='hosted@weblate.org'
+WEBLATE_DEFAULT_COMMITER_NAME='Hosted Weblate'
+WEBLATE_STATUS_URL="https://status.weblate.org/"
+WEBLATE_GET_HELP_URL="https://care.weblate.org/"
+WEBLATE_CONTACT_FORM="from"
+WEBLATE_ADMINS_CONTACT='rt@weblate.org'
+WEBLATE_SILENCED_SYSTEM_CHECKS=weblate.E012,weblate.E013
+
+# Sentry integration
+SENTRY_DSN="$WEBLATE_SENTRY"
+SENTRY_TOKEN="$WEBLATE_SENTRY_TOKEN"
+SENTRY_TRACES_SAMPLE_RATE="0.1"
+
+# Registration
+WEBLATE_REGISTRATION_OPEN=0
+WEBLATE_REQUIRE_LOGIN=1
+WEBLATE_LEGAL_INTEGRATION=wllegal
+
+# Machinery, see https://github.com/WeblateOrg/weblate/issues/8908
+WEBLATE_MT_APERTIUM_APY="http://172.16.0.9:2737/"
+WEBLATE_MT_LIBRETRANSLATE_API_URL="http://172.16.0.9:5000/"
+EOT
