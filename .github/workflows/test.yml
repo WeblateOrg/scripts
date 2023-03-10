@@ -26,6 +26,8 @@ jobs:
         TOKEN
         EOT
         cat /etc/weblate-bootstrap
+    - name: Docker
+      run: sudo ./install-docker
     - name: Exim
       run: sudo ./install-exim
     - name: PostgreSQL
