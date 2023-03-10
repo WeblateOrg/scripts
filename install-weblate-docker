@@ -93,7 +93,13 @@ EOT
 chown -R weblate:weblate $WEBLATE_HOME
 
 # Start Weblate
-sudo -u weblate -D $WEBLATE_DOCKER docker-compose up -d --wait
+sudo -u weblate -D $WEBLATE_DOCKER docker-compose up -d
+
+# Wait for startup
+while [ "$(sudo -u weblate -D $WEBLATE_DOCKER docker-compose ps --services --filter state=unhealthy)" = "" ] ; do sleep 1; echo sleep 1; done;
+
+# Show logs
+sudo -u weblate -D $WEBLATE_DOCKER docker-compose logs
 
 # Check
 sudo -u weblate -D $WEBLATE_DOCKER docker-compose exec --user weblate weblate weblate check --deploy
