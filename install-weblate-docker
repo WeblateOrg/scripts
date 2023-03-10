@@ -10,13 +10,13 @@ usermod --append --groups adm weblate
 usermod --append --groups docker weblate
 
 WEBLATE_HOME=~weblate
-WEBLATE_DIR="$WEBLATE_HOME/weblate"
+WEBLATE_DOCKER="$WEBLATE_HOME/weblate"
 
 # Install Weblate and deps
-mkdir -p "$WEBLATE_DIR" "$WEBLATE_DIR/data" "$WEBLATE_DIR/postgresql" "$WEBLATE_DIR/redis" "$WEBLATE_DIR/ssl-certs"
-curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/docker-compose-https.yml > "$WEBLATE_DIR/docker-compose.yml"
-curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/environment > "$WEBLATE_DIR/environment"
-cat > "$WEBLATE_DIR/docker-compose.override.yml" <<EOT
+mkdir -p "$WEBLATE_DOCKER" "$WEBLATE_HOME/data" "$WEBLATE_HOME/postgresql" "$WEBLATE_HOME/redis" "$WEBLATE_HOME/ssl-certs"
+curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/docker-compose-https.yml > "$WEBLATE_DOCKER/docker-compose.yml"
+curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/environment > "$WEBLATE_DOCKER/environment"
+cat > "$WEBLATE_DOCKER/docker-compose.override.yml" <<EOT
 services:
   weblate:
     image: weblate/weblate:latest
@@ -50,7 +50,7 @@ volumes:
       device: '$WEBLATE_HOME/ssl-certs'
 EOT
 
-cat >> $WEBLATE_DIR/environment <<EOT
+cat >> $WEBLATE_DOCKER/environment <<EOT
 
 # E-mail setup
 WEBLATE_EMAIL_HOST=mail.cihar.com
@@ -88,3 +88,12 @@ WEBLATE_LEGAL_INTEGRATION=wllegal
 WEBLATE_MT_APERTIUM_APY="http://172.16.0.9:2737/"
 WEBLATE_MT_LIBRETRANSLATE_API_URL="http://172.16.0.9:5000/"
 EOT
+
+# Fix permissions
+chown -R weblate:weblate $WEBLATE_HOME
+
+# Start Weblate
+sudo -u weblate -D $WEBLATE_DOCKER docker-compose up -d --wait
+
+# Check
+sudo -u weblate -D $WEBLATE_DOCKER docker-compose exec --user weblate weblate weblate check --deploy
