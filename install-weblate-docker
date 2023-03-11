@@ -20,6 +20,11 @@ cd $WEBLATE_DOCKER
 
 curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/docker-compose-https.yml > docker-compose.yml
 curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/environment > environment
+if [ "$1" = "--nocert" ] ; then
+    HTTPS_STAGE=local
+else
+    HTTPS_STAGE=production
+fi
 cat > docker-compose.override.yml <<EOT
 services:
   weblate:
@@ -27,6 +32,7 @@ services:
   https-portal:
     environment:
       DOMAINS: '$WEBLATE_DOMAIN -> http://weblate:8080'
+      STAGE: $HTTPS_STAGE
 volumes:
   weblate-data:
     driver: local
