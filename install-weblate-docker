@@ -103,8 +103,9 @@ EOT
 chown -R weblate:weblate $WEBLATE_HOME
 
 # Start Weblate
-sudo -u weblate docker compose up -d --wait
+sudo -u weblate docker compose up -d # --wait
 
+sudo -u weblate docker compose logs -f
 # Show logs
 sudo -u weblate docker compose logs
 
