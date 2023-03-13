@@ -5,6 +5,22 @@ set -e
 # shellcheck disable=SC1091
 . /etc/weblate-bootstrap
 
+if [ "$1" = "--nocert" ] ; then
+    HTTPS_STAGE=local
+    shift
+else
+    HTTPS_STAGE=production
+fi
+
+if [ "$1" = "--nomail" ] ; then
+    IGNORE_CHECKS=,weblate.E003
+    shift
+else
+    IGNORE_CHECKS=""
+fi
+
+
+
 adduser weblate --disabled-password --gecos Weblate
 usermod --append --groups adm weblate
 usermod --append --groups docker weblate
@@ -20,11 +36,6 @@ cd $WEBLATE_DOCKER
 
 curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/docker-compose-https.yml > docker-compose.yml
 curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/environment > environment
-if [ "$1" = "--nocert" ] ; then
-    HTTPS_STAGE=local
-else
-    HTTPS_STAGE=production
-fi
 cat > docker-compose.override.yml <<EOT
 services:
   weblate:
@@ -82,7 +93,7 @@ WEBLATE_STATUS_URL="https://status.weblate.org/"
 WEBLATE_GET_HELP_URL="https://care.weblate.org/"
 WEBLATE_CONTACT_FORM="from"
 WEBLATE_ADMINS_CONTACT='rt@weblate.org'
-WEBLATE_SILENCED_SYSTEM_CHECKS=weblate.E012,weblate.E013
+WEBLATE_SILENCED_SYSTEM_CHECKS=weblate.E012,weblate.E013$IGNORE_CHECKS
 
 # Sentry integration
 SENTRY_DSN="$WEBLATE_SENTRY"
