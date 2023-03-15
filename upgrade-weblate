@@ -78,139 +78,151 @@ fi
 # WEBLATE_USERNAME is user running Weblate
 # USERNAME is user owning Weblate sources
 
-# Detect web service
-for service in uwsgi.service httpd.service ; do
-    if systemctl cat -- $service > /dev/null 2>&1 ; then
-        SERVICE=$service
-        break
+if [ -f "$WEBLATE_HOME/weblate/docker-compose.override.yml" ] ; then
+    # Docker based upgrade
+    cd "$WEBLATE_HOME/weblate"
+    sudo -u weblate docker compose pull
+    sudo -u weblate docker compose down
+    sudo -u weblate docker compose up -d --wait
+    sudo -u weblate docker compose logs
+    sudo -u weblate docker compose exec --user weblate weblate weblate check --deploy
+
+else
+
+    # Detect web service
+    for service in uwsgi.service httpd.service ; do
+        if systemctl cat -- $service > /dev/null 2>&1 ; then
+            SERVICE=$service
+            break
+        fi
+    done
+    if [ -z "$SERVICE" ] ; then
+        echo "Could not detect web service!"
+        exit 1
     fi
-done
-if [ -z "$SERVICE" ] ; then
-    echo "Could not detect web service!"
-    exit 1
-fi
 
 
-if [ "$WEBLATE_HOME" = /opt/weblate ] ; then
-    WEBLATE_ENV="/opt/weblate"
-else
-    WEBLATE_ENV="$WEBLATE_HOME/weblate-env"
-fi
+    if [ "$WEBLATE_HOME" = /opt/weblate ] ; then
+        WEBLATE_ENV="/opt/weblate"
+    else
+        WEBLATE_ENV="$WEBLATE_HOME/weblate-env"
+    fi
 
-PYVER="$("$WEBLATE_ENV/bin/python" -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')"
+    PYVER="$("$WEBLATE_ENV/bin/python" -c 'import sys; print("{}.{}".format(*sys.version_info[:2]))')"
 
-if [ -d "$WEBLATE_HOME/weblate-src" ] ; then
-    WEBLATE_DIR="$WEBLATE_HOME/weblate-src"
-    WEBLATE_PKG="$WEBLATE_DIR"
-    PIP_ARGS="--editable"
-elif [ -d "$WEBLATE_HOME/weblate" ] ; then
-    WEBLATE_DIR="$WEBLATE_HOME/weblate"
-    WEBLATE_PKG="$WEBLATE_DIR"
-    PIP_ARGS="--editable"
-else
-    WEBLATE_DIR="$WEBLATE_ENV/lib/python$PYVER/site-packages"
-    WEBLATE_PKG="Weblate"
-    PIP_ARGS=""
-fi
-WEBLATE_FLAGS="all,zxcvbn"
-# Disable OCR
-if ! pkg-config --exists lept ; then
-    WEBLATE_FLAGS="Subtitles,Amazon,LDAP,zxcvbn,Fluent,Gerrit,Google,INI,Mercurial,PHP,Postgres,Antispam,SAML,YAML,OpenIDConnect,MSTerminology"
-fi
-if [ -d "$WEBLATE_HOME/hosted" ] ; then
-    PIP_ARGS="djangosaml2idp --editable $WEBLATE_HOME/hosted $PIP_ARGS"
-    WEBLATE_FLAGS="$WEBLATE_FLAGS,mysql"
-fi
-
-# Backup settings
-cp "$WEBLATE_DIR/weblate/settings.py" "/root/weblate-settings-$(date -I).py"
-
-# Weblate 4.9 migration, cleanup
-sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" uninstall --yes akismet celery-batches
-
-# Upgrade pip
-sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install -U pip wheel
-
-# Prebuild wheels, they are stored in the cache
-WHEELS=$(mktemp -d)
-chown "$USERNAME" "$WHEELS"
-sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" wheel --wheel-dir "$WHEELS" "Weblate[${WEBLATE_FLAGS}]" wllegal
-rm -rf "$WHEELS"
-
-if [ $LAZY_RESTART -eq 0 ] ; then
-    # Stop web
-    systemctl stop "$SERVICE"
-    # Wait for celery to process all jobs
-    while sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" celery_queues | grep ': [^0]' ; do
-        sleep 1
-    done
-
-    # Stop celery
-    systemctl stop celery-weblate.service
-    for WORKER in $WEBLATE_WORKERS ; do
-        ssh "root@$WORKER" systemctl stop celery-weblate.service
-    done
-fi
-
-# Upgrade modules
-if [ "$WEBLATE_PKG" != "Weblate" ] ; then
-    OLD_DIR=$PWD
-    cd "$WEBLATE_DIR"
-    git config --global safe.directory "$WEBLATE_DIR"
-    OLD_HEAD=$(git log -n1 --format=%H)
-    sudo -u "$USERNAME" sh -c "cd $WEBLATE_DIR; git pull"
+    if [ -d "$WEBLATE_HOME/weblate-src" ] ; then
+        WEBLATE_DIR="$WEBLATE_HOME/weblate-src"
+        WEBLATE_PKG="$WEBLATE_DIR"
+        PIP_ARGS="--editable"
+    elif [ -d "$WEBLATE_HOME/weblate" ] ; then
+        WEBLATE_DIR="$WEBLATE_HOME/weblate"
+        WEBLATE_PKG="$WEBLATE_DIR"
+        PIP_ARGS="--editable"
+    else
+        WEBLATE_DIR="$WEBLATE_ENV/lib/python$PYVER/site-packages"
+        WEBLATE_PKG="Weblate"
+        PIP_ARGS=""
+    fi
+    WEBLATE_FLAGS="all,zxcvbn"
+    # Disable OCR
+    if ! pkg-config --exists lept ; then
+        WEBLATE_FLAGS="Subtitles,Amazon,LDAP,zxcvbn,Fluent,Gerrit,Google,INI,Mercurial,PHP,Postgres,Antispam,SAML,YAML,OpenIDConnect,MSTerminology"
+    fi
     if [ -d "$WEBLATE_HOME/hosted" ] ; then
-        sudo -u "$WEBLATE_USERNAME" sh -c "cd $WEBLATE_HOME/hosted; git pull -q"
+        PIP_ARGS="djangosaml2idp --editable $WEBLATE_HOME/hosted $PIP_ARGS"
+        WEBLATE_FLAGS="$WEBLATE_FLAGS,mysql"
     fi
-    if [ "$DO_DIFF" -eq 1 ] && git diff --exit-code "$OLD_HEAD".. -- weblate/settings_example.py > /dev/null ; then
-        DO_DIFF="0"
+
+    # Backup settings
+    cp "$WEBLATE_DIR/weblate/settings.py" "/root/weblate-settings-$(date -I).py"
+
+    # Weblate 4.9 migration, cleanup
+    sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" uninstall --yes akismet celery-batches
+
+    # Upgrade pip
+    sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install -U pip wheel
+
+    # Prebuild wheels, they are stored in the cache
+    WHEELS=$(mktemp -d)
+    chown "$USERNAME" "$WHEELS"
+    sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" wheel --wheel-dir "$WHEELS" "Weblate[${WEBLATE_FLAGS}]" wllegal
+    rm -rf "$WHEELS"
+
+    if [ $LAZY_RESTART -eq 0 ] ; then
+        # Stop web
+        systemctl stop "$SERVICE"
+        # Wait for celery to process all jobs
+        while sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" celery_queues | grep ': [^0]' ; do
+            sleep 1
+        done
+
+        # Stop celery
+        systemctl stop celery-weblate.service
+        for WORKER in $WEBLATE_WORKERS ; do
+            ssh "root@$WORKER" systemctl stop celery-weblate.service
+        done
     fi
-    cd "$OLD_DIR"
-fi
-sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install --upgrade --no-cache-dir --no-binary :all: cffi
-# shellcheck disable=SC2086
-sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install --upgrade-strategy eager --upgrade $PIP_ARGS "${WEBLATE_PKG}[${WEBLATE_FLAGS}]" wllegal
 
-# Adjust configuration
-if [ "$DO_DIFF" -eq 1 ] ; then
-    vimdiff "$WEBLATE_DIR/weblate/settings_example.py" "$WEBLATE_DIR/weblate/settings.py"
-fi
-if [ -z "$WEBLATE_WORKERS" ] ; then
-    sed "s@/home/weblate/weblate-env@$WEBLATE_ENV@" "$WEBLATE_DIR/weblate/examples/celery-weblate.conf" > /etc/default/celery-weblate
-fi
-
-# Migrate database, compile gettext and collect static files
-sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" migrate
-sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" ensure_stats
-sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" collectstatic --noinput
-sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" compress --force
-if ! grep -q UPDATE_LANGUAGES "$WEBLATE_DIR/weblate/settings.py" ; then
-    sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" setuplang
-fi
-if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
-    sudo -u "$WEBLATE_USERNAME" sh -c "cd $WEBLATE_DIR; $WEBLATE_ENV/bin/weblate compilemessages"
-    if [ -d "$WEBLATE_HOME/hosted" ] ; then
-        sudo -u "$WEBLATE_USERNAME" sh -c "cd $WEBLATE_HOME/hosted; $WEBLATE_ENV/bin/weblate compilemessages"
+    # Upgrade modules
+    if [ "$WEBLATE_PKG" != "Weblate" ] ; then
+        OLD_DIR=$PWD
+        cd "$WEBLATE_DIR"
+        git config --global safe.directory "$WEBLATE_DIR"
+        OLD_HEAD=$(git log -n1 --format=%H)
+        sudo -u "$USERNAME" sh -c "cd $WEBLATE_DIR; git pull"
+        if [ -d "$WEBLATE_HOME/hosted" ] ; then
+            sudo -u "$WEBLATE_USERNAME" sh -c "cd $WEBLATE_HOME/hosted; git pull -q"
+        fi
+        if [ "$DO_DIFF" -eq 1 ] && git diff --exit-code "$OLD_HEAD".. -- weblate/settings_example.py > /dev/null ; then
+            DO_DIFF="0"
+        fi
+        cd "$OLD_DIR"
     fi
-fi
-# Track deploy at Sentry
-if ! grep -q "SENTRY_TOKEN = ''" "$WEBLATE_DIR/weblate/settings.py" ; then
-    sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" sentry_deploy
-fi
+    sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install --upgrade --no-cache-dir --no-binary :all: cffi
+    # shellcheck disable=SC2086
+    sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install --upgrade-strategy eager --upgrade $PIP_ARGS "${WEBLATE_PKG}[${WEBLATE_FLAGS}]" wllegal
 
-# Start the services
-if [ $LAZY_RESTART -eq 0 ] ; then
-    systemctl start celery-weblate.service
-    for WORKER in $WEBLATE_WORKERS ; do
-        ssh "root@$WORKER" systemctl start celery-weblate.service
-    done
-    systemctl start "$SERVICE"
-else
-    systemctl restart celery-weblate.service &
-    for WORKER in $WEBLATE_WORKERS ; do
-        ssh "root@$WORKER" systemctl restart celery-weblate.service &
-    done
-    systemctl restart "$SERVICE"
+    # Adjust configuration
+    if [ "$DO_DIFF" -eq 1 ] ; then
+        vimdiff "$WEBLATE_DIR/weblate/settings_example.py" "$WEBLATE_DIR/weblate/settings.py"
+    fi
+    if [ -z "$WEBLATE_WORKERS" ] ; then
+        sed "s@/home/weblate/weblate-env@$WEBLATE_ENV@" "$WEBLATE_DIR/weblate/examples/celery-weblate.conf" > /etc/default/celery-weblate
+    fi
+
+    # Migrate database, compile gettext and collect static files
+    sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" migrate
+    sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" ensure_stats
+    sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" collectstatic --noinput
+    sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" compress --force
+    if ! grep -q UPDATE_LANGUAGES "$WEBLATE_DIR/weblate/settings.py" ; then
+        sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" setuplang
+    fi
+    if [ "$WEBLATE_DIR" = "$WEBLATE_HOME/weblate" ] ; then
+        sudo -u "$WEBLATE_USERNAME" sh -c "cd $WEBLATE_DIR; $WEBLATE_ENV/bin/weblate compilemessages"
+        if [ -d "$WEBLATE_HOME/hosted" ] ; then
+            sudo -u "$WEBLATE_USERNAME" sh -c "cd $WEBLATE_HOME/hosted; $WEBLATE_ENV/bin/weblate compilemessages"
+        fi
+    fi
+    # Track deploy at Sentry
+    if ! grep -q "SENTRY_TOKEN = ''" "$WEBLATE_DIR/weblate/settings.py" ; then
+        sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" sentry_deploy
+    fi
+
+    # Start the services
+    if [ $LAZY_RESTART -eq 0 ] ; then
+        systemctl start celery-weblate.service
+        for WORKER in $WEBLATE_WORKERS ; do
+            ssh "root@$WORKER" systemctl start celery-weblate.service
+        done
+        systemctl start "$SERVICE"
+    else
+        systemctl restart celery-weblate.service &
+        for WORKER in $WEBLATE_WORKERS ; do
+            ssh "root@$WORKER" systemctl restart celery-weblate.service &
+        done
+        systemctl restart "$SERVICE"
+    fi
 fi
 
 # Upgrade munin plugin

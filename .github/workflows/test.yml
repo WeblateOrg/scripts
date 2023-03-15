@@ -68,3 +68,5 @@ jobs:
       run: sudo ./install-exim
     - name: Weblate
       run: sudo ./install-weblate-docker --nocert --nomail
+    - name: Upgrade
+      run: sudo ./upgrade-weblate
