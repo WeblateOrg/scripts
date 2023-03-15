@@ -116,10 +116,8 @@ cat > docker-compose.override.yml <<EOT
 services:
   weblate:
     image: weblate/weblate:latest
-  https-portal:
-    environment:
-      DOMAINS: '$WEBLATE_DOMAIN -> http://weblate:8080'
-      STAGE: $HTTPS_STAGE
+    ports:
+    - 127.0.0.1:8080:8080
 volumes:
   weblate-data:
     driver: local
