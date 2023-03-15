@@ -62,7 +62,7 @@ s ./scripts/install-docker
 s ./scripts/install-weblate-docker
 #s ./scripts/install-posgtresql
 #s ./scripts/install-weblate
-#s ./scripts/upgrade-nginx-ssl
+s ./scripts/upgrade-nginx-ssl
 s ./scripts/install-munin
 
 # Print list of things to do
