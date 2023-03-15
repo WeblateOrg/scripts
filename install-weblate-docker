@@ -122,5 +122,10 @@ sudo -u weblate docker compose logs
 # Track deploy to Sentry
 sudo -u weblate docker compose exec --user weblate weblate weblate sentry_deploy
 
+# Create admin user
+if [ -n "$WEBLATE_PASSWORD" ] ; then
+    sudo -u weblate docker compose exec --user weblate weblate weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař' --password "$WEBLATE_PASSWORD" --update
+fi
+
 # Check
 sudo -u weblate docker compose exec --user weblate weblate weblate check --deploy
