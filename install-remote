@@ -47,6 +47,10 @@ s() {
     ssh "root@$IPADDRESS" "$@"
 }
 
+# Configure mail sending
+echo "$WEBLATE_DOMAIN:$(openssl passwd -6 -salt "$(openssl rand -hex 6)" "$EXIM_PASS"):666:0:99999:7::" | ssh root@mail tee --append /etc/exim4/passwd
+ssh root@mail ln -sf /etc/exim4/virtual/weblate.cloud "/etc/exim4/virtual/$WEBLATE_DOMAIN"
+
 # Install the system
 scp "$BOOTSTRAP" "root@$IPADDRESS:/etc/weblate-bootstrap"
 s apt update
@@ -54,15 +58,12 @@ s apt install -y git
 s git clone https://github.com/WeblateOrg/scripts.git
 s ./scripts/configure-system
 s ./scripts/install-exim
-# s ./scripts/install-docker
-s ./scripts/install-posgtresql
-s ./scripts/install-weblate
-s ./scripts/upgrade-nginx-ssl
+s ./scripts/install-docker
+s ./scripts/install-weblate-docker
+#s ./scripts/install-posgtresql
+#s ./scripts/install-weblate
+#s ./scripts/upgrade-nginx-ssl
 s ./scripts/install-munin
-
-# Configure mail sending
-echo "$WEBLATE_DOMAIN:$(openssl passwd -6 -salt "$(openssl rand -hex 6)" "$EXIM_PASS"):666:0:99999:7::" | ssh root@mail tee --append /etc/exim4/passwd
-ssh root@mail ln -sf /etc/exim4/virtual/weblate.cloud "/etc/exim4/virtual/$WEBLATE_DOMAIN"
 
 # Print list of things to do
 echo "TODO:"
