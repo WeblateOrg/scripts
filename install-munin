@@ -9,8 +9,10 @@ set -e
 mkdir -p /etc/munin/plugin-conf.d/
 cat > /etc/munin/plugin-conf.d/postgres <<EOT
 [postgres_*]
-user postgres
-env.PGUSER postgres
+user weblate
+env.PGHOST 127.0.0.1
+env.PGUSER weblate
+env.PGPASSWORD weblate
 EOT
 cat > /etc/munin/plugin-conf.d/redis <<EOT
 [redis]

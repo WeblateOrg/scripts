@@ -131,6 +131,12 @@ services:
     image: weblate/weblate:edge
     ports:
     - 127.0.0.1:8080:8080
+  database:
+    ports:
+    - 127.0.0.1:5432:5432
+  cache:
+    ports:
+    - 127.0.0.1:6379:6379
 volumes:
   weblate-data:
     driver: local
