@@ -26,6 +26,9 @@ usermod --append --groups docker weblate
 WEBLATE_HOME=~weblate
 WEBLATE_DOCKER="$WEBLATE_HOME/weblate"
 
+# Legal stuff
+sudo -u weblate git clone https://github.com/WeblateOrg/wllegal.git $WEBLATE_HOME/wllegal
+
 cd /tmp
 apt-get update
 apt-get install --no-install-recommends -y\
@@ -57,6 +60,16 @@ cat > /etc/nginx/snippets/weblate.conf <<EOT
         proxy_set_header X-Forwarded-Host \$server_name;
     }
     client_max_body_size 200m;
+    error_page 500 502 504 /weblate_50x.html;
+    error_page 503 /weblate_503.html;
+    location = /weblate_503.html {
+            root $WEBLATE_HOME/wllegal/wllegal/templates;
+            internal;
+    }
+    location = /weblate_50x.html {
+            root $WEBLATE_HOME/wllegal/wllegal/templates;
+            internal;
+    }
     access_log /var/log/nginx/matomo.log matomo;
     access_log /var/log/nginx/access.log;
 EOT

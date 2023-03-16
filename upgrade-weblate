@@ -225,6 +225,11 @@ else
     fi
 fi
 
+# Upgrade legal
+if [ -d "$WEBLATE_HOME/wllegal" ] ; then
+    sudo -u "$USERNAME" sh -c "cd $WEBLATE_HOME/wllegal && git pull"
+fi
+
 # Upgrade munin plugin
 if [ -d /usr/share/munin/plugins ] ; then
     wget -O - https://raw.githubusercontent.com/WeblateOrg/munin/master/weblate > /usr/share/munin/plugins/weblate
