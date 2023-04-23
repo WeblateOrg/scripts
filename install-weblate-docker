@@ -6,10 +6,8 @@ set -e
 . /etc/weblate-bootstrap
 
 if [ "$1" = "--nocert" ] ; then
-    HTTPS_STAGE=local
+    CERT=0
     shift
-else
-    HTTPS_STAGE=production
 fi
 
 if [ "$1" = "--nomail" ] ; then
@@ -19,9 +17,19 @@ else
     IGNORE_CHECKS=""
 fi
 
-adduser weblate --disabled-password --gecos Weblate
-usermod --append --groups adm weblate
-usermod --append --groups docker weblate
+if [ "$1" = "--migrate" ] ; then
+    MIGRATE=1
+    CERT=0
+    shift
+else
+    MIGRATE=0
+fi
+
+if [ "$MIGRATE" -eq 0 ] ; then
+    adduser weblate --disabled-password --gecos Weblate
+    usermod --append --groups adm weblate
+    usermod --append --groups docker weblate
+fi
 
 WEBLATE_HOME=~weblate
 WEBLATE_DOCKER="$WEBLATE_HOME/weblate"
@@ -38,14 +46,16 @@ apt-get install --no-install-recommends -y\
     python3-certbot-nginx
 
 # SSL cert
-if [ "$HTTPS_STAGE" = "production" ] ; then
+if [ "$CERT" -eq 1 ] ; then
     certbot --agree-tos --email care@weblate.org --redirect --no-eff-email -d "$WEBLATE_DOMAIN"
 fi
 
 # Enable http/2
 sed -i -e 's/ssl;/ssl http2;/' -e 's/ssl ipv6only=on/ssl ipv6only=on http2/' /etc/nginx/sites-available/default
-# Enable status locally
-sed -i '/server_name _/a location = /nginx_status {\n    stub_status;\n}'   /etc/nginx/sites-available/default
+if [ "$MIGRATE" -eq 0 ] ; then
+    # Enable status locally
+    sed -i '/server_name _/a location = /nginx_status {\n    stub_status;\n}'   /etc/nginx/sites-available/default
+fi
 # Hide server version
 sed -i 's/# server_tokens off/server_tokens off/' /etc/nginx/nginx.conf
 
@@ -84,16 +94,20 @@ log_format  matomo                   '{"ip": "\$remote_addr",'
                                     '"generation_time_milli": \$request_time,'
                                     '"date": "\$time_iso8601"}';
 EOT
-# Insert include after first server_name stanza
-sed -i "0,/server_name $WEBLATE_DOMAIN.*/s//&\\ninclude snippets\/weblate.conf;/" /etc/nginx/sites-available/default
-# Delete default location, replaced by snippet
-sed -i ':a;N;$!ba;s/\(snippets\/weblate.conf;\)[^}]*}/\1/g' /etc/nginx/sites-available/default
+
+if [ "$MIGRATE" -eq 0 ] ; then
+    # Insert include after first server_name stanza
+    sed -i "0,/server_name $WEBLATE_DOMAIN.*/s//&\\ninclude snippets\/weblate.conf;/" /etc/nginx/sites-available/default
+    # Delete default location, replaced by snippet
+    sed -i ':a;N;$!ba;s/\(snippets\/weblate.conf;\)[^}]*}/\1/g' /etc/nginx/sites-available/default
+fi
 systemctl enable nginx.service
 systemctl restart nginx.service
 
 # Matomo
-sudo -u weblate git clone https://github.com/matomo-org/matomo-log-analytics.git $WEBLATE_HOME/matomo-log-analytics
-cat > $WEBLATE_HOME/run-matomo.sh <<EOT
+if [ ! -d "$WEBLATE_HOME/matomo-log-analytics" ] ; then
+    sudo -u weblate git clone https://github.com/matomo-org/matomo-log-analytics.git "$WEBLATE_HOME/matomo-log-analytics"
+    cat > $WEBLATE_HOME/run-matomo.sh <<EOT
 #!/bin/sh
 /usr/bin/python3 \
         $WEBLATE_HOME/matomo-log-analytics/import_logs.py \
@@ -103,25 +117,30 @@ cat > $WEBLATE_HOME/run-matomo.sh <<EOT
         --token-auth=$MATOMO_TOKEN \
         /var/log/nginx/matomo.log.1
 EOT
-chmod +x $WEBLATE_HOME/run-matomo.sh
-chown weblate:weblate $WEBLATE_HOME/run-matomo.sh
+    chmod +x $WEBLATE_HOME/run-matomo.sh
+    chown weblate:weblate $WEBLATE_HOME/run-matomo.sh
+fi
+
+# Always randomize cron job
 echo "$(( RANDOM % 60 )) 7 * * * $WEBLATE_HOME/run-matomo.sh | logger -t matomo" > /tmp/weblate-cron
 crontab /tmp/weblate-cron
 rm /tmp/weblate-cron
 
 
 # Fail2ban
-sudo -u weblate git clone https://github.com/WeblateOrg/fail2ban.git $WEBLATE_HOME/fail2ban
-ln -s $WEBLATE_HOME/fail2ban/filter.d/* /etc/fail2ban/filter.d/
-ln -s $WEBLATE_HOME/fail2ban/jail.d/* /etc/fail2ban/jail.d/
-systemctl restart fail2ban.service
+if [ ! -d "$WEBLATE_HOME/fail2ban" ] ; then
+    sudo -u weblate git clone https://github.com/WeblateOrg/fail2ban.git $WEBLATE_HOME/fail2ban
+    ln -s $WEBLATE_HOME/fail2ban/filter.d/* /etc/fail2ban/filter.d/
+    ln -s $WEBLATE_HOME/fail2ban/jail.d/* /etc/fail2ban/jail.d/
+    systemctl restart fail2ban.service
+fi
 
 
 # Install Weblate dirs
 mkdir -p "$WEBLATE_DOCKER" "$WEBLATE_HOME/cache" "$WEBLATE_HOME/data" "$WEBLATE_HOME/postgresql" "$WEBLATE_HOME/redis"
 
 # Go to the docker dir
-cd $WEBLATE_DOCKER
+cd "$WEBLATE_DOCKER"
 
 curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/docker-compose.yml > docker-compose.yml
 curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/environment > environment
@@ -209,6 +228,13 @@ EOT
 
 # Fix permissions
 chown -R weblate:weblate $WEBLATE_HOME
+
+# Fetch Weblate containers
+sudo -u weblate docker compose pull
+
+if [ "$MIGRATE" -eq 1 ] ; then
+    exit 0
+fi
 
 # Start Weblate
 sudo -u weblate docker compose up -d --wait

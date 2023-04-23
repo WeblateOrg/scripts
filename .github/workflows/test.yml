@@ -38,6 +38,8 @@ jobs:
       run: sudo ./upgrade-weblate --nodiff
     - name: Upgrade (lazy restart)
       run: sudo ./upgrade-weblate --nodiff --lazy-restart
+    - name: Migrate
+      run: sudo ./migrate-docker
 
   docker:
     runs-on: ubuntu-20.04
