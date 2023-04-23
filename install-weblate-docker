@@ -27,9 +27,9 @@ fi
 
 if [ "$MIGRATE" -eq 0 ] ; then
     adduser weblate --disabled-password --gecos Weblate
-    usermod --append --groups adm weblate
-    usermod --append --groups docker weblate
 fi
+usermod --append --groups adm weblate
+usermod --append --groups docker weblate
 
 WEBLATE_HOME=~weblate
 WEBLATE_DOCKER="$WEBLATE_HOME/weblate"
