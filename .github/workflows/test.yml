@@ -40,6 +40,12 @@ jobs:
       run: sudo ./upgrade-weblate --nodiff --lazy-restart
     - name: Migrate
       run: sudo ./migrate-docker
+    - name: Logs
+      if: always()
+      run: |
+        cd /home/weblate/weblate
+        docker compose logs
+
 
   docker:
     runs-on: ubuntu-20.04
@@ -72,3 +78,8 @@ jobs:
       run: sudo ./install-weblate-docker --nocert --nomail
     - name: Upgrade
       run: sudo ./upgrade-weblate
+    - name: Logs
+      if: always()
+      run: |
+        cd /home/weblate/weblate
+        docker compose logs
