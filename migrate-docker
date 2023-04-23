@@ -14,6 +14,9 @@ USERNAME=weblate
 WEBLATE_HOME=$(getent passwd "$USERNAME" | cut -d: -f 6)
 WEBLATE_ENV="$WEBLATE_HOME/weblate-env"
 
+# Install docker
+install-docker
+
 # Stop services, wait for empty queue
 systemctl stop uwsgi
 while sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" celery_queues | grep ': [^0]' ; do
