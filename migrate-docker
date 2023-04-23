@@ -54,7 +54,7 @@ apt-get purge \
     postgresql \
 
 # Start Weblate
-sudo -u weblate docker compose up #-d --wait
+sudo -u weblate docker compose up -d --wait
 
 # Show logs
 sudo -u weblate docker compose logs
