@@ -42,9 +42,10 @@ docker compose exec -T database psql --username weblate --dbname postgres < "$WE
 
 # Move redis data
 cp /var/lib/redis/dump.rdb "$WEBLATE_HOME/redis"
-chown 999:1000 "$WEBLATE_HOME/redis"
+chown -R 999:1000 "$WEBLATE_HOME/redis"
 
 # Filesystem data is already in correct place
+chown -R 1000:1000 "$WEBLATE_HOME/data"
 
 # Cleanup system packages
 apt-get purge \
