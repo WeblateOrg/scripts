@@ -9,10 +9,12 @@ set -e
 PATH="$(dirname "$(readlink -f "$0")"):$PATH"
 export PATH
 
+# Use same variables as in other scripts even though these are not configurable here
 WEBLATE_USERNAME=weblate
 USERNAME=weblate
 WEBLATE_HOME=$(getent passwd "$USERNAME" | cut -d: -f 6)
 WEBLATE_ENV="$WEBLATE_HOME/weblate-env"
+WEBLATE_DOCKER="$WEBLATE_HOME/weblate"
 
 # Install docker
 install-docker
@@ -31,6 +33,8 @@ install-weblate-docker --migrate
 # Dump PostgreSQL and load it to Docker
 # shellcheck disable=SC2024
 sudo -u "postgres" pg_dump --no-privileges --no-owner --clean --if-exists  weblate > "$WEBLATE_HOME/weblate.sql"
+
+cd "$WEBLATE_DOCKER"
 docker compose up -d database --wait
 docker compose exec -T database psql --username weblate --dbname postgres < "$WEBLATE_HOME/weblate.sql"
 
