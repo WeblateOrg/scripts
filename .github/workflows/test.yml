@@ -39,7 +39,7 @@ jobs:
     - name: Upgrade (lazy restart)
       run: sudo ./upgrade-weblate --nodiff --lazy-restart
     - name: Migrate
-      run: sudo ./migrate-docker
+      run: sudo ./migrate-docker --nomail
     - name: Logs
       if: always()
       run: |
