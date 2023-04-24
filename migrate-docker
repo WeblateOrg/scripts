@@ -28,7 +28,7 @@ systemctl stop celery-weblate
 systemctl stop redis
 
 # Prepare Docker environment
-install-weblate-docker --migrate "$@"
+install-weblate-docker "$@" --migrate
 
 # Dump PostgreSQL and load it to Docker
 # shellcheck disable=SC2024
