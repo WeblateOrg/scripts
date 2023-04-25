@@ -27,7 +27,7 @@ EOT
 # Create server
 hcloud server create \
     --image debian-11 \
-    --location nbg1 \
+    --location fsn1 \
     --name "$1" \
     --network 19990 \
     --ssh-key 1056953 \
@@ -35,6 +35,7 @@ hcloud server create \
     --type cax11 | tee "$TMPFILE"
 
 # TODO: decide cx21 / cax11 / cax21
+# Location: nbg1 / fsn1
 
 IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' "$TMPFILE")
 
