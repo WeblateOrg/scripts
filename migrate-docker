@@ -38,7 +38,7 @@ systemctl stop postgresql
 cd "$WEBLATE_DOCKER"
 docker compose up -d database --wait
 sleep 60
-docker compose exec -T database psql --username weblate --dbname postgres < "$WEBLATE_HOME/weblate.sql"
+docker compose exec -T database psql --username weblate --dbname weblate < "$WEBLATE_HOME/weblate.sql"
 
 # Move redis data
 cp /var/lib/redis/dump.rdb "$WEBLATE_HOME/redis"

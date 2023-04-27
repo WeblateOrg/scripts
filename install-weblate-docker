@@ -8,6 +8,8 @@ set -e
 if [ "$1" = "--nocert" ] ; then
     CERT=0
     shift
+else
+    CERT=1
 fi
 
 if [ "$1" = "--nomail" ] ; then
