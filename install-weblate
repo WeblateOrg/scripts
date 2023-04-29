@@ -116,7 +116,7 @@ SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
 cat <<EOT >> "$SETTINGS_PY"
 
 # Hosted customization
-ADMINS_CONTACT = ['rt@weblate.org']
+ADMINS_CONTACT = ['care@weblate.org']
 DEFAULT_COMMITER_EMAIL = 'hosted@weblate.org'
 DEFAULT_COMMITER_NAME = 'Hosted Weblate'
 STATUS_URL = "https://status.weblate.org/"
@@ -152,7 +152,7 @@ systemctl restart uwsgi.service
 
 # SSL cert
 if [ "$1" != "--nocert" ] ; then
-    certbot --agree-tos --email rt@weblate.org --redirect --no-eff-email -d "$WEBLATE_DOMAIN"
+    certbot --agree-tos --email care@weblate.org --redirect --no-eff-email -d "$WEBLATE_DOMAIN"
 fi
 
 # Enable http/2

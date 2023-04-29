@@ -206,7 +206,7 @@ WEBLATE_DEFAULT_COMMITER_NAME='Hosted Weblate'
 WEBLATE_STATUS_URL="https://status.weblate.org/"
 WEBLATE_GET_HELP_URL="https://care.weblate.org/"
 WEBLATE_CONTACT_FORM="from"
-WEBLATE_ADMINS_CONTACT='rt@weblate.org'
+WEBLATE_ADMINS_CONTACT='care@weblate.org'
 WEBLATE_SILENCED_SYSTEM_CHECKS=weblate.E012,weblate.E013$IGNORE_CHECKS
 
 # Sentry integration
