@@ -52,6 +52,7 @@ apt-get purge -y \
     redis-server \
     uwsgi \
     postgresql \
+systemctl disable celery-weblate
 
 # Start Weblate
 sudo -u weblate docker compose up -d --wait
