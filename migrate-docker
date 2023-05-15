@@ -25,6 +25,7 @@ while sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" celery_queues | gre
     sleep 1
 done
 systemctl stop celery-weblate
+systemctl disable celery-weblate
 systemctl stop redis
 
 # Prepare Docker environment
@@ -51,8 +52,7 @@ chown -R 1000:1000 "$WEBLATE_HOME/data"
 apt-get purge -y \
     redis-server \
     uwsgi \
-    postgresql \
-systemctl disable celery-weblate
+    postgresql
 
 # Start Weblate
 sudo -u weblate docker compose up -d --wait
