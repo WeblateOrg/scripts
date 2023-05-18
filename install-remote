@@ -72,7 +72,8 @@ s ./scripts/install-munin
 echo "TODO:"
 echo " * Store password: $WEBLATE_PASSWORD"
 echo " * Add $IPADDRESS to SSH configuration"
-echo " * Add host to munin: $(s ip -f inet address show ens10  | sed -En -e 's/.*inet ([0-9.]+).*/\1/p')"
+# AMD uses ens10
+echo " * Add host to munin: $(s ip -f inet address show enp7s0  | sed -En -e 's/.*inet ([0-9.]+).*/\1/p')"
 echo " * Link with purchased service"
 echo " * Activate and verify backups"
 echo " * Verify SMTP is working"
