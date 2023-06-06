@@ -17,5 +17,8 @@ fi
 
 if [ -z "$KEY" ] ; then
     cd /home/weblate/weblate || exit 1
-    sudo -u weblate docker compose exec --user weblate weblate weblate shell -c 'from weblate.auth.models import User; user = User.objects.create(username="monitor"); print(user.auth_token.key)'
+    echo "Generating new key"
+    KEY="$(sudo -u weblate docker compose exec --user weblate weblate weblate shell -c 'from weblate.auth.models import User; user = User.objects.create(username="monitor"); print(user.auth_token.key)')"
+
+    sed -i "s/^env.KEY .*/env.KEY $KEY/" /etc/munin/plugin-conf.d/weblate_servers
 fi
