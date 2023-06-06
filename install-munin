@@ -5,6 +5,10 @@ set -e
 # shellcheck disable=SC1091
 . /etc/weblate-bootstrap
 
+# Set path to include script directory
+PATH="$(dirname "$(readlink -f "$0")"):$PATH"
+export PATH
+
 # Munin
 mkdir -p /etc/munin/plugin-conf.d/
 cat > /etc/munin/plugin-conf.d/postgres <<EOT
@@ -30,8 +34,9 @@ chmod +x redis weblate ksm
 cat > /etc/munin/plugin-conf.d/weblate_servers <<EOT
 [weblate]
 env.SERVER https://$WEBLATE_DOMAIN/
-env.KEY $(sudo -u weblate /home/weblate/weblate-env/bin/weblate shell -c 'from weblate.auth.models import User; user = User.objects.create(username="monitor"); print(user.auth_token.key)')
+env.KEY
 EOT
+create-monitor-user
 
 # Install and configure munin
 # The mkdir is needed on Ubuntu (used for CI)
