@@ -43,6 +43,7 @@ cd /tmp
 apt-get update
 apt-get install --no-install-recommends -y\
     fail2ban python3-pyinotify python3-systemd \
+    rsyslog \
     nginx \
     openssh-client \
     python3-certbot-nginx
