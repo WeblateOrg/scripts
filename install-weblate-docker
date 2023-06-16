@@ -252,8 +252,10 @@ if [ -n "$WEBLATE_PASSWORD" ] ; then
 fi
 
 # Machinery configuration
-sudo -u weblate docker compose exec --user weblate weblate weblate install_machinery --service libretranslate --configuration '{"key": "", "url": "http://172.16.0.9:5000/"}'
-sudo -u weblate docker compose exec --user weblate weblate weblate install_machinery --service apertium-apy --configuration '{"url": "http://172.16.0.9:2737/"}'
+if [ "$CERT" -eq 1 ] ; then
+    sudo -u weblate docker compose exec --user weblate weblate weblate install_machinery --service libretranslate --configuration '{"key": "", "url": "http://172.16.0.9:5000/"}'
+    sudo -u weblate docker compose exec --user weblate weblate weblate install_machinery --service apertium-apy --configuration '{"url": "http://172.16.0.9:2737/"}'
+fi
 
 # Check
 sudo -u weblate docker compose exec --user weblate weblate weblate check --deploy
