@@ -138,9 +138,6 @@ else
     # Backup settings
     cp "$WEBLATE_DIR/weblate/settings.py" "/root/weblate-settings-$(date -I).py"
 
-    # Weblate 4.9 migration, cleanup
-    sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" uninstall --yes akismet celery-batches
-
     # Upgrade pip
     sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install -U pip wheel
 
