@@ -88,6 +88,7 @@ sed -i \
     -e "s#^SITE_DOMAIN.*#SITE_DOMAIN = '$WEBLATE_DOMAIN'#" \
     -e "s#^SENTRY_DSN.*#SENTRY_DSN = '$WEBLATE_SENTRY'#" \
     -e "s#^SENTRY_ENVIRONMENT.*#SENTRY_ENVIRONMENT = SITE_DOMAIN#" \
+    -e "/HiredisParser/ D" \
     -e "/SENTRY_DSN/ a \
 SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     -e "s#^        \"PASSWORD\":.*#        \"PASSWORD\": '$POSTGRES_PASS',#" \
