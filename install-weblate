@@ -245,4 +245,5 @@ sudo -u weblate ln -s $WEBLATE_HOME/.gem $WEBLATE_HOME/data/home/
 sudo -u weblate git clone https://github.com/WeblateOrg/fail2ban.git $WEBLATE_HOME/fail2ban
 ln -s $WEBLATE_HOME/fail2ban/filter.d/* /etc/fail2ban/filter.d/
 ln -s $WEBLATE_HOME/fail2ban/jail.d/* /etc/fail2ban/jail.d/
+ln -s $WEBLATE_HOME/fail2ban/action.d/* /etc/fail2ban/action.d/
 systemctl restart fail2ban.service

@@ -241,6 +241,8 @@ if [ -d "$WEBLATE_HOME/fail2ban" ] ; then
     ln -sf $WEBLATE_HOME/fail2ban/filter.d/* /etc/fail2ban/filter.d/
     # shellcheck disable=SC2086
     ln -sf $WEBLATE_HOME/fail2ban/jail.d/* /etc/fail2ban/jail.d/
+    # shellcheck disable=SC2086
+    ln -sf $WEBLATE_HOME/fail2ban/action.d/* /etc/fail2ban/action.d/
     systemctl reload fail2ban.service
 fi
 
