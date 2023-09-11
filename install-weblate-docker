@@ -36,9 +36,6 @@ usermod --append --groups docker weblate
 WEBLATE_HOME=~weblate
 WEBLATE_DOCKER="$WEBLATE_HOME/weblate"
 
-# Legal stuff
-sudo -u weblate git clone https://github.com/WeblateOrg/wllegal.git $WEBLATE_HOME/wllegal
-
 cd /tmp
 apt-get update
 apt-get install --no-install-recommends -y\
@@ -46,7 +43,11 @@ apt-get install --no-install-recommends -y\
     rsyslog \
     nginx \
     openssh-client \
-    python3-certbot-nginx
+    python3-certbot-nginx \
+    git
+
+# Legal stuff
+sudo -u weblate git clone https://github.com/WeblateOrg/wllegal.git $WEBLATE_HOME/wllegal
 
 # SSL cert
 if [ "$CERT" -eq 1 ] ; then
