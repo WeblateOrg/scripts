@@ -125,10 +125,6 @@ else
         PIP_ARGS=""
     fi
     WEBLATE_FLAGS="all,zxcvbn"
-    # Disable OCR
-    if ! pkg-config --exists lept ; then
-        WEBLATE_FLAGS="Subtitles,Amazon,LDAP,zxcvbn,Fluent,Gerrit,Google,INI,Mercurial,PHP,Postgres,Antispam,SAML,YAML,OpenIDConnect,MSTerminology"
-    fi
     if [ -d "$WEBLATE_HOME/hosted" ] ; then
         PIP_ARGS="djangosaml2idp --editable $WEBLATE_HOME/hosted $PIP_ARGS"
         WEBLATE_FLAGS="$WEBLATE_FLAGS,mysql"
