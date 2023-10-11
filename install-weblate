@@ -21,6 +21,7 @@ apt-get install --no-install-recommends -y\
     gir1.2-pango-1.0 \
     git \
     git-svn \
+    git-lfs \
     gnupg \
     libcairo2-dev \
     libenchant-2-2 \
