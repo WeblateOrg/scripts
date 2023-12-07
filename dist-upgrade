@@ -1,5 +1,7 @@
 #!/bin/sh
 sed -i s/bullseye/bookworm/ /etc/apt/sources.list /etc/apt/sources.list.d/*.list
+sed -i /backports/D /etc/apt/sources.list.d/hetzner-mirror.list
+
 apt update
 apt purge postgresql-13 postgresql-client-13 postgresql-11 postgresql-client-11
 apt full-upgrade
