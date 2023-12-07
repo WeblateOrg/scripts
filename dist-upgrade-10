@@ -1,0 +1,8 @@
+#!/bin/sh
+sed -i 's@http://security.debian.org/ buster/updates@http://security.debian.org/debian-security bookworm-security@' /etc/apt/sources.list /etc/apt/sources.list.d/*.list
+sed -i 's@security buster/updates@security bookworm-security@' /etc/apt/sources.list /etc/apt/sources.list.d/*.list
+sed -i s/buster/bullseye/ /etc/apt/sources.list /etc/apt/sources.list.d/*.list
+apt update
+apt purge postgresql-13 postgresql-client-13
+apt full-upgrade
+apt autoremove
