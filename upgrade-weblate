@@ -126,7 +126,7 @@ else
     fi
     WEBLATE_FLAGS="all,zxcvbn"
     if [ -d "$WEBLATE_HOME/hosted" ] ; then
-        PIP_ARGS="djangosaml2idp pyOpenSSL==23.3.0 --editable $WEBLATE_HOME/hosted $PIP_ARGS"
+        PIP_ARGS="djangosaml2idp --editable $WEBLATE_HOME/hosted $PIP_ARGS"
         WEBLATE_FLAGS="$WEBLATE_FLAGS,mysql"
     fi
 
