@@ -8,6 +8,8 @@ if [ -z "$1" ] || [ "$1" = "--help" ] ; then
     exit 1
 fi
 
+SERVER_NAME="$1"
+
 # Set path to include script directory
 PATH="$(dirname "$(readlink -f "$0")"):$PATH"
 export PATH
@@ -25,21 +27,25 @@ EOT
 . "$BOOTSTRAP"
 
 # Create server
+# TODO: decide cx21 / cax11 / cax21
+# Location: nbg1 / fsn1
 # image is debian-12 for arm64
 hcloud server create \
     --image 114690389 \
     --location fsn1 \
-    --name "$1" \
+    --name "$SERVER_NAME" \
     --network 19990 \
     --firewall 13110 \
     --ssh-key 1056953 \
     --ssh-key 1494306 \
     --type cax11 | tee "$TMPFILE"
 
-# TODO: decide cx21 / cax11 / cax21
-# Location: nbg1 / fsn1
-
 IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' "$TMPFILE")
+IP6ADDRESS=$(sed -n 's/IPv6: \(.*\)/\1/p' "$TMPFILE")
+
+hcloud server  set-rdns --ip "$IPADDRESS" --hostname "$WEBLATE_DOMAIN" "$SERVER_NAME"
+hcloud server  set-rdns --ip "$IP6ADDRESS" --hostname "$WEBLATE_DOMAIN" "$SERVER_NAME"
+./dns-edit "$IPADDRESS" "$IP6ADDRESS" "$WEBLATE_CLOUD_DOMAIN"
 
 ssh-keygen -f ~/.ssh/known_hosts -R "$IPADDRESS"
 

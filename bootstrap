@@ -2,6 +2,11 @@
 
 echo "Weblate domain:"
 read -r domain
+cloud_domain="${domain%.weblate.cloud}"
+if [ "$cloud_domain" = "$domain" ] ; then
+    echo "Cloud domain (without .weblate.cloud):"
+    read -r cloud_domain
+fi
 echo "Weblate title:"
 read -r title
 if [ -f ~/.config/weblate-bootstrap/sentry_dsn ] ; then
@@ -29,6 +34,7 @@ smtp_pass=$(openssl rand -hex 32)
 
 cat > "${1:-/etc/weblate-bootstrap}" <<EOT
 WEBLATE_DOMAIN="$domain"
+WEBLATE_CLOUD_DOMAIN="$cloud_domain"
 WEBLATE_TITLE="$title"
 WEBLATE_SECRET=$(openssl rand -hex 32)
 WEBLATE_SENTRY="$sentry"
