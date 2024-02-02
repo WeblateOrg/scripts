@@ -25,11 +25,13 @@ EOT
 . "$BOOTSTRAP"
 
 # Create server
+# image is debian-12 for arm64
 hcloud server create \
-    --image debian-12 \
+    --image 114690389 \
     --location fsn1 \
     --name "$1" \
     --network 19990 \
+    --firewall 13110 \
     --ssh-key 1056953 \
     --ssh-key 1494306 \
     --type cax11 | tee "$TMPFILE"
