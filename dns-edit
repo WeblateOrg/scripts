@@ -7,9 +7,15 @@ if len(sys.argv) != 4:
 
 cf = CloudFlare.CloudFlare()
 zone = cf.zones.get(params={"name": "weblate.cloud"})[0]
-zone_id = zone['id']
-zone_name = zone['name']
+zone_id = zone["id"]
+zone_name = zone["name"]
 print("editing zone_id=%s zone_name=%s" % (zone_id, zone_name))
 
-cf.zones.dns_records.post(zone_id, data={'name':sys.argv[3], 'type':'A', 'content':sys.argv[1]})
-cf.zones.dns_records.post(zone_id, data={'name':sys.argv[3], 'type':'AAAA', 'content':sys.argv[2]})
+cf.zones.dns_records.post(
+    zone_id,
+    data={"name": sys.argv[3], "type": "A", "content": sys.argv[1]},
+)
+cf.zones.dns_records.post(
+    zone_id,
+    data={"name": sys.argv[3], "type": "AAAA", "content": sys.argv[2]},
+)
