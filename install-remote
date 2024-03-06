@@ -3,6 +3,11 @@
 
 set -e
 
+if [ ! -f .venv/bin/activate ] ; then
+    echo "Missing virtual environment!"
+    exit 2
+fi
+
 if [ -z "$1" ] || [ "$1" = "--help" ] ; then
     echo "Usage: install-remote HOSTNAME [VERSION]"
     exit 1
@@ -25,6 +30,8 @@ EOT
 
 # shellcheck disable=SC1090
 . "$BOOTSTRAP"
+# shellcheck disable=SC1090,SC1091
+. .venv/bin/activate
 
 # Create server
 # TODO: decide cx21 / cax11 / cax21
