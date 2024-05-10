@@ -238,9 +238,7 @@ crontab /tmp/weblate-cron
 rm /tmp/weblate-cron
 
 # Licensee
-sudo -u weblate gem install --user-install licensee
-sudo -u weblate ln -s $WEBLATE_HOME/.gem/ruby/2.7.0/bin/licensee $WEBLATE_HOME/weblate-env/bin/
-sudo -u weblate ln -s $WEBLATE_HOME/.gem $WEBLATE_HOME/data/home/
+apt install -y ruby-licensee
 
 # Fail2ban
 sudo -u weblate git clone https://github.com/WeblateOrg/fail2ban.git $WEBLATE_HOME/fail2ban
