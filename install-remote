@@ -38,6 +38,9 @@ pip install -r requirements.txt
 # TODO: decide cx21 / cax11 / cax21
 # Location: nbg1 / fsn1
 # image is debian-12 for arm64
+#
+# debian-12 arm64: 114690389
+# debian-12 amd64: 114690387
 hcloud server create \
     --image 114690389 \
     --location fsn1 \
