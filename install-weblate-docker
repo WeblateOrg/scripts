@@ -246,7 +246,7 @@ sudo -u weblate docker compose logs
 
 # Track deploy to Sentry
 if [ -n "$WEBLATE_SENTRY_TOKEN" ] ; then
-    sudo -u weblate docker compose exec --user weblate weblate weblate sentry_deploy
+    sudo -u weblate docker compose exec --user weblate weblate weblate sentry_deploy || true
 fi
 
 # Create admin user
