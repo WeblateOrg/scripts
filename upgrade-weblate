@@ -85,8 +85,9 @@ if [ -f "$WEBLATE_HOME/weblate/docker-compose.override.yml" ] ; then
     sudo -u weblate docker compose pull
     sudo -u weblate docker compose up -d --wait
     sudo -u weblate docker compose logs
-    sudo -u weblate docker compose exec --user weblate weblate weblate check --deploy
     sudo -u weblate docker image prune --all --force
+    sudo -u weblate docker compose exec --user weblate weblate weblate check --deploy || true
+    sudo -u weblate docker compose exec --user weblate weblate weblate sentry_deploy || true
 
 else
 
