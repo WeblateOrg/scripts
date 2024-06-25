@@ -1,1 +1,1 @@
-cloudflare==2.19.0
+cloudflare==3.0.1
