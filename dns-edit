@@ -1,21 +1,29 @@
 #!/usr/bin/env python3
-import CloudFlare
+from cloudflare import Cloudflare
+import os
+from configparser import ConfigParser
 import sys
 
 if len(sys.argv) != 4:
     raise ValueError("Usage: dns-edit IPV4 IPV6 NAME")
 
-cf = CloudFlare.CloudFlare()
-zone = cf.zones.get(params={"name": "weblate.cloud"})[0]
-zone_id = zone["id"]
-zone_name = zone["name"]
-print("editing zone_id=%s zone_name=%s" % (zone_id, zone_name))
+cp = ConfigParser()
+cp.read([os.path.expanduser("~/.cloudflare/cloudflare.cfg")])
+token = cp.get("Cloudflare", "token")
 
-cf.zones.dns_records.post(
-    zone_id,
-    data={"name": sys.argv[3], "type": "A", "content": sys.argv[1]},
+cf = Cloudflare(api_token=token)
+zone = cf.zones.list(name="weblate.cloud").result[0]
+print("editing zone_id=%s zone_name=%s" % (zone.id, zone.name))
+
+cf.dns.records.create(
+    zone_id=zone.id,
+    name=sys.argv[3],
+    type="A",
+    content=sys.argv[1],
 )
-cf.zones.dns_records.post(
-    zone_id,
-    data={"name": sys.argv[3], "type": "AAAA", "content": sys.argv[2]},
+cf.dns.records.create(
+    zone_id=zone.id,
+    name=sys.argv[3],
+    type="AAAA",
+    content=sys.argv[2],
 )
