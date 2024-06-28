@@ -21,14 +21,6 @@ else
     echo "Sentry Token:"
     read -r sentry_token
 fi
-echo "Matomo site id:"
-read -r matomo
-if [ -f ~/.config/weblate-bootstrap/matomo_token ] ; then
-    matomo_token=$(cat ~/.config/weblate-bootstrap/matomo_token)
-else
-    echo "Matomo token:"
-    read -r matomo_token
-fi
 
 smtp_pass=$(openssl rand -hex 32)
 
@@ -40,10 +32,6 @@ WEBLATE_SECRET=$(openssl rand -hex 32)
 WEBLATE_SENTRY="$sentry"
 WEBLATE_SENTRY_TOKEN="$sentry_token"
 WEBLATE_VERSION="$2"
-
-# Matomo
-MATOMO_SITE="$matomo"
-MATOMO_TOKEN="$matomo_token"
 
 # Exim
 EXIM_PASS=$smtp_pass

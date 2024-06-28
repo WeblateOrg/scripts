@@ -199,19 +199,7 @@ cat > /etc/nginx/snippets/weblate.conf <<EOT
             root $WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/wllegal/templates;
             internal;
     }
-    access_log /var/log/nginx/matomo.log matomo;
     access_log /var/log/nginx/access.log;
-EOT
-cat > /etc/nginx/conf.d/matomo.conf <<EOT
-log_format  matomo                   '{"ip": "\$remote_addr",'
-                                    '"host": "\$host",'
-                                    '"path": "\$request_uri",'
-                                    '"status": "\$status",'
-                                    '"referrer": "\$http_referer",'
-                                    '"user_agent": "\$http_user_agent",'
-                                    '"length": \$bytes_sent,'
-                                    '"generation_time_milli": \$request_time,'
-                                    '"date": "\$time_iso8601"}';
 EOT
 # Insert include after first server_name stanza
 sed -i "0,/server_name $WEBLATE_DOMAIN.*/s//&\\ninclude snippets\/weblate.conf;/" /etc/nginx/sites-available/default
@@ -219,24 +207,6 @@ sed -i "0,/server_name $WEBLATE_DOMAIN.*/s//&\\ninclude snippets\/weblate.conf;/
 sed -i ':a;N;$!ba;s/\(snippets\/weblate.conf;\)[^}]*}/\1/g' /etc/nginx/sites-available/default
 systemctl enable nginx.service
 systemctl restart nginx.service
-
-# Matomo
-sudo -u weblate git clone https://github.com/matomo-org/matomo-log-analytics.git $WEBLATE_HOME/matomo-log-analytics
-cat > $WEBLATE_HOME/run-matomo.sh <<EOT
-#!/bin/sh
-/usr/bin/python3 \
-        $WEBLATE_HOME/matomo-log-analytics/import_logs.py \
-        --url=https://stats.cihar.com \
-        --enable-http-errors \
-        --idsite=$MATOMO_SITE \
-        --token-auth=$MATOMO_TOKEN \
-        /var/log/nginx/matomo.log.1
-EOT
-chmod +x $WEBLATE_HOME/run-matomo.sh
-chown weblate:weblate $WEBLATE_HOME/run-matomo.sh
-echo "0 7 * * * $WEBLATE_HOME/run-matomo.sh | logger -t matomo" > /tmp/weblate-cron
-crontab /tmp/weblate-cron
-rm /tmp/weblate-cron
 
 # Licensee
 apt install -y ruby-licensee
