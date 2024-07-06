@@ -81,7 +81,6 @@ fi
 if [ -f "$WEBLATE_HOME/weblate/docker-compose.override.yml" ] ; then
     # Docker based upgrade
     cd "$WEBLATE_HOME/weblate"
-    sed -i s/alpine3.17/alpine/ docker-compose.yml
     sudo -u weblate docker compose pull
     sudo -u weblate docker compose up -d --wait
     sudo -u weblate docker compose logs
