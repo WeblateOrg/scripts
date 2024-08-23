@@ -40,6 +40,9 @@ apt-get install --no-install-recommends -y\
     libyaml-dev \
     libacl1-dev \
     zlib1g-dev \
+    liblz4-dev \
+    libzstd-dev \
+    libxxhash-dev \
     nginx \
     openssh-client \
     pkg-config \
