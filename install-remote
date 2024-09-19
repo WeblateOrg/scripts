@@ -36,7 +36,7 @@ pip install -r requirements.txt
 
 # Create server
 # TODO: decide cx21 / cax11 / cax21
-# Location: nbg1 / fsn1
+# Location: nbg1 / fsn1 / hel1
 # image is debian-12 for arm64
 #
 # debian-12 arm64: 114690389
