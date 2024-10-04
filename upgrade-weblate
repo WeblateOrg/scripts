@@ -172,7 +172,6 @@ else
         fi
         cd "$OLD_DIR"
     fi
-    sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install --upgrade --no-cache-dir --no-binary :all: cffi
     # shellcheck disable=SC2086
     sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install --upgrade-strategy eager --upgrade $PIP_ARGS "${WEBLATE_PKG}[${WEBLATE_FLAGS}]" wllegal
 
