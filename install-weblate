@@ -111,7 +111,7 @@ SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     -e 's/^#     "weblate.machinery.weblatetm./    "weblate.machinery.weblatetm./' \
     -e 's/^#     "weblate.memory.machine/    "weblate.memory.machine/' \
     -e 's/^DEBUG =.*/DEBUG = False/' \
-    -e 's/"admin.E408"/"admin.E408", "weblate.E012", "weblate.E013",/' \
+    -e 's/"admin.E408"/"admin.E408", "weblate.E012", "weblate.E013"/' \
     -e 's/^REGISTRATION_OPEN =.*/REGISTRATION_OPEN = False/' \
     -e 's/^REQUIRE_LOGIN =.*/REQUIRE_LOGIN = True/' \
     -e 's/^COMPRESS_OFFLINE =.*/COMPRESS_OFFLINE = True/' \
