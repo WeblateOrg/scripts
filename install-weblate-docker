@@ -86,19 +86,7 @@ cat > /etc/nginx/snippets/weblate.conf <<EOT
             root $WEBLATE_HOME/wllegal/wllegal/templates;
             internal;
     }
-    access_log /var/log/nginx/matomo.log matomo;
     access_log /var/log/nginx/access.log;
-EOT
-cat > /etc/nginx/conf.d/matomo.conf <<EOT
-log_format  matomo                   '{"ip": "\$remote_addr",'
-                                    '"host": "\$host",'
-                                    '"path": "\$request_uri",'
-                                    '"status": "\$status",'
-                                    '"referrer": "\$http_referer",'
-                                    '"user_agent": "\$http_user_agent",'
-                                    '"length": \$bytes_sent,'
-                                    '"generation_time_milli": \$request_time,'
-                                    '"date": "\$time_iso8601"}';
 EOT
 
 if [ "$MIGRATE" -eq 0 ] ; then
@@ -109,29 +97,6 @@ if [ "$MIGRATE" -eq 0 ] ; then
 fi
 systemctl enable nginx.service
 systemctl restart nginx.service
-
-# Matomo
-if [ ! -d "$WEBLATE_HOME/matomo-log-analytics" ] ; then
-    sudo -u weblate git clone https://github.com/matomo-org/matomo-log-analytics.git "$WEBLATE_HOME/matomo-log-analytics"
-    cat > $WEBLATE_HOME/run-matomo.sh <<EOT
-#!/bin/sh
-/usr/bin/python3 \
-        $WEBLATE_HOME/matomo-log-analytics/import_logs.py \
-        --url=https://stats.cihar.com \
-        --enable-http-errors \
-        --idsite=$MATOMO_SITE \
-        --token-auth=$MATOMO_TOKEN \
-        /var/log/nginx/matomo.log.1
-EOT
-    chmod +x $WEBLATE_HOME/run-matomo.sh
-    chown weblate:weblate $WEBLATE_HOME/run-matomo.sh
-fi
-
-# Always randomize cron job
-echo "$(( RANDOM % 60 )) 7 * * * $WEBLATE_HOME/run-matomo.sh | logger -t matomo" > /tmp/weblate-cron
-crontab /tmp/weblate-cron
-rm /tmp/weblate-cron
-
 
 # Fail2ban
 if [ ! -d "$WEBLATE_HOME/fail2ban" ] ; then
