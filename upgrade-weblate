@@ -126,8 +126,8 @@ else
     fi
     WEBLATE_FLAGS="all,zxcvbn"
     if [ -d "$WEBLATE_HOME/hosted" ] ; then
-        PIP_ARGS="djangosaml2idp --editable $WEBLATE_HOME/hosted $PIP_ARGS"
-        WEBLATE_FLAGS="$WEBLATE_FLAGS,mysql"
+        PIP_ARGS="--editable $WEBLATE_HOME/hosted $PIP_ARGS"
+        WEBLATE_FLAGS="$WEBLATE_FLAGS,mysql,saml2idp"
     fi
 
     # Backup settings
