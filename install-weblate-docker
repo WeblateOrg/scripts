@@ -177,6 +177,7 @@ WEBLATE_GET_HELP_URL="https://care.weblate.org/"
 WEBLATE_CONTACT_FORM="from"
 WEBLATE_ADMINS_CONTACT='care@weblate.org'
 WEBLATE_SILENCED_SYSTEM_CHECKS=weblate.E012,weblate.E013$IGNORE_CHECKS
+WEBLATE_ZAMMAD_URL=https://care.weblate.org
 
 # Sentry integration
 SENTRY_DSN="$WEBLATE_SENTRY"
