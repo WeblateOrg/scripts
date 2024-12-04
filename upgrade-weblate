@@ -91,7 +91,7 @@ if [ -f "$WEBLATE_HOME/weblate/docker-compose.override.yml" ] ; then
 else
 
     # Detect web service
-    for service in uwsgi.service httpd.service gunicorn.service ; do
+    for service in gunicorn.service uwsgi.service httpd.service ; do
         if systemctl cat -- $service > /dev/null 2>&1 ; then
             SERVICE=$service
             break
