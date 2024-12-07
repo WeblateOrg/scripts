@@ -2,5 +2,5 @@ weblate.example.com
 example
 CI Weblate
 https://00000000000000000000000000000000@sentry.example.com/123
-TOKEN
+
 GTOKEN
