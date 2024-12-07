@@ -21,6 +21,12 @@ else
     echo "Sentry Token:"
     read -r sentry_token
 fi
+if [ -f ~/.config/weblate-bootstrap/graylog_token ] ; then
+    graylog_token=$(cat ~/.config/weblate-bootstrap/graylog_token)
+else
+    echo "Graylog Token:"
+    read -r graylog_token
+fi
 
 smtp_pass=$(openssl rand -hex 32)
 
@@ -31,6 +37,7 @@ WEBLATE_TITLE="$title"
 WEBLATE_SECRET=$(openssl rand -hex 32)
 WEBLATE_SENTRY="$sentry"
 WEBLATE_SENTRY_TOKEN="$sentry_token"
+WEBLATE_GRAYLOG_TOKEN="$graylog_token"
 WEBLATE_VERSION="$2"
 
 # Exim

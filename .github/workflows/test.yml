@@ -35,6 +35,8 @@ jobs:
       run: sudo ./install-weblate --nocert
     - name: Munin
       run: sudo ./install-munin
+    - name: Graylog
+      run: sudo ./install-graylog
     - name: Upgrade
       run: sudo ./upgrade-weblate --nodiff
     - name: Upgrade (lazy restart)

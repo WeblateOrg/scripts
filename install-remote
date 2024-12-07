@@ -86,6 +86,7 @@ s ./scripts/install-weblate-docker
 #s ./scripts/install-weblate
 s ./scripts/upgrade-nginx-ssl
 s ./scripts/install-munin
+s ./scripts/install-graylog
 
 # Print list of things to do
 echo "TODO:"
