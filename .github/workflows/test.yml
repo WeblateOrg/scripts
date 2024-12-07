@@ -3,7 +3,7 @@ name: Test
 on: [push, pull_request]
 
 jobs:
-  build:
+  native:
     runs-on: ubuntu-24.04
 
     steps:
@@ -17,37 +17,48 @@ jobs:
       run: sudo ./configure-system
     - name: Bootstrap
       run: |
-        sudo ./bootstrap <<EOT
-        weblate.example.com
-        example
-        CI Weblate
-        https://00000000000000000000000000000000@sentry.example.com/123
-
-        0
-        TOKEN
-        EOT
+        sudo ./bootstrap < .github/boostrap.txt
         cat /etc/weblate-bootstrap
-    - name: Exim
-      run: sudo ./install-exim
     - name: PostgreSQL
       run: sudo ./install-posgtresql
     - name: Weblate
       run: sudo ./install-weblate --nocert
-    - name: Munin
-      run: sudo ./install-munin
-    - name: Graylog
-      run: sudo ./install-graylog
     - name: Upgrade
       run: sudo ./upgrade-weblate --nodiff
     - name: Upgrade (lazy restart)
       run: sudo ./upgrade-weblate --nodiff --lazy-restart
-    - name: Migrate
+    - name: Migrate to docker
       run: sudo ./migrate-docker --nomail
     - name: Logs
       if: always()
       run: |
         cd /home/weblate/weblate
         docker compose logs
+
+  system:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4                                       # v4
+      # Remove non-installable git packages. There git-svn can not be installed
+      # because the image contains newer versions which do not have matching git-svn
+      # in enabled repositories.
+    - name: APT cleanup
+      run: sudo apt-get purge git git-man
+    - name: Exim
+      run: sudo ./configure-system
+    - name: Bootstrap
+      run: |
+        sudo ./bootstrap < .github/boostrap.txt
+        cat /etc/weblate-bootstrap
+    - name: Exim
+      run: sudo ./install-exim
+    - name: PostgreSQL
+      run: sudo ./install-posgtresql
+    - name: Munin
+      run: sudo ./install-munin
+    - name: Graylog
+      run: sudo ./install-graylog
 
 
   docker:
@@ -64,20 +75,10 @@ jobs:
       run: sudo ./configure-system
     - name: Bootstrap
       run: |
-        sudo ./bootstrap <<EOT
-        weblate.example.com
-        example
-        CI Weblate
-        https://00000000000000000000000000000000@sentry.example.com/123
-
-        0
-        TOKEN
-        EOT
+        sudo ./bootstrap < .github/boostrap.txt
         cat /etc/weblate-bootstrap
     - name: Docker
       run: sudo ./install-docker
-    - name: Exim
-      run: sudo ./install-exim
     - name: Weblate
       run: sudo ./install-weblate-docker --nocert --nomail
     - name: Upgrade
