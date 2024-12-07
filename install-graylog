@@ -16,7 +16,6 @@ apt-get install -y graylog-sidecar
 sed -i "s@^.\?server_url:.*@server_url: http://172.16.0.78:9000/api/@" /etc/graylog/sidecar/sidecar.yml
 sed -i "s@^server_api_token:.*@server_api_token: $WEBLATE_GRAYLOG_TOKEN@" /etc/graylog/sidecar/sidecar.yml
 sed -i "s@^#node_id: @node_id: @" /etc/graylog/sidecar/sidecar.yml
-cat /etc/graylog/sidecar/sidecar.yml
 
 # Start service
 graylog-sidecar -service install

@@ -58,7 +58,9 @@ jobs:
     - name: Munin
       run: sudo ./install-munin
     - name: Graylog
-      run: sudo ./install-graylog
+      run: |
+        sudo ./install-graylog
+        sudo cat /etc/graylog/sidecar/sidecar.yml
 
 
   docker:
