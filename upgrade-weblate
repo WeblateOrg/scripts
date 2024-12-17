@@ -144,6 +144,9 @@ else
 
     if [ $LAZY_RESTART -eq 0 ] ; then
         # Stop web
+        if [ "$SERVICE" = gunicorn.service ] ; then
+            systemctl disable gunicorn.socket
+        fi
         systemctl stop "$SERVICE"
         # Wait for celery to process all jobs
         while sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" celery_queues | grep ': [^0]' ; do
@@ -209,6 +212,9 @@ else
             ssh "root@$WORKER" systemctl start celery-weblate.service
         done
         systemctl start "$SERVICE"
+        if [ "$SERVICE" = gunicorn.service ] ; then
+            systemctl enable gunicorn.socket
+        fi
     else
         systemctl restart celery-weblate.service &
         for WORKER in $WEBLATE_WORKERS ; do
