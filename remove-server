@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+from cloudflare import Cloudflare
+import os
+from configparser import ConfigParser
+import sys
+import subprocess
+import json
+from pathlib import Path
+import requests
+
+sentry_org = "weblate"
+
+if len(sys.argv) not in (2, 3, 4):
+    raise ValueError("Usage: remove-server DNS_NAME [PUBLIC_NAME [SERVER_NAME]]")
+
+dns_name = f"{sys.argv[1]}.weblate.cloud"
+if len(sys.argv) >= 3:
+    public_name = sys.argv[2]
+else:
+    public_name = dns_name
+if len(sys.argv) >= 4:
+    server_name = sys.argv[3]
+else:
+    server_name = f"{sys.argv[1]}-weblate"
+
+# Sentry
+sentry_token_path = Path.home() / ".config" / "sentry_token"
+sentry_token = sentry_token_path.read_text().strip()
+auth = {"Authorization": f"Bearer {sentry_token}"}
+response = requests.get(
+    f"https://de.sentry.io/api/0/organizations/{sentry_org}/monitors/",
+    params={"environment": public_name},
+    headers=auth,
+)
+response.raise_for_status()
+cron_monitors = [cron for cron in response.json() if cron["environments"]]
+
+# CloudFlare
+cp = ConfigParser()
+cp.read([os.path.expanduser("~/.cloudflare/cloudflare.cfg")])
+token = cp.get("Cloudflare", "token")
+cf = Cloudflare(api_token=token)
+
+zone = cf.zones.list(name="weblate.cloud").result[0]
+
+dns_records = list(
+    cf.dns.records.list(
+        name=dns_name,
+        zone_id=zone.id,
+    )
+)
+
+# Hetzner
+servers_json = subprocess.run(
+    ["hcloud", "server", "list", "-o", "json"], capture_output=True, check=True
+)
+servers = [
+    server
+    for server in json.loads(servers_json.stdout)
+    if server["name"] == server_name
+]
+
+print("== Summary ==")
+print("Cron monitors:", len(cron_monitors))
+print(", ".join(monitor["slug"] for monitor in cron_monitors))
+print("DNS entries:", len(dns_records))
+print(dns_records)
+print("Servers:", len(servers))
+print(servers)
+print()
+print("Press Ctrl+C to cancel or Enter to continue...")
+input()
+
+print("Removing DNS entries...")
+for record in dns_records:
+    cf.dns.records.delete(record.id, zone_id=zone.id)
+print("Removing server...")
+for server in servers:
+    subprocess.run(["hcloud", "server", "delete", str(server["id"])])
+print("Disabling sentry cron monitors...")
+for cron in cron_monitors:
+    response = requests.delete(
+        f"https://de.sentry.io/api/0/organizations/{sentry_org}/monitors/{cron['slug']}/",
+        params={"environment": public_name},
+        headers=auth,
+    )
+    response.raise_for_status()
