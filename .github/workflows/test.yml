@@ -90,3 +90,5 @@ jobs:
       run: |
         cd /home/weblate/weblate
         docker compose logs
+permissions:
+  contents: read
