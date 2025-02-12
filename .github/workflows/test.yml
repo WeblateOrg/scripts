@@ -17,7 +17,7 @@ jobs:
       run: sudo ./configure-system
     - name: Bootstrap
       run: |
-        sudo ./bootstrap < .github/boostrap.txt
+        sudo ./bootstrap < .github/boostrap.txt # shellcheck: disable=SC2024
         cat /etc/weblate-bootstrap
     - name: PostgreSQL
       run: sudo ./install-posgtresql
@@ -49,7 +49,7 @@ jobs:
       run: sudo ./configure-system
     - name: Bootstrap
       run: |
-        sudo ./bootstrap < .github/boostrap.txt
+        sudo ./bootstrap < .github/boostrap.txt # shellcheck: disable=SC2024
         cat /etc/weblate-bootstrap
     - name: Exim
       run: sudo ./install-exim
@@ -77,7 +77,7 @@ jobs:
       run: sudo ./configure-system
     - name: Bootstrap
       run: |
-        sudo ./bootstrap < .github/boostrap.txt
+        sudo ./bootstrap < .github/boostrap.txt # shellcheck: disable=SC2024
         cat /etc/weblate-bootstrap
     - name: Docker
       run: sudo ./install-docker
