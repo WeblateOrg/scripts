@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       # Remove non-installable git packages. There git-svn can not be installed
       # because the image contains newer versions which do not have matching git-svn
       # in enabled repositories.
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       # Remove non-installable git packages. There git-svn can not be installed
       # because the image contains newer versions which do not have matching git-svn
       # in enabled repositories.
@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       # Remove non-installable git packages. There git-svn can not be installed
       # because the image contains newer versions which do not have matching git-svn
       # in enabled repositories.
