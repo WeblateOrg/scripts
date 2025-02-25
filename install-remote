@@ -70,7 +70,7 @@ s() {
 }
 
 # Configure mail sending
-echo "$WEBLATE_DOMAIN:$(openssl passwd -6 -salt "$(openssl rand -hex 6)" "$EXIM_PASS"):666:0:99999:7::" | ssh root@mail tee --append /etc/exim4/passwd
+#echo "$WEBLATE_DOMAIN:$(openssl passwd -6 -salt "$(openssl rand -hex 6)" "$EXIM_PASS"):666:0:99999:7::" | ssh root@mail tee --append /etc/exim4/passwd
 
 # Install the system
 scp "$BOOTSTRAP" "root@$IPADDRESS:/etc/weblate-bootstrap"

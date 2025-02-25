@@ -11,15 +11,15 @@ sed -i \
     -e "s#dc_eximconfig_configtype=.*#dc_eximconfig_configtype='satellite'#" \
     -e "s#dc_local_interfaces=.*#dc_local_interfaces='127.0.0.1'#" \
     -e "s#dc_readhost=.*#dc_readhost='$WEBLATE_DOMAIN'#" \
-    -e "s#dc_smarthost=.*#dc_smarthost='mail.cihar.com'#" \
+    -e "s#dc_smarthost=.*#dc_smarthost='172.16.0.84'#" \
     -e "s#dc_hide_mailname=.*#dc_hide_mailname='true'#" \
     /etc/exim4/update-exim4.conf.conf
 
-cat >> /etc/exim4/passwd.client <<EOT
-mail.cihar.com:$WEBLATE_DOMAIN:$EXIM_PASS
-EOT
+#cat >> /etc/exim4/passwd.client <<EOT
+#mail.cihar.com:$WEBLATE_DOMAIN:$EXIM_PASS
+#EOT
 
 systemctl restart exim4
 
-echo "TODO: update smarthost credentials:"
-echo "$WEBLATE_DOMAIN:$(openssl passwd -6 -salt "$(openssl rand -hex 6)" "$EXIM_PASS"):666:0:99999:7::"
+#echo "TODO: update smarthost credentials:"
+#echo "$WEBLATE_DOMAIN:$(openssl passwd -6 -salt "$(openssl rand -hex 6)" "$EXIM_PASS"):666:0:99999:7::"
