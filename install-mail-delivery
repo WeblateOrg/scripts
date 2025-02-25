@@ -1,0 +1,62 @@
+#!/bin/sh
+
+set -e
+
+if [ -z "$1" ] || [ "$1" = "--help" ] ; then
+    echo "Usage: install-mail-delivery HOSTNAME"
+    exit 1
+fi
+
+ssh "$1" apt update
+ssh "$1" apt install -y git
+
+ssh "$1" "if [ -d scripts ] ; then cd scripts ; git pull -q ; else git clone https://github.com/WeblateOrg/scripts.git ; fi"
+
+ssh "$1" ./scripts/configure-system
+
+ssh "$1" apt install -y exim4 bsd-mailx
+
+scp ~/Nextcloud/Weblate/Servers/Mail/DKIM/dkim.private.key "$1":/etc/exim4/dkim.private.key
+ssh "$1" chgrp Debian-exim /etc/exim4/dkim.private.key
+ssh "$1" chmod 640 /etc/exim4/dkim.private.key
+
+ssh "$1" tee /etc/exim4/update-exim4.conf.conf << EOT
+dc_eximconfig_configtype='internet'
+dc_other_hostnames=''
+dc_local_interfaces=''
+dc_readhost='md.weblate.org'
+dc_relay_domains=''
+dc_minimaldns='false'
+dc_relay_nets='172.16.0.0/16'
+dc_smarthost=''
+CFILEMODE='644'
+dc_use_split_config='true'
+dc_hide_mailname='true'
+dc_mailname_in_oh='true'
+dc_localdelivery='mail_spool'
+EOT
+
+ssh "$1" tee /etc/exim4/conf.d/main/00_local_settings << EOT
+daemon_smtp_ports = 25 : 587
+REMOTE_SMTP_HELO_DATA = md.weblate.org
+MAIN_HARDCODE_PRIMARY_HOSTNAME = md.weblate.org
+DKIM_CANON = relaxed
+DKIM_SELECTOR = md2502
+DKIM_PRIVATE_KEY = /etc/exim4/dkim.private.key
+DKIM_DOMAIN = weblate.org
+DKIM_STRICT = 1
+EOT
+
+ssh "$1" update-exim4.conf
+ssh "$1" systemctl restart exim4
+
+# shellcheck disable=SC2029
+ssh "$1" ./scripts/install-graylog "'$(cat ~/.config/weblate-bootstrap/graylog_token)'"
+
+# shellcheck disable=SC2087
+ssh "$1" mail -r "noreply@weblate.org" -s "Test" -- "michal@weblate.org" << EOT
+E-mail delivery from $1.
+
+--
+Your friendly bot
+EOT

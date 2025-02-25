@@ -2,8 +2,12 @@
 
 set -e
 
-# shellcheck disable=SC1091
-. /etc/weblate-bootstrap
+if [ -n "$1" ] ; then
+    WEBLATE_GRAYLOG_TOKEN="$1"
+else
+    # shellcheck disable=SC1091
+    . /etc/weblate-bootstrap
+fi
 
 # Install package
 wget https://packages.graylog2.org/repo/packages/graylog-sidecar-repository_1-5_all.deb
