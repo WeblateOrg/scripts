@@ -118,7 +118,7 @@ curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/envi
 cat > docker-compose.override.yml <<EOT
 services:
   weblate:
-    image: weblate/weblate:edge
+    image: weblate/weblate:latest
     ports:
     - 127.0.0.1:8080:8080
   database:
