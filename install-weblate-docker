@@ -119,6 +119,7 @@ cat > docker-compose.override.yml <<EOT
 services:
   weblate:
     image: weblate/weblate:latest
+    hostname: $(hostname)
     ports:
     - 127.0.0.1:8080:8080
   database:
