@@ -76,7 +76,7 @@ for record in dns_records:
     cf.dns.records.delete(record.id, zone_id=zone.id)
 print("Removing server...")
 for server in servers:
-    subprocess.run(["hcloud", "server", "delete", str(server["id"])])
+    subprocess.run(["hcloud", "server", "delete", str(server["id"])], check=True)
 print("Disabling sentry cron monitors...")
 for cron in cron_monitors:
     response = requests.delete(
