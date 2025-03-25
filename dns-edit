@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
+# ruff: noqa: T201,TRY003
+"""Changes DNS entries at Cloudflare."""
+
 from cloudflare import Cloudflare
 import os
 from configparser import ConfigParser
 import sys
 
-if len(sys.argv) != 4:
+if len(sys.argv) != 4:  # noqa: PLR2004
     raise ValueError("Usage: dns-edit IPV4 IPV6 NAME")
 
 cp = ConfigParser()
@@ -13,7 +16,7 @@ token = cp.get("Cloudflare", "token")
 
 cf = Cloudflare(api_token=token)
 zone = cf.zones.list(name="weblate.cloud").result[0]
-print("editing zone_id=%s zone_name=%s" % (zone.id, zone.name))
+print(f"editing zone_id={zone.id} zone_name={zone.name}")
 
 cf.dns.records.create(
     zone_id=zone.id,
