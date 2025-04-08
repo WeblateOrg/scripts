@@ -2,7 +2,7 @@
 
 set -e
 
-if [ -n "$1" ] ; then
+if [ -n "$1" ]; then
     WEBLATE_GRAYLOG_TOKEN="$1"
 else
     # shellcheck disable=SC1091

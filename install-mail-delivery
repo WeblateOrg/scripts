@@ -2,7 +2,7 @@
 
 set -e
 
-if [ -z "$1" ] || [ "$1" = "--help" ] ; then
+if [ -z "$1" ] || [ "$1" = "--help" ]; then
     echo "Usage: install-mail-delivery HOSTNAME"
     exit 1
 fi

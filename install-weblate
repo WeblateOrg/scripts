@@ -9,8 +9,7 @@ cd /tmp
 
 # Install deps
 apt-get update
-apt-get install --no-install-recommends -y\
-    build-essential \
+apt-get install --no-install-recommends -y build-essential \
     certbot \
     curl \
     cython3 \
@@ -118,7 +117,7 @@ SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     -e 's/#     "weblate.machinery.apertium.ApertiumAPYTranslation",/"weblate.machinery.apertium.ApertiumAPYTranslation",/' \
     "$SETTINGS_PY"
 
-cat <<EOT >> "$SETTINGS_PY"
+cat << EOT >> "$SETTINGS_PY"
 
 # Hosted customization
 ADMINS_CONTACT = ['care@weblate.org']
@@ -131,7 +130,7 @@ EOT
 
 # Fill the database
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate migrate
-if [ -n "$WEBLATE_PASSWORD" ] ; then
+if [ -n "$WEBLATE_PASSWORD" ]; then
     sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař' --password "$WEBLATE_PASSWORD"
 else
     sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
@@ -139,7 +138,7 @@ fi
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate compress --force
 # Track deploy at Sentry
-if ! grep -q "SENTRY_TOKEN = ''" "$SETTINGS_PY" ; then
+if ! grep -q "SENTRY_TOKEN = ''" "$SETTINGS_PY"; then
     sudo -u weblate "$WEBLATE_HOME/weblate-env/bin/weblate" sentry_deploy
 fi
 
@@ -156,20 +155,20 @@ ln -s ../apps-available/weblate.ini /etc/uwsgi/apps-enabled/
 systemctl restart uwsgi.service
 
 # SSL cert
-if [ "$1" != "--nocert" ] ; then
+if [ "$1" != "--nocert" ]; then
     certbot --agree-tos --email care@weblate.org --redirect --no-eff-email -d "$WEBLATE_DOMAIN"
 fi
 
 # Enable http/2
 sed -i -e 's/ssl;/ssl http2;/' -e 's/ssl ipv6only=on/ssl ipv6only=on http2/' /etc/nginx/sites-available/default
 # Enable status locally
-sed -i '/server_name _/a location = /nginx_status {\n    stub_status;\n}'   /etc/nginx/sites-available/default
+sed -i '/server_name _/a location = /nginx_status {\n    stub_status;\n}' /etc/nginx/sites-available/default
 # Enable compression for js/css
 sed -i 's/^\t# gzip/\tgzip/' /etc/nginx/nginx.conf
 # Hide server version
 sed -i 's/# server_tokens off/server_tokens off/' /etc/nginx/nginx.conf
 # Weblate nginx snippet
-cat > /etc/nginx/snippets/weblate.conf <<EOT
+cat > /etc/nginx/snippets/weblate.conf << EOT
     location /static/ {
         # DATA_DIR/static/
         alias $WEBLATE_HOME/data/static/;

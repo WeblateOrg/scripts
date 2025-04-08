@@ -21,7 +21,7 @@ install-docker
 
 # Stop services, wait for empty queue
 systemctl stop uwsgi
-while sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" celery_queues | grep ': [^0]' ; do
+while sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" celery_queues | grep ': [^0]'; do
     sleep 1
 done
 systemctl stop celery-weblate
@@ -33,7 +33,7 @@ install-weblate-docker "$@" --migrate
 
 # Dump PostgreSQL and load it to Docker
 # shellcheck disable=SC2024
-sudo -u "postgres" pg_dump --no-privileges --no-owner --clean --if-exists  weblate > "$WEBLATE_HOME/weblate.sql"
+sudo -u "postgres" pg_dump --no-privileges --no-owner --clean --if-exists weblate > "$WEBLATE_HOME/weblate.sql"
 systemctl stop postgresql
 
 cd "$WEBLATE_DOCKER"
@@ -61,7 +61,7 @@ sudo -u weblate docker compose up -d --wait
 sudo -u weblate docker compose logs
 
 # Track deploy to Sentry
-if [ -n "$WEBLATE_SENTRY_TOKEN" ] ; then
+if [ -n "$WEBLATE_SENTRY_TOKEN" ]; then
     sudo -u weblate docker compose exec --user weblate weblate weblate sentry_deploy
 fi
 

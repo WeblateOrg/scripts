@@ -3,12 +3,12 @@
 
 set -e
 
-if [ ! -f .venv/bin/activate ] ; then
+if [ ! -f .venv/bin/activate ]; then
     echo "Missing virtual environment!"
     exit 2
 fi
 
-if [ -z "$1" ] || [ "$1" = "--help" ] ; then
+if [ -z "$1" ] || [ "$1" = "--help" ]; then
     echo "Usage: install-remote HOSTNAME [VERSION]"
     exit 1
 fi
@@ -24,7 +24,7 @@ TMPFILE=$(mktemp --tmpdir weblate-log.XXXXXXXXXX)
 
 # Gather basic configuration
 bootstrap "$BOOTSTRAP" "$2"
-cat >> "$BOOTSTRAP" <<EOT
+cat >> "$BOOTSTRAP" << EOT
 WEBLATE_PASSWORD="$(apg -a 0 -M sncl -n 1 -x 10 -m 20)"
 EOT
 
@@ -54,8 +54,8 @@ hcloud server create \
 IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' "$TMPFILE")
 IP6ADDRESS=$(sed -n 's/IPv6: \(.*\)/\1/p' "$TMPFILE")
 
-hcloud server  set-rdns --ip "$IPADDRESS" --hostname "$WEBLATE_DOMAIN" "$SERVER_NAME"
-hcloud server  set-rdns --ip "$IP6ADDRESS" --hostname "$WEBLATE_DOMAIN" "$SERVER_NAME"
+hcloud server set-rdns --ip "$IPADDRESS" --hostname "$WEBLATE_DOMAIN" "$SERVER_NAME"
+hcloud server set-rdns --ip "$IP6ADDRESS" --hostname "$WEBLATE_DOMAIN" "$SERVER_NAME"
 ./dns-edit "$IPADDRESS" "$IP6ADDRESS" "$WEBLATE_CLOUD_DOMAIN"
 
 ssh-keygen -f ~/.ssh/known_hosts -R "$IPADDRESS"
@@ -92,7 +92,7 @@ echo "TODO:"
 echo " * Store password: $WEBLATE_PASSWORD"
 echo " * Add $IPADDRESS to SSH configuration"
 # AMD uses ens10
-echo " * Add host to munin: $(s ip -f inet address show enp7s0  | sed -En -e 's/.*inet ([0-9.]+).*/\1/p')"
+echo " * Add host to munin: $(s ip -f inet address show enp7s0 | sed -En -e 's/.*inet ([0-9.]+).*/\1/p')"
 echo " * Link with purchased service"
 echo " * Activate and verify backups"
 echo " * Verify SMTP is working"
