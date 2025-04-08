@@ -45,6 +45,7 @@ DKIM_SELECTOR = md2502
 DKIM_PRIVATE_KEY = /etc/exim4/dkim.private.key
 DKIM_DOMAIN = weblate.org
 DKIM_STRICT = 1
+MAIN_TLS_ADVERTISE_HOSTS =
 EOT
 
 ssh "$1" update-exim4.conf
