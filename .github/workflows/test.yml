@@ -11,6 +11,8 @@ jobs:
       # Remove non-installable git packages. There git-svn can not be installed
       # because the image contains newer versions which do not have matching git-svn
       # in enabled repositories.
+      with:
+        persist-credentials: false
     - name: APT cleanup
       run: sudo apt-get purge git git-man
     - name: Exim
@@ -44,6 +46,8 @@ jobs:
       # Remove non-installable git packages. There git-svn can not be installed
       # because the image contains newer versions which do not have matching git-svn
       # in enabled repositories.
+      with:
+        persist-credentials: false
     - name: APT cleanup
       run: sudo apt-get purge git git-man
     - name: Exim
@@ -73,6 +77,8 @@ jobs:
       # Remove non-installable git packages. There git-svn can not be installed
       # because the image contains newer versions which do not have matching git-svn
       # in enabled repositories.
+      with:
+        persist-credentials: false
     - name: APT cleanup
       run: sudo apt-get purge git git-man
     - name: Exim
