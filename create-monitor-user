@@ -20,9 +20,9 @@ if [ -z "$KEY" ]; then
     echo "Generating new key"
     if [ -f "/home/weblate/weblate/docker-compose.override.yml" ]; then
         cd /home/weblate/weblate || exit 1
-        KEY="$(sudo -u weblate docker compose exec --user weblate weblate weblate shell -c 'from weblate.auth.models import User; user = User.objects.create(username="monitor"); print(user.auth_token.key)')"
+        KEY="$(sudo -u weblate docker compose exec --user weblate weblate weblate shell --no-imports -c 'from weblate.auth.models import User; user = User.objects.get_or_create(username="monitor")[0]; print(user.auth_token.key)')"
     else
-        KEY="$(sudo -u weblate /home/weblate/weblate-env/bin/weblate shell -c 'from weblate.auth.models import User; user = User.objects.create(username="monitor"); print(user.auth_token.key)')"
+        KEY="$(sudo -u weblate /home/weblate/weblate-env/bin/weblate shell --no-imports -c 'from weblate.auth.models import User; user = User.objects.get_or_create(username="monitor")[0]; print(user.auth_token.key)')"
     fi
 
     sed -i "s/^env.KEY .*/env.KEY $KEY/" /etc/munin/plugin-conf.d/weblate_servers
