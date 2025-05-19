@@ -42,14 +42,14 @@ pip install -r requirements.txt
 # debian-12 arm64: 114690389
 # debian-12 amd64: 114690387
 hcloud server create \
-    --image 114690387 \
+    --image 114690389 \
     --location fsn1 \
     --name "$SERVER_NAME" \
     --network 19990 \
     --firewall 13110 \
     --ssh-key 1056953 \
     --ssh-key 1494306 \
-    --type cx22 | tee "$TMPFILE"
+    --type cax11 | tee "$TMPFILE"
 
 IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' "$TMPFILE")
 IP6ADDRESS=$(sed -n 's/IPv6: \(.*\)/\1/p' "$TMPFILE")
