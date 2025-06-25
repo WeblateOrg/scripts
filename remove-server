@@ -8,8 +8,6 @@ from configparser import ConfigParser
 import sys
 import subprocess
 import json
-from pathlib import Path
-import requests
 
 sentry_org = "weblate"
 
@@ -25,18 +23,6 @@ if len(sys.argv) >= 4:  # noqa: PLR2004
     server_name = sys.argv[3]
 else:
     server_name = f"{sys.argv[1]}-weblate"
-
-# Sentry
-sentry_token_path = Path.home() / ".config" / "sentry_token"
-sentry_token = sentry_token_path.read_text().strip()
-auth = {"Authorization": f"Bearer {sentry_token}"}
-response = requests.get(
-    f"https://de.sentry.io/api/0/organizations/{sentry_org}/monitors/",
-    params={"environment": public_name},
-    headers=auth,
-)
-response.raise_for_status()
-cron_monitors = [cron for cron in response.json() if cron["environments"]]
 
 # CloudFlare
 cp = ConfigParser()
@@ -64,8 +50,7 @@ servers = [
 ]
 
 print("== Summary ==")
-print("Cron monitors:", len(cron_monitors))
-print(", ".join(monitor["slug"] for monitor in cron_monitors))
+print("Sentry environment:", public_name)
 print("DNS entries:", len(dns_records))
 print(dns_records)
 print("Servers:", len(servers))
@@ -81,10 +66,4 @@ print("Removing server...")
 for server in servers:
     subprocess.run(["hcloud", "server", "delete", str(server["id"])], check=True)
 print("Disabling sentry cron monitors...")
-for cron in cron_monitors:
-    response = requests.delete(
-        f"https://de.sentry.io/api/0/organizations/{sentry_org}/monitors/{cron['slug']}/",
-        params={"environment": public_name},
-        headers=auth,
-    )
-    response.raise_for_status()
+subprocess.sun(["./disable-sentry-monitors", public_name])
