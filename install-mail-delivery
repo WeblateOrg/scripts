@@ -3,8 +3,8 @@
 set -e
 
 if [ -z "$1" ] || [ "$1" = "--help" ]; then
-    echo "Usage: install-mail-delivery HOSTNAME"
-    exit 1
+	echo "Usage: install-mail-delivery HOSTNAME"
+	exit 1
 fi
 
 ssh "$1" apt update
@@ -20,7 +20,7 @@ scp ~/Nextcloud/Weblate/Servers/Mail/DKIM/dkim.private.key "$1":/etc/exim4/dkim.
 ssh "$1" chgrp Debian-exim /etc/exim4/dkim.private.key
 ssh "$1" chmod 640 /etc/exim4/dkim.private.key
 
-ssh "$1" tee /etc/exim4/update-exim4.conf.conf << EOT
+ssh "$1" tee /etc/exim4/update-exim4.conf.conf <<EOT
 dc_eximconfig_configtype='internet'
 dc_other_hostnames=''
 dc_local_interfaces=''
@@ -36,7 +36,7 @@ dc_mailname_in_oh='true'
 dc_localdelivery='mail_spool'
 EOT
 
-ssh "$1" tee /etc/exim4/conf.d/main/00_local_settings << EOT
+ssh "$1" tee /etc/exim4/conf.d/main/00_local_settings <<EOT
 daemon_smtp_ports = 25 : 587
 REMOTE_SMTP_HELO_DATA = md.weblate.org
 MAIN_HARDCODE_PRIMARY_HOSTNAME = md.weblate.org
@@ -55,7 +55,7 @@ ssh "$1" systemctl restart exim4
 ssh "$1" ./scripts/install-graylog "'$(cat ~/.config/weblate-bootstrap/graylog_token)'"
 
 # shellcheck disable=SC2087
-ssh "$1" mail -r "noreply@weblate.org" -s "Test" -- "michal@weblate.org" << EOT
+ssh "$1" mail -r "noreply@weblate.org" -s "Test" -- "michal@weblate.org" <<EOT
 E-mail delivery from $1.
 
 --

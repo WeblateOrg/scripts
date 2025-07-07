@@ -11,14 +11,14 @@ export PATH
 
 # Munin
 mkdir -p /etc/munin/plugin-conf.d/
-cat > /etc/munin/plugin-conf.d/postgres << EOT
+cat >/etc/munin/plugin-conf.d/postgres <<EOT
 [postgres_*]
 user weblate
 env.PGHOST 127.0.0.1
 env.PGUSER weblate
 env.PGPASSWORD weblate
 EOT
-cat > /etc/munin/plugin-conf.d/redis << EOT
+cat >/etc/munin/plugin-conf.d/redis <<EOT
 [redis]
 env.host1 127.0.0.1
 env.port1 6379
@@ -31,7 +31,7 @@ wget https://raw.githubusercontent.com/munin-monitoring/contrib/master/plugins/r
 wget https://raw.githubusercontent.com/WeblateOrg/munin/master/weblate
 wget https://raw.githubusercontent.com/WeblateOrg/munin/master/ksm
 chmod +x redis weblate ksm
-cat > /etc/munin/plugin-conf.d/weblate_servers << EOT
+cat >/etc/munin/plugin-conf.d/weblate_servers <<EOT
 [weblate]
 env.SERVER https://$WEBLATE_DOMAIN/
 env.KEY
