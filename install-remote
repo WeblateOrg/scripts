@@ -4,13 +4,13 @@
 set -e
 
 if [ ! -f .venv/bin/activate ]; then
-    echo "Missing virtual environment!"
-    exit 2
+	echo "Missing virtual environment!"
+	exit 2
 fi
 
 if [ -z "$1" ] || [ "$1" = "--help" ]; then
-    echo "Usage: install-remote HOSTNAME [VERSION]"
-    exit 1
+	echo "Usage: install-remote HOSTNAME [VERSION]"
+	exit 1
 fi
 
 SERVER_NAME="$1"
@@ -24,7 +24,7 @@ TMPFILE=$(mktemp --tmpdir weblate-log.XXXXXXXXXX)
 
 # Gather basic configuration
 bootstrap "$BOOTSTRAP" "$2"
-cat >> "$BOOTSTRAP" << EOT
+cat >>"$BOOTSTRAP" <<EOT
 WEBLATE_PASSWORD="$(apg -a 0 -M sncl -n 1 -x 10 -m 20)"
 EOT
 
@@ -42,14 +42,14 @@ pip install -r requirements.txt
 # debian-12 arm64: 114690389
 # debian-12 amd64: 114690387
 hcloud server create \
-    --image 114690389 \
-    --location fsn1 \
-    --name "$SERVER_NAME" \
-    --network 19990 \
-    --firewall 13110 \
-    --ssh-key 1056953 \
-    --ssh-key 1494306 \
-    --type cax11 | tee "$TMPFILE"
+	--image 114690389 \
+	--location fsn1 \
+	--name "$SERVER_NAME" \
+	--network 19990 \
+	--firewall 13110 \
+	--ssh-key 1056953 \
+	--ssh-key 1494306 \
+	--type cax11 | tee "$TMPFILE"
 
 IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' "$TMPFILE")
 IP6ADDRESS=$(sed -n 's/IPv6: \(.*\)/\1/p' "$TMPFILE")
@@ -65,8 +65,8 @@ echo "Created server with address $IPADDRESS, please ensure $WEBLATE_DOMAIN poin
 read -r dummy
 
 s() {
-    # shellcheck disable=SC2029
-    ssh "root@$IPADDRESS" "$@"
+	# shellcheck disable=SC2029
+	ssh "root@$IPADDRESS" "$@"
 }
 
 # Configure mail sending
