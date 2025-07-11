@@ -66,4 +66,4 @@ print("Removing server...")
 for server in servers:
     subprocess.run(["hcloud", "server", "delete", str(server["id"])], check=True)
 print("Disabling sentry cron monitors...")
-subprocess.sun(["./disable-sentry-monitors", public_name])
+subprocess.run(["./disable-sentry-monitors", public_name])
