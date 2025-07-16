@@ -9,7 +9,7 @@ sed -i '/\/etc\/letsencrypt\/options-ssl-nginx.conf/ D' /etc/nginx/sites-availab
 sed -i -e '/ssl_protocols/D' -e '/ssl_prefer_server_ciphers/D' /etc/nginx/nginx.conf
 
 # Update SSL config
-cat >/etc/nginx/conf.d/ssl.conf <<EOT
+cat > /etc/nginx/conf.d/ssl.conf << EOT
 ssl_session_timeout 1d;
 ssl_session_cache shared:SSL:50m;
 ssl_session_tickets off;
@@ -26,7 +26,7 @@ EOT
 
 # Update DH params
 if [ ! -f /etc/nginx/ffdhe4096.pem ]; then
-	curl https://ssl-config.mozilla.org/ffdhe2048.txt >/etc/nginx/ffdhe4096.pem
+    curl https://ssl-config.mozilla.org/ffdhe2048.txt > /etc/nginx/ffdhe4096.pem
 fi
 
 # Reload ngxin

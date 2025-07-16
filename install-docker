@@ -5,11 +5,11 @@
 apt-get update
 
 apt-get install -y \
-	ca-certificates \
-	curl \
-	gnupg \
-	apparmor \
-	lsb-release
+    ca-certificates \
+    curl \
+    gnupg \
+    apparmor \
+    lsb-release
 
 # Keyring
 # shellcheck disable=SC2174
@@ -18,14 +18,14 @@ curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o 
 
 # APT source
 echo \
-	"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]') \
-  $(lsb_release -cs) stable" >/etc/apt/sources.list.d/docker.list
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]') \
+  $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
 
 # Install Docker
 apt-get update
 apt-get install -y \
-	docker-ce \
-	docker-ce-cli \
-	containerd.io \
-	docker-buildx-plugin \
-	docker-compose-plugin
+    docker-ce \
+    docker-ce-cli \
+    containerd.io \
+    docker-buildx-plugin \
+    docker-compose-plugin

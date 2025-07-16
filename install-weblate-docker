@@ -6,29 +6,29 @@ set -e
 . /etc/weblate-bootstrap
 
 if [ "$1" = "--nocert" ]; then
-	CERT=0
-	shift
+    CERT=0
+    shift
 else
-	CERT=1
+    CERT=1
 fi
 
 if [ "$1" = "--nomail" ]; then
-	IGNORE_CHECKS=,weblate.E003
-	shift
+    IGNORE_CHECKS=,weblate.E003
+    shift
 else
-	IGNORE_CHECKS=""
+    IGNORE_CHECKS=""
 fi
 
 if [ "$1" = "--migrate" ]; then
-	MIGRATE=1
-	CERT=0
-	shift
+    MIGRATE=1
+    CERT=0
+    shift
 else
-	MIGRATE=0
+    MIGRATE=0
 fi
 
 if [ "$MIGRATE" -eq 0 ]; then
-	adduser weblate --disabled-password --gecos Weblate
+    adduser weblate --disabled-password --gecos Weblate
 fi
 usermod --append --groups adm weblate
 usermod --append --groups docker weblate
@@ -39,32 +39,32 @@ WEBLATE_DOCKER="$WEBLATE_HOME/weblate"
 cd /tmp
 apt-get update
 apt-get install --no-install-recommends -y fail2ban python3-pyinotify python3-systemd \
-	systemd-timesyncd \
-	rsyslog \
-	nginx \
-	openssh-client \
-	python3-certbot-nginx \
-	git
+    systemd-timesyncd \
+    rsyslog \
+    nginx \
+    openssh-client \
+    python3-certbot-nginx \
+    git
 
 # Legal stuff
 sudo -u weblate git clone https://github.com/WeblateOrg/wllegal.git $WEBLATE_HOME/wllegal
 
 # SSL cert
 if [ "$CERT" -eq 1 ]; then
-	certbot --agree-tos --email care@weblate.org --redirect --no-eff-email -d "$WEBLATE_DOMAIN"
+    certbot --agree-tos --email care@weblate.org --redirect --no-eff-email -d "$WEBLATE_DOMAIN"
 fi
 
 # Enable http/2
 sed -i -e 's/ssl;/ssl http2;/' -e 's/ssl ipv6only=on/ssl ipv6only=on http2/' /etc/nginx/sites-available/default
 if [ "$MIGRATE" -eq 0 ]; then
-	# Enable status locally
-	sed -i '/server_name _/a location = /nginx_status {\n    stub_status;\n}' /etc/nginx/sites-available/default
+    # Enable status locally
+    sed -i '/server_name _/a location = /nginx_status {\n    stub_status;\n}' /etc/nginx/sites-available/default
 fi
 # Hide server version
 sed -i 's/# server_tokens off/server_tokens off/' /etc/nginx/nginx.conf
 
 # Weblate nginx snippet
-cat >/etc/nginx/snippets/weblate.conf <<EOT
+cat > /etc/nginx/snippets/weblate.conf << EOT
     location / {
         proxy_pass http://127.0.0.1:8080;
         proxy_read_timeout 3600s;
@@ -89,20 +89,20 @@ cat >/etc/nginx/snippets/weblate.conf <<EOT
 EOT
 
 if [ "$MIGRATE" -eq 0 ]; then
-	# Insert include after first server_name stanza
-	sed -i "0,/server_name $WEBLATE_DOMAIN.*/s//&\\ninclude snippets\/weblate.conf;/" /etc/nginx/sites-available/default
-	# Delete default location, replaced by snippet
-	sed -i ':a;N;$!ba;s/\(snippets\/weblate.conf;\)[^}]*}/\1/g' /etc/nginx/sites-available/default
+    # Insert include after first server_name stanza
+    sed -i "0,/server_name $WEBLATE_DOMAIN.*/s//&\\ninclude snippets\/weblate.conf;/" /etc/nginx/sites-available/default
+    # Delete default location, replaced by snippet
+    sed -i ':a;N;$!ba;s/\(snippets\/weblate.conf;\)[^}]*}/\1/g' /etc/nginx/sites-available/default
 fi
 systemctl enable nginx.service
 systemctl restart nginx.service
 
 # Fail2ban
 if [ ! -d "$WEBLATE_HOME/fail2ban" ]; then
-	sudo -u weblate git clone https://github.com/WeblateOrg/fail2ban.git $WEBLATE_HOME/fail2ban
-	ln -s $WEBLATE_HOME/fail2ban/filter.d/* /etc/fail2ban/filter.d/
-	ln -s $WEBLATE_HOME/fail2ban/jail.d/* /etc/fail2ban/jail.d/
-	systemctl restart fail2ban.service
+    sudo -u weblate git clone https://github.com/WeblateOrg/fail2ban.git $WEBLATE_HOME/fail2ban
+    ln -s $WEBLATE_HOME/fail2ban/filter.d/* /etc/fail2ban/filter.d/
+    ln -s $WEBLATE_HOME/fail2ban/jail.d/* /etc/fail2ban/jail.d/
+    systemctl restart fail2ban.service
 fi
 
 # Install Weblate dirs
@@ -111,9 +111,9 @@ mkdir -p "$WEBLATE_DOCKER" "$WEBLATE_HOME/cache" "$WEBLATE_HOME/data" "$WEBLATE_
 # Go to the docker dir
 cd "$WEBLATE_DOCKER"
 
-curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/docker-compose.yml >docker-compose.yml
-curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/environment >environment
-cat >docker-compose.override.yml <<EOT
+curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/docker-compose.yml > docker-compose.yml
+curl -fsSL https://raw.githubusercontent.com/WeblateOrg/docker-compose/main/environment > environment
+cat > docker-compose.override.yml << EOT
 services:
   weblate:
     image: weblate/weblate:latest
@@ -153,7 +153,7 @@ volumes:
       device: '$WEBLATE_HOME/redis'
 EOT
 
-cat >>environment <<EOT
+cat >> environment << EOT
 
 # E-mail setup
 WEBLATE_EMAIL_HOST=172.16.0.84
@@ -200,7 +200,7 @@ chown -R weblate:weblate $WEBLATE_HOME
 sudo -u weblate docker compose pull
 
 if [ "$MIGRATE" -eq 1 ]; then
-	exit 0
+    exit 0
 fi
 
 # Start Weblate
@@ -211,18 +211,18 @@ sudo -u weblate docker compose logs
 
 # Track deploy to Sentry
 if [ -n "$WEBLATE_SENTRY_TOKEN" ]; then
-	sudo -u weblate docker compose exec --user weblate weblate weblate sentry_deploy || true
+    sudo -u weblate docker compose exec --user weblate weblate weblate sentry_deploy || true
 fi
 
 # Create admin user
 if [ -n "$WEBLATE_PASSWORD" ]; then
-	sudo -u weblate docker compose exec --user weblate weblate weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař' --password "$WEBLATE_PASSWORD" --update
+    sudo -u weblate docker compose exec --user weblate weblate weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař' --password "$WEBLATE_PASSWORD" --update
 fi
 
 # Machinery configuration
 if [ "$CERT" -eq 1 ]; then
-	sudo -u weblate docker compose exec --user weblate weblate weblate install_machinery --service libretranslate --configuration '{"key": "", "url": "http://172.16.0.9:5000/"}'
-	sudo -u weblate docker compose exec --user weblate weblate weblate install_machinery --service apertium-apy --configuration '{"url": "http://172.16.0.9:2737/"}'
+    sudo -u weblate docker compose exec --user weblate weblate weblate install_machinery --service libretranslate --configuration '{"key": "", "url": "http://172.16.0.9:5000/"}'
+    sudo -u weblate docker compose exec --user weblate weblate weblate install_machinery --service apertium-apy --configuration '{"url": "http://172.16.0.9:2737/"}'
 fi
 
 # Check

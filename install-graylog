@@ -3,10 +3,10 @@
 set -e
 
 if [ -n "$1" ]; then
-	WEBLATE_GRAYLOG_TOKEN="$1"
+    WEBLATE_GRAYLOG_TOKEN="$1"
 else
-	# shellcheck disable=SC1091
-	. /etc/weblate-bootstrap
+    # shellcheck disable=SC1091
+    . /etc/weblate-bootstrap
 fi
 
 # Install package

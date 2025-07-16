@@ -7,7 +7,7 @@ apt update
 apt install -y fail2ban vim
 apt purge -y vim-tiny cryptsetup-initramfs
 
-cat >/etc/fail2ban/jail.d/sshd.conf <<EOT
+cat > /etc/fail2ban/jail.d/sshd.conf << EOT
 [sshd]
 mode   = aggressive
 EOT
