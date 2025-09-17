@@ -123,7 +123,7 @@ else
         WEBLATE_PKG="Weblate"
         PIP_ARGS=""
     fi
-    WEBLATE_FLAGS="all,zxcvbn,wllegal"
+    WEBLATE_FLAGS="all,zxcvbn,wllegal,wsgi"
     if [ -d "$WEBLATE_HOME/hosted" ]; then
         PIP_ARGS="--editable $WEBLATE_HOME/hosted $PIP_ARGS"
         WEBLATE_FLAGS="$WEBLATE_FLAGS,mysql,saml2idp"
