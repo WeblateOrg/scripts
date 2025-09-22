@@ -218,7 +218,7 @@ fi
 
 # Create admin user
 if [ -n "$WEBLATE_PASSWORD" ]; then
-    sudo -u weblate docker compose exec --user weblate weblate weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař' --password "$WEBLATE_PASSWORD" --update
+    sudo -u weblate docker compose exec --user weblate weblate weblate createadmin --username nijel --email michal@weblate.org --name 'Michal Čihař' --password "$WEBLATE_PASSWORD" --update
 fi
 
 # Machinery configuration
