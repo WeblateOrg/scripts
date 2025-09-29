@@ -2,14 +2,14 @@
 
 set -e
 
+SCRIPTS_DIR="$(dirname "$(readlink -f "$0")")"
+
 cd /tmp
 
 if [ -f /etc/weblate-bootstrap ]; then
     # shellcheck disable=SC1091
     . /etc/weblate-bootstrap
 fi
-
-SCRIPTS_DIR="$(dirname "$(readlink -f "$0")")"
 
 DO_DIFF=1
 LAZY_RESTART=0
