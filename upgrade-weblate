@@ -83,7 +83,7 @@ fi
 if [ -f "$WEBLATE_HOME/weblate/docker-compose.override.yml" ]; then
     # Upgrade Anubis config before starting containers
     if [ -f "/home/weblate/anubis/botPolicies.yaml" ]; then
-        sed s@WEBLATE_ANUBIS_DATA_PATH@/data/@ "$SCRIPTS_DIR/weblate.botPolicies.yaml" > /etc/anubis/weblate.botPolicies.yaml
+        sed s@WEBLATE_ANUBIS_DATA_PATH@/data/@ "$SCRIPTS_DIR/weblate.botPolicies.yaml" > /home/weblate/anubis/botPolicies.yaml
     fi
     # Docker based upgrade
     cd "$WEBLATE_HOME/weblate"
