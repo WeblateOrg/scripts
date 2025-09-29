@@ -9,6 +9,8 @@ if [ -f /etc/weblate-bootstrap ]; then
     . /etc/weblate-bootstrap
 fi
 
+SCRIPTS_DIR="$(dirname "$(readlink -f "$0")")"
+
 DO_DIFF=1
 LAZY_RESTART=0
 
@@ -232,6 +234,13 @@ fi
 if [ -d /usr/share/munin/plugins ]; then
     wget -O - https://raw.githubusercontent.com/WeblateOrg/munin/master/weblate > /usr/share/munin/plugins/weblate
     wget -O - https://raw.githubusercontent.com/WeblateOrg/munin/master/ksm > /usr/share/munin/plugins/ksm
+fi
+
+# Upgrade Anubis policy
+if [ -f "/etc/anubis/weblate.botPolicies.yaml" ]; then
+    sed s@WEBLATE_ANUBIS_DATA_PATH@/var/lib/anubis/weblate/@ "$SCRIPTS_DIR/weblate.botPolicies.yaml" > /etc/anubis/weblate.botPolicies.yaml
+elif [ -f "/home/weblate/anubis/botPolicies.yaml" ]; then
+    sed s@WEBLATE_ANUBIS_DATA_PATH@/data/@ "$SCRIPTS_DIR/weblate.botPolicies.yaml" > /etc/anubis/weblate.botPolicies.yaml
 fi
 
 # Upgrade fail2ban
