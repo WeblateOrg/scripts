@@ -81,6 +81,10 @@ fi
 # USERNAME is user owning Weblate sources
 
 if [ -f "$WEBLATE_HOME/weblate/docker-compose.override.yml" ]; then
+    # Upgrade Anubis config before starting containers
+    if [ -f "/home/weblate/anubis/botPolicies.yaml" ]; then
+        sed s@WEBLATE_ANUBIS_DATA_PATH@/data/@ "$SCRIPTS_DIR/weblate.botPolicies.yaml" > /etc/anubis/weblate.botPolicies.yaml
+    fi
     # Docker based upgrade
     cd "$WEBLATE_HOME/weblate"
     sudo -u weblate docker compose pull
@@ -239,8 +243,7 @@ fi
 # Upgrade Anubis policy
 if [ -f "/etc/anubis/weblate.botPolicies.yaml" ]; then
     sed s@WEBLATE_ANUBIS_DATA_PATH@/var/lib/anubis/weblate/@ "$SCRIPTS_DIR/weblate.botPolicies.yaml" > /etc/anubis/weblate.botPolicies.yaml
-elif [ -f "/home/weblate/anubis/botPolicies.yaml" ]; then
-    sed s@WEBLATE_ANUBIS_DATA_PATH@/data/@ "$SCRIPTS_DIR/weblate.botPolicies.yaml" > /etc/anubis/weblate.botPolicies.yaml
+    systemctl restart anubis@weblate
 fi
 
 # Upgrade fail2ban
