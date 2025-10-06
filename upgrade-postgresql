@@ -29,6 +29,7 @@ sed -i \
 
 # Start new server
 docker compose up -d --wait database
+sleep 5
 
 # Restore content
 cat backup.sql | docker compose exec -T database psql --username weblate --dbname weblate
