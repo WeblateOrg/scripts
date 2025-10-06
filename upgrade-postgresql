@@ -1,6 +1,7 @@
 #!/bin/sh
 
 set -e
+set -x
 
 cd /home/weblate/weblate
 
@@ -15,6 +16,7 @@ docker compose stop database
 
 # Remove container, volume and directory
 docker compose rm -v database
+sleep 1
 docker volume remove weblate_postgres-data
 rm -rf /home/weblate/postgresql/
 mkdir -p /home/weblate/postgresql/
