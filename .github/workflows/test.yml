@@ -94,6 +94,8 @@ jobs:
       run: sudo ./install-weblate-docker --nocert --nomail
     - name: Upgrade
       run: sudo ./upgrade-weblate
+    - name: Upgrade PostgreSQL
+      run: sudo ./upgrade-postgresql
     - name: Logs
       if: always()
       run: |

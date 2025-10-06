@@ -1,0 +1,35 @@
+#!/bin/sh
+
+set -e
+
+cd /home/weblate/weblate
+
+# Stop other containers
+docker compose stop weblate cache
+
+# Dump current database
+docker compose exec database pg_dumpall --clean --if-exists --username weblate > backup.sql
+
+# Stop database
+docker compose stop database
+
+# Remove container, volume and directory
+docker compose rm -v database
+docker volume remove weblate_postgres-data
+rm -rf /home/weblate/postgresql/
+mkdir -p /home/weblate/postgresql/
+
+# Edit docker-compose.yml
+sed -i \
+    -e 's/image: postgres:.*/image: postgres:18-alpine/' \
+    -e 's@postgres-data:/var/lib/postgresql/data@postgres-data:/var/lib/postgresql@' \
+    docker-compose.yml
+
+# Start new server
+docker compose up -d database
+
+# Restore content
+cat backup.sql | docker compose exec -T database psql --username weblate --dbname weblate
+
+# Start remaining containers
+docker compose up -d
