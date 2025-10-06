@@ -8,12 +8,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      # Remove non-installable git packages. There git-svn can not be installed
-      # because the image contains newer versions which do not have matching git-svn
-      # in enabled repositories.
       with:
         persist-credentials: false
     - name: APT cleanup
+      # Remove non-installable git packages. There git-svn can not be installed
+      # because the image contains newer versions which do not have matching git-svn
+      # in enabled repositories.
       run: sudo apt-get purge git git-man
     - name: Exim
       run: sudo ./configure-system
@@ -43,12 +43,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      # Remove non-installable git packages. There git-svn can not be installed
-      # because the image contains newer versions which do not have matching git-svn
-      # in enabled repositories.
       with:
         persist-credentials: false
     - name: APT cleanup
+      # Remove non-installable git packages. There git-svn can not be installed
+      # because the image contains newer versions which do not have matching git-svn
+      # in enabled repositories.
       run: sudo apt-get purge git git-man
     - name: Exim
       run: sudo ./configure-system
@@ -74,12 +74,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      # Remove non-installable git packages. There git-svn can not be installed
-      # because the image contains newer versions which do not have matching git-svn
-      # in enabled repositories.
       with:
         persist-credentials: false
     - name: APT cleanup
+      # Remove non-installable git packages. There git-svn can not be installed
+      # because the image contains newer versions which do not have matching git-svn
+      # in enabled repositories.
       run: sudo apt-get purge git git-man
     - name: Exim
       run: sudo ./configure-system
