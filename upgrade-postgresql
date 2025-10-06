@@ -17,8 +17,6 @@ docker compose stop database
 # Remove container, volume and directory
 docker compose down
 docker compose rm -v database
-docker ps -a
-sleep 1
 docker volume remove weblate_postgres-data
 rm -rf /home/weblate/postgresql/
 mkdir -p /home/weblate/postgresql/
@@ -30,7 +28,7 @@ sed -i \
     docker-compose.yml
 
 # Start new server
-docker compose up -d database
+docker compose up -d --wait database
 
 # Restore content
 cat backup.sql | docker compose exec -T database psql --username weblate --dbname weblate
