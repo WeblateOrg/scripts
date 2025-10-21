@@ -35,7 +35,7 @@ EOT
 pip install -r requirements.txt
 
 # Create server
-# Type: cx22 / cax11 / cax21
+# Type: cx23 / cax11 / cax21
 # Location: nbg1 / fsn1 / hel1
 # image is debian-12 for arm64
 #
@@ -49,7 +49,7 @@ hcloud server create \
     --firewall 13110 \
     --ssh-key 1056953 \
     --ssh-key 1494306 \
-    --type cax11 | tee "$TMPFILE"
+    --type cx23 | tee "$TMPFILE"
 
 IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' "$TMPFILE")
 IP6ADDRESS=$(sed -n 's/IPv6: \(.*\)/\1/p' "$TMPFILE")
