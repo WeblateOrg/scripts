@@ -32,7 +32,7 @@ EOT
 . "$BOOTSTRAP"
 # shellcheck disable=SC1090,SC1091
 . .venv/bin/activate
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 
 # Create server
 # Type: cx23 / cax11 / cax21
