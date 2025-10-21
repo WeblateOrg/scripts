@@ -49,6 +49,7 @@ hcloud server create \
     --firewall 13110 \
     --ssh-key 1056953 \
     --ssh-key 1494306 \
+    --placement-group 1231118 \
     --type cx23 | tee "$TMPFILE"
 
 IPADDRESS=$(sed -n 's/IPv4: \(.*\)/\1/p' "$TMPFILE")
