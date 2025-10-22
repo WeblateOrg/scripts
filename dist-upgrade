@@ -15,7 +15,9 @@ Suites: trixie-security
 Components: main
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 EOT
-sed -i s/bookworm/trixie/ /etc/apt/sources.list.d/docker.list
+if [ -f /etc/apt/sources.list.d/docker.list ]; then
+    sed -i s/bookworm/trixie/ /etc/apt/sources.list.d/docker.list
+fi
 
 apt update
 apt full-upgrade -y
