@@ -1,0 +1,9 @@
+#!/bin/sh
+
+needed=$(du -s -BM /home/weblate/postgresql/ | awk '{print $1}')
+available=$(df -BM --output=avail /home/weblate/ | tail -n1)
+
+if [ "$available" -gt $((needed * 2)) ]; then
+    echo "Available $available, current size $needed"
+    exit 1
+fi
