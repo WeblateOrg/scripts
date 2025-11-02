@@ -3,6 +3,7 @@
 set -e
 
 if grep -q 'image: valkey' /home/weblate/weblate/docker-compose.yml; then
+    sed -i 's@image: valkey/valkey:9.0.0@image: valkey/valkey:9@' /home/weblate/weblate/docker-compose.yml
     exit 0
 fi
 
@@ -11,8 +12,18 @@ if grep -q 'image: redis:7' /home/weblate/weblate/docker-compose.yml; then
     REMOVE=0
 fi
 
+cd /home/weblate/weblate
+docker compose down
+
+# Backup rdb file
+cp /home/weblate/redis/dump.rdb /tmp/
+
+# Update
+sed -i 's@image: redis.*@image: valkey/valkey:9@' /home/weblate/weblate/docker-compose.yml
+sed -i "s@command:.*redis-server.*@command: [valkey-server, --save, '60', '1', --loglevel, warning]@" /home/weblate/weblate/docker-compose.yml
+
 if [ "$REMOVE" -eq 1 ]; then
-    echo remove
+    rm /home/weblate/redis/dump.rdb
 fi
 
-exit 1
+docker compose up -d
