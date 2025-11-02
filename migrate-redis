@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+if grep -q 'image: valkey' /home/weblate/weblate/docker-compose.yml; then
+    exit 0
+fi
+
+REMOVE=1
+if grep -q 'image: redis:7' /home/weblate/weblate/docker-compose.yml; then
+    REMOVE=0
+fi
+
+if [ "$REMOVE" -eq 1 ]; then
+    echo remove
+fi
+
+exit 1
