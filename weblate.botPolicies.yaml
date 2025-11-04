@@ -19,7 +19,9 @@ bots:
     all:
     - '"Accept" in headers'
     - '"Authorization" in headers'
-    - path.startsWith("/api/")
+# Using path would be better, but seems broken for subrequest auth, see
+# https://github.com/TecharoHQ/anubis/issues/1245
+#    - path.startsWith("/api/")
 
 dnsbl: false
 
