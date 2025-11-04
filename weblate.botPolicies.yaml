@@ -25,13 +25,13 @@ bots:
 dnsbl: false
 
 # #
-impressum:
-  # Displayed at the bottom of every page rendered by Anubis.
-  footer: >-
-    This website is hosted by Weblate s.r.o. If you have any complaints or notes
-    about the service, please contact
-    <a href="mailto:care@weblate.org">care@weblate.org</a>
-    and we will assist you as soon as possible.
+# impressum:
+#   # Displayed at the bottom of every page rendered by Anubis.
+#   footer: >-
+#     This website is hosted by Zombocom. If you have any complaints or notes
+#     about the service, please contact
+#     <a href="mailto:contact@domainhere.example">contact@domainhere.example</a>
+#     and we will assist you as soon as possible.
 
 #   # The imprint page that will be linked to at the footer of every Anubis page.
 #   page:
