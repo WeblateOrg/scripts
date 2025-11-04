@@ -13,6 +13,13 @@
 bots:
   # You can import the entire default config with this macro:
 - import: (data)/meta/default-config.yaml
+- name: allow-api-requests
+  action: ALLOW
+  expression:
+    all:
+    - '"Accept" in headers'
+    - '"Authorization" in headers'
+    - path.startsWith("/api/")
 
 dnsbl: false
 
