@@ -17,7 +17,6 @@ bots:
   action: ALLOW
   expression:
     all:
-    - '"Accept" in headers'
     - '"Authorization" in headers'
 # Using path would be better, but seems broken for subrequest auth, see
 # https://github.com/TecharoHQ/anubis/issues/1245
