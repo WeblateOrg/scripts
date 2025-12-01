@@ -144,7 +144,7 @@ else
     # Prebuild wheels, they are stored in the cache
     WHEELS=$(mktemp -d)
     chown "$USERNAME" "$WHEELS"
-    sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" wheel --wheel-dir "$WHEELS" "Weblate[${WEBLATE_FLAGS}]" 'pygobject<3.52'
+    sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" wheel --wheel-dir "$WHEELS" "Weblate[${WEBLATE_FLAGS}]"
     rm -rf "$WHEELS"
 
     if [ $LAZY_RESTART -eq 0 ]; then
@@ -181,7 +181,7 @@ else
         cd "$OLD_DIR"
     fi
     # shellcheck disable=SC2086
-    sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install 'pygobject<3.52' --upgrade-strategy eager --upgrade $PIP_ARGS "${WEBLATE_PKG}[${WEBLATE_FLAGS}]"
+    sudo -u "$USERNAME" "$WEBLATE_ENV/bin/pip" install --upgrade-strategy eager --upgrade $PIP_ARGS "${WEBLATE_PKG}[${WEBLATE_FLAGS}]"
 
     # Adjust configuration
     if [ "$DO_DIFF" -eq 1 ]; then
