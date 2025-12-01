@@ -11,13 +11,13 @@
 ## /usr/share/docs/anubis/data or in the tarball you extracted Anubis from.
 
 bots:
-  # You can import the entire default config with this macro:
-- import: (data)/meta/default-config.yaml
 - name: allow-api-requests
   action: ALLOW
   expression:
     all:
     - '"Authorization" in headers'
+  # You can import the entire default config with this macro:
+- import: (data)/meta/default-config.yaml
 # Using path would be better, but seems broken for subrequest auth, see
 # https://github.com/TecharoHQ/anubis/issues/1245
 #    - path.startsWith("/api/")
