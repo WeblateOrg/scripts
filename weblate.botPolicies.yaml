@@ -13,12 +13,9 @@
 bots:
 - name: allow-api-requests
   action: ALLOW
-  expression:
-    all:
-    - '"Authorization" in headers'
-# Using path would be better, but seems broken for subrequest auth, see
-# https://github.com/TecharoHQ/anubis/issues/1245
-#    - path.startsWith("/api/")
+  headers_regex:
+    Authorization: .*
+  path_regex: ^/api/.*$
   # You can import the entire default config with this macro:
 - import: (data)/meta/default-config.yaml
 
