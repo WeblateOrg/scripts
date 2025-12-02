@@ -2,7 +2,7 @@
 
 # Based on https://ssl-config.mozilla.org/#server=nginx
 
-# Disable Letsencrypt SSL configuraion (it is weak)
+# Disable Letsencrypt SSL configuration (it is weak)
 sed -i '/\/etc\/letsencrypt\/options-ssl-nginx.conf/ D' /etc/nginx/sites-available/*
 
 # Disable built-in SSL config
