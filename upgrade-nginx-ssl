@@ -29,5 +29,5 @@ if [ ! -f /etc/nginx/ffdhe4096.pem ]; then
     curl https://ssl-config.mozilla.org/ffdhe2048.txt > /etc/nginx/ffdhe4096.pem
 fi
 
-# Reload ngxin
+# Reload nginx
 systemctl reload nginx
