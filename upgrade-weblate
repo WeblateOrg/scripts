@@ -4,6 +4,17 @@ set -e
 
 SCRIPTS_DIR="$(dirname "$(readlink -f "$0")")"
 
+cd "$SCRIPTS_DIR"
+
+git remote update
+
+if [ "$(git log --oneline ..origin/main | wc -l)" -gt 0 ]; then
+    # Update repo
+    git merge origin/main
+    # Re-exec script to use updated version
+    exec ./upgrade-weblate "$@"
+fi
+
 cd /tmp
 
 if [ -f /etc/weblate-bootstrap ]; then
