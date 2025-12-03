@@ -8,7 +8,7 @@ cd "$SCRIPTS_DIR"
 
 git remote update
 
-if [ "$(git log --oneline ..origin/main | wc -l)" -gt 0 ]; then
+if [ "$(git rev-parse --abbrev-ref HEAD)" = "main" ] && [ "$(git log --oneline ..origin/main | wc -l)" -gt 0 ]; then
     # Update repo
     git merge origin/main
     # Re-exec script to use updated version
