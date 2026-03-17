@@ -10,9 +10,9 @@ else
 fi
 
 # Install package
-wget https://packages.graylog2.org/repo/packages/graylog-sidecar-repository_1-5_all.deb
-dpkg -i graylog-sidecar-repository_1-5_all.deb
-rm graylog-sidecar-repository_1-5_all.deb
+wget ttps://downloads.graylog.org/repo/packages/graylog-sidecar-repository_1-6_all.deb
+dpkg -i graylog-sidecar-repository_1-4_all.deb
+rm graylog-sidecar-repository_1-4_all.deb
 apt-get update
 apt-get install -y graylog-sidecar
 
