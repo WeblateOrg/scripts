@@ -45,7 +45,7 @@ uv pip install -r requirements.txt
 # debian-13 amd64: 310554929
 hcloud server create \
     --image 310554929 \
-    --location nbg1 \
+    --location fsn1 \
     --name "$SERVER_NAME" \
     --network 19990 \
     --firewall 13110 \
