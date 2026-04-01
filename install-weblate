@@ -95,7 +95,7 @@ sed -i \
     -e "/SENTRY_DSN/ a \
 SENTRY_TOKEN = '$WEBLATE_SENTRY_TOKEN'" \
     -e "s#^        \"PASSWORD\":.*#        \"PASSWORD\": '$POSTGRES_PASS',#" \
-    -e "s#.*your_email@example.com.*#    ('Michal Čihař', 'michal@cihar.com'),#" \
+    -e "s#.*your_email@example.com.*#    ('Michal Čihař', 'michal@weblate.org'),#" \
     -e '/social_core.pipeline.social_auth.load_extra_data/ a \
     "weblate.legal.pipeline.tos_confirm",' \
     -e '/weblate.middleware.SecurityMiddleware/ a \
@@ -131,9 +131,9 @@ EOT
 # Fill the database
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate migrate
 if [ -n "$WEBLATE_PASSWORD" ]; then
-    sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař' --password "$WEBLATE_PASSWORD"
+    sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate createadmin --username nijel --email michal@weblate.org --name 'Michal Čihař' --password "$WEBLATE_PASSWORD"
 else
-    sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate createadmin --username nijel --email michal@cihar.com --name 'Michal Čihař'
+    sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate createadmin --username nijel --email michal@weblate.org --name 'Michal Čihař'
 fi
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate collectstatic --noinput
 sudo -u weblate $WEBLATE_HOME/weblate-env/bin/weblate compress --force
