@@ -23,10 +23,12 @@ cf.dns.records.create(
     name=sys.argv[3],
     type="A",
     content=sys.argv[1],
+    ttl=1,
 )
 cf.dns.records.create(
     zone_id=zone.id,
     name=sys.argv[3],
     type="AAAA",
     content=sys.argv[2],
+    ttl=1,
 )
