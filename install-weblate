@@ -144,10 +144,13 @@ fi
 
 # Celery and uwsgi
 cd "$WEBLATE_HOME/weblate-env/lib/python$PYVER/site-packages/weblate/examples/"
-cp celery-weblate.logrotate /etc/logrotate.d/
-cp celery-weblate.service /etc/systemd/system/
-cp celery-weblate.conf /etc/default/celery-weblate
-cp weblate.uwsgi.ini /etc/uwsgi/apps-available/weblate.ini
+download_example() {
+    curl -fsSL "https://github.com/WeblateOrg/weblate/raw/refs/heads/main/weblate/examples/$1"
+}
+download_example celery-weblate.logrotate > /etc/logrotate.d/
+download_example celery-weblate.service > /etc/systemd/system/
+download_example celery-weblate.conf > /etc/default/celery-weblate
+download_example weblate.uwsgi.ini > /etc/uwsgi/apps-available/weblate.ini
 systemctl daemon-reload
 systemctl enable celery-weblate.service
 systemctl start celery-weblate.service
