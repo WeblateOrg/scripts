@@ -199,7 +199,7 @@ else
         vimdiff "$WEBLATE_DIR/weblate/settings_example.py" "$WEBLATE_DIR/weblate/settings.py"
     fi
     if [ -z "$WEBLATE_WORKERS" ]; then
-        sed "s@/home/weblate/weblate-env@$WEBLATE_ENV@" "$WEBLATE_DIR/weblate/examples/celery-weblate.conf" > /etc/default/celery-weblate
+        curl -fsSL "https://github.com/WeblateOrg/weblate/raw/refs/heads/main/weblate/examples/celery-weblate.conf" | sed "s@/home/weblate/weblate-env@$WEBLATE_ENV@" > /etc/default/celery-weblate
     fi
 
     # Migrate database, compile gettext and collect static files
