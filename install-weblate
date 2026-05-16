@@ -149,8 +149,8 @@ download_example() {
 }
 download_example celery-weblate.logrotate > /etc/logrotate.d/celery-weblate.logrotate
 download_example celery-weblate.service > /etc/systemd/system/celery-weblate.service
-download_example celery-weblate.conf > /etc/default/celery-weblatecelery-weblate.conf
-download_example weblate.uwsgi.ini > /etc/uwsgi/apps-available/weblate.iniweblate.uwsgi.ini
+download_example celery-weblate.conf > /etc/default/celery-weblate
+download_example weblate.uwsgi.ini > /etc/uwsgi/apps-available/weblate.ini
 systemctl daemon-reload
 systemctl enable celery-weblate.service
 systemctl start celery-weblate.service
