@@ -16,6 +16,9 @@ bots:
   headers_regex:
     Authorization: .*
   path_regex: ^/api/.*$
+- name: allow-hosted-api-requests
+  action: ALLOW
+  path_regex: ^/hosted/api/.*$
   # You can import the entire default config with this macro:
 - import: (data)/meta/default-config.yaml
 
