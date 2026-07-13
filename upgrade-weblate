@@ -206,7 +206,6 @@ else
     sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" migrate
     sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" ensure_stats
     sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" collectstatic --noinput
-    sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" compress --force
     if ! grep -q UPDATE_LANGUAGES "$WEBLATE_DIR/weblate/settings.py"; then
         sudo -u "$WEBLATE_USERNAME" "$WEBLATE_ENV/bin/weblate" setuplang
     fi
