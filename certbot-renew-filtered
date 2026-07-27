@@ -1,0 +1,4 @@
+#!/bin/sh
+hcloud firewall apply-to-resource 13110 --type server --server 32895564
+ssh -i /home/nijel/.ssh/id_ed25519_certbot sas-weblate certbot renew
+hcloud firewall remove-from-resource 13110 --type server --server 32895564
