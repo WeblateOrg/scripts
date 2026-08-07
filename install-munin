@@ -43,6 +43,11 @@ create-monitor-user
 mkdir /run/munin/
 chmod 777 /run/munin/
 apt install -y munin-node munin-plugins-extra libdbd-pg-perl libwww-perl libswitch-perl
+usermod --groups docker munin
 
 sed -i '/allow.*::1/ a allow ^172\\.16\\.0\\.9$' /etc/munin/munin-node.conf
 systemctl restart munin-node
+
+if [ ! -f /etc/munin/plugins/weblate ]; then
+    ln -s /usr/share/munin/plugins/weblate /etc/munin/plugins/
+fi
