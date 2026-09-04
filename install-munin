@@ -33,6 +33,7 @@ wget https://raw.githubusercontent.com/WeblateOrg/munin/master/ksm
 chmod +x redis weblate ksm
 cat > /etc/munin/plugin-conf.d/weblate_servers << EOT
 [weblate]
+group docker
 env.SERVER https://$WEBLATE_DOMAIN/
 env.KEY
 EOT
