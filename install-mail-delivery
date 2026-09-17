@@ -14,7 +14,7 @@ ssh "$1" "if [ -d scripts ] ; then cd scripts ; git pull -q ; else git clone htt
 
 ssh "$1" ./scripts/configure-system
 
-ssh "$1" apt install -y exim4 bsd-mailx
+ssh "$1" apt install -y exim4 bsd-mailx nginx
 
 scp ~/Nextcloud/Weblate/Servers/Mail/DKIM/dkim.private.key "$1":/etc/exim4/dkim.private.key
 ssh "$1" chgrp Debian-exim /etc/exim4/dkim.private.key
@@ -61,3 +61,7 @@ E-mail delivery from $1.
 --
 Your friendly bot
 EOT
+
+ssh "$1" "cd /srv ; git clone https://github.com/WeblateOrg/website.git"
+ssh "$1" ln -s /srv/website/mail-server/nginx.conf /etc/nginx/sites-available/md.weblate.org
+ssh "$1" ln -s ../sites-available/md.weblate.org /etc/nginx/sites-enabled/md.weblate.org
