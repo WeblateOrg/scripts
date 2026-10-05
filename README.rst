@@ -1,9 +1,11 @@
-.. image:: https://s.weblate.org/cdn/Logo-Darktext-borders.png
-   :alt: Weblate
-   :target: https://weblate.org/
-   :height: 80px
-
-**Weblate is libre software web-based continuous localization system,
-used by over 2500 libre projects and companies in more than 165 countries.**
+Weblate maintenance scripts
+===========================
 
 Maintenance scripts for Hosted Weblate plafrorm
+
+.. image:: https://s.weblate.org/cdn/Logo-Darktext-borders.png
+   :target: https://weblate.org/
+   :alt: Weblate
+   :height: 55px
+
+Maintained by `Weblate <https://weblate.org/>`_ — a privacy-respecting localization platform built on open-source foundations.
