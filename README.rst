@@ -1,7 +1,7 @@
 Weblate maintenance scripts
 ===========================
 
-Maintenance scripts for Hosted Weblate plafrorm
+Maintenance scripts for Weblate hosting platform.
 
 .. image:: https://s.weblate.org/cdn/Logo-Darktext-borders.png
    :target: https://weblate.org/
