@@ -24,6 +24,30 @@ bots:
 
 dnsbl: false
 
+## GeoIP configuration
+## See: https://anubis.techaro.lol/docs/admin/geoip
+# geoip:
+#   asn:
+#     path: /var/lib/anubis/GeoLite2-ASN.mmdb # ensure /var/lib/anubis is writable
+#   country:
+#     path: /var/lib/anubis/GeoLite2-Country.mmdb
+#   auto_update:
+#     account_id: 123456
+#     license_key_env: MAXMIND_LICENSE_KEY
+#     interval: 24h # if not set, this is the default
+
+## Honeypot configuration
+honeypot:
+  ## If not set, Anubis will assume you meant `true`.
+  enabled: true
+  ## Currently the only supported implementation is the naive method.
+  ## See https://anubis.techaro.lol/docs/admin/honeypot/overview#implementation-notes for more information
+  implementation: naive
+  ## Setting ip_log_file makes Anubis log IP addresses that hit honeypot URLs to a file.
+  ## Anubis writes to this file either once per minute or after Anubis records 32
+  ## kilobytes of IP addresses, whichever happens first.
+  #ip_log_file: ./var/honeypot.addrs
+
 # #
 # impressum:
 #   # Displayed at the bottom of every page rendered by Anubis.
@@ -85,6 +109,36 @@ status_codes:
   CHALLENGE: 200
   DENY: 403
 
+# # Configuration for the metrics server. See the docs for more information:
+# #
+# # https://anubis.techaro.lol/docs/admin/policies#metrics-server
+# #
+# # This is commented out by default so that command line flags take precedence.
+# metrics:
+#   bind: ":9090"
+#   network: "tcp"
+#
+# # To protect your metrics server with basic auth, set credentials below:
+# #
+# # https://anubis.techaro.lol/docs/admin/policies#http-basic-authentication
+#   basicAuth:
+#     username: ""
+#     password: ""
+#
+# # To serve metrics over TLS, set the path to the right TLS certificate and key
+# # here. When the files change on disk, they will automatically be reloaded.
+# #
+# # https://anubis.techaro.lol/docs/admin/policies#tls
+#   tls:
+#     certificate: /path/to/tls.crt
+#     key: /path/to/tls.key
+#
+#     # If you want to secure your metrics endpoint using mutual TLS (mTLS), set
+#     # the path to a certificate authority public certificate here.
+#     #
+#     # https://anubis.techaro.lol/docs/admin/policies#mtls
+#     ca: /path/to/ca.crt
+
 # Anubis can store temporary data in one of a few backends. See the storage
 # backends section of the docs for more information:
 #
@@ -124,7 +178,6 @@ thresholds:
       # https://anubis.techaro.lol/docs/admin/configuration/challenges/metarefresh
     algorithm: metarefresh
     difficulty: 1
-    report_as: 1
   # For clients that are browser-like but have either gained points from custom rules or
   # report as a standard browser.
 - name: moderate-suspicion
@@ -137,7 +190,6 @@ thresholds:
       # https://anubis.techaro.lol/docs/admin/configuration/challenges/proof-of-work
     algorithm: fast
     difficulty: 2   # two leading zeros, very fast for most clients
-    report_as: 2
 - name: mild-proof-of-work
   expression:
     all:
@@ -148,7 +200,6 @@ thresholds:
       # https://anubis.techaro.lol/docs/admin/configuration/challenges/proof-of-work
     algorithm: fast
     difficulty: 4
-    report_as: 4
   # For clients that are browser like and have gained many points from custom rules
 - name: extreme-suspicion
   expression: weight >= 30
@@ -157,4 +208,3 @@ thresholds:
       # https://anubis.techaro.lol/docs/admin/configuration/challenges/proof-of-work
     algorithm: fast
     difficulty: 6
-    report_as: 6
